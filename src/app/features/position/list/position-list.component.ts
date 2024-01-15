@@ -77,13 +77,13 @@ export class PositionListComponent implements OnInit {
           data: '',
         },
       ],
-      // columnDefs: [
-      //   { orderable: true, targets: 0 }, // Enable sorting on first column
-      //   { orderable: true, targets: 1 }, // Enable sorting on second column
-      //   { orderable: true, targets: 2 }, // Disable sorting on third column
-      //   { orderable: false, targets: 3 }, // Enable sorting on fourth column
-      //   // Specify orderable for other columns as needed
-      // ]
+      columnDefs: [
+        { orderable: true, targets: 0 }, // Enable sorting on first column
+        { orderable: true, targets: 1 }, // Enable sorting on second column
+        { orderable: true, targets: 2 }, // Disable sorting on third column
+        { orderable: false, targets: 3 }, // Enable sorting on fourth column
+        //   // Specify orderable for other columns as needed
+      ],
     };
   }
 }

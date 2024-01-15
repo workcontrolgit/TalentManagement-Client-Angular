@@ -98,7 +98,8 @@ export class PositionDetailComponent implements OnInit {
           positionNumber: this.position.positionNumber,
           positionTitle: this.position.positionTitle,
           positionDescription: this.position.positionDescription,
-          positionSalary: this.position.salaryRange,
+          departmentId: this.position.departmentId,
+          salaryRangeId: this.position.salaryRangeId,
         });
       },
       (error) => {
@@ -144,7 +145,8 @@ export class PositionDetailComponent implements OnInit {
       positionNumber: ['', Validators.required],
       positionTitle: ['', Validators.required],
       positionDescription: ['', Validators.required],
-      positionSalary: ['', RxwebValidators.numeric({ allowDecimal: true, isFormat: false })],
+      departmentId: ['', Validators.required],
+      salaryRangeId: ['', Validators.required],
     });
   }
 
