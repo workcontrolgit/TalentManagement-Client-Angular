@@ -1,0 +1,44 @@
+<div class="container-fluid mt-3">
+  <div class="card">
+    <div class="card-header">
+      <div class="float-start">
+        <h3 class="text-secondary">Employees</h3>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <table datatable [dtOptions]="dtOptions" class="table table-hover">
+          <!-- <thead>
+            <tr>
+              <th>Last</th>
+              <th>First</th>
+              <th>Email</th>
+              <th>Email</th>
+              <th>Position Title</th>
+            </tr>
+          </thead> -->
+          @if (employees.length !== 0) {
+          <tbody>
+            @for (employee of employees; track employee) {
+            <tr (click)="wholeRowClick(employee)">
+              <td>{{ employee.lastName }}</td>
+              <td>{{ employee.firstName }}</td>
+              <td>{{ employee.email }}</td>
+              <td>{{ employee.employeeNumber }}</td>
+              <td>{{ employee.position.positionTitle }}</td>
+            </tr>
+            }
+          </tbody>
+          } @else {
+          <tbody>
+            <tr>
+              <td colspan="4" class="no-data-available">No data!</td>
+            </tr>
+          </tbody>
+          }
+        </table>
+      </div>
+    </div>
+    <div class="card-footer">Hint: All columns are searchable and sortable.</div>
+  </div>
+</div>

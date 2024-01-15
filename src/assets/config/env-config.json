@@ -1,0 +1,29 @@
+{
+  "externalApiUrl": "https://api.chucknorris.io",
+  "clientId": "TalentManagement",
+  "responseType": "code",
+  "silentRefreshRedirectUri": "/silent-refresh.html",
+  "scope": "openid profile email roles app.api.employeeprofile.read",
+  "useSilentRefresh": true,
+  "silentRefreshTimeout": 50000,
+  "timeoutFactor": 0.25,
+  "strictDiscoveryDocumentValidation": false,
+  "sessionChecksEnabled": false,
+  "showDebugInformation": false,
+  "clearHashAfterLogin": false,
+  "nonceStateSeparator": "semicolon",
+  "appSetting": [
+    {
+      "subEnvironment": "localhost",
+      "apiEndpoint": "https://localhost:44378/api/v1",
+      "apiMockEndpoint": "https://apiresources.azurewebsites.net/api/v1",
+      "issuer": "https://cat-token-identity.azurewebsites.net"
+    },
+    {
+      "subEnvironment": "server",
+      "apiEndpoint": "https://apiresources.azurewebsites.net/api/v1",
+      "apiMockEndpoint": "https://apiresources.azurewebsites.net/api/v1",
+      "issuer": "https://cat-token-identity.azurewebsites.net"
+    }
+  ]
+}
