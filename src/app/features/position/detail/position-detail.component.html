@@ -86,21 +86,40 @@
               Position Description is required
             </small>
           </label>
-          <label for="positionSalary">Position Salary</label>
+
+          <label for="positionSalary">Department</label>
 
           <label class="d-block mb-3">
             <input
               type="text"
               class="form-control"
-              formControlName="positionSalary"
-              [ngClass]="{ 'is-invalid': f.positionSalary.errors }"
-              autocomplete="current-positionSalary"
-              [placeholder]="'Enter salary here' | translate"
+              formControlName="departmentId"
+              [ngClass]="{ 'is-invalid': f.departmentId.errors }"
+              autocomplete="current-departmentId"
+              [placeholder]="'Select from list' | translate"
+              required
+            />
+            <span hidden translate>Department</span>
+            <small [hidden]="f.departmentId.valid || f.departmentId.untouched" class="text-danger" translate>
+              Department is required and must be selected
+            </small>
+          </label>
+
+          <label for="positionSalary">Salary Range</label>
+
+          <label class="d-block mb-3">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="salaryRangeId"
+              [ngClass]="{ 'is-invalid': f.salaryRangeId.errors }"
+              autocomplete="current-salaryRangeId"
+              [placeholder]="'Select from list' | translate"
               required
             />
             <span hidden translate>PositionSalary</span>
-            <small [hidden]="f.positionSalary.valid || f.positionSalary.untouched" class="text-danger" translate>
-              Position Salary is required and must be numeric
+            <small [hidden]="f.salaryRangeId.valid || f.salaryRangeId.untouched" class="text-danger" translate>
+              Position Salary Range is required and must be selected
             </small>
           </label>
         </div>
