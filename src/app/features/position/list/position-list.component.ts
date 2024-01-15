@@ -50,7 +50,7 @@ export class PositionListComponent implements OnInit {
           .post(this.apiEndpointsService.postPositionsPagedEndpoint(), dataTablesParameters)
           .subscribe((resp: DataTablesResponse) => {
             this.positions = resp.data;
-            log.debug("dump positions", this.positions);
+            // log.debug('dump positions', this.positions);
             callback({
               recordsTotal: resp.recordsTotal,
               recordsFiltered: resp.recordsFiltered,
