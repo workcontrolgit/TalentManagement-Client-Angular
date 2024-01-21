@@ -5,15 +5,38 @@
   </button>
 </div>
 <div class="modal-body">
-  <p class="card-text"><strong>employee.id: </strong> {{ employee.id }}</p>
-  <p class="card-text"><strong>employee.prefix: </strong> {{ employee.prefix }}</p>
-  <p class="card-text"><strong>employee.lastName: </strong> {{ employee.lastName }}</p>
-  <p class="card-text"><strong>employee.firstName: </strong> {{ employee.firstName }}</p>
-  <p class="card-text"><strong>employee.position.positionTitle: </strong> {{ employee.position.positionTitle }}</p>
-  <p class="card-text"><strong>employee.email: </strong> {{ employee.email }}</p>
-  <p class="card-text"><strong>employee.phone: </strong> {{ employee.phone }}</p>
-  <p class="card-text"><strong>employee.birthday: </strong> {{ employee.birthday }}</p>
-  <p class="card-text"><strong>employee.employeeNumber: </strong> {{ employee.employeeNumber }}</p>
+  <table class="table table-striped">
+    <tbody>
+      <tr>
+        <th scope="row">Employee ID</th>
+        <td>{{ employee.id }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Name</th>
+        <td>{{ employee.prefix }} {{ employee.firstName }} {{ employee.lastName }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Position Title</th>
+        <td>{{ employee.position.positionTitle }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Email</th>
+        <td>{{ employee.email }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Phone</th>
+        <td>{{ employee.phone }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Birthday</th>
+        <td>{{ employee.birthday | date }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Employee Number</th>
+        <td>{{ employee.employeeNumber }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-primary" (click)="this.activeModal.dismiss()">Close</button>
