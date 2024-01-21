@@ -8,13 +8,15 @@ import { Position } from '@shared/interfaces/position';
 import { DataResponsePosition } from '@shared/interfaces/data-response-position';
 import { ModalService } from '@app/services/modal/modal.service';
 
-import { RxwebValidators, RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
+import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 import { ToastService } from '@app/services/toast/toast.service';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { Department } from '@app/@shared/interfaces/department';
 import { SalaryRange } from '@app/@shared/interfaces/salaryrange';
+
+import { NgSelectModule } from '@ng-select/ng-select';
 
 const log = new Logger('Detail');
 
@@ -23,7 +25,7 @@ const log = new Logger('Detail');
   templateUrl: './position-detail.component.html',
   styleUrls: ['./position-detail.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, RxReactiveFormsModule, CommonModule, RouterLink, TranslateModule],
+  imports: [ReactiveFormsModule, RxReactiveFormsModule, CommonModule, RouterLink, TranslateModule, NgSelectModule],
 })
 export class PositionDetailComponent implements OnInit {
   formMode = 'New';
@@ -47,6 +49,8 @@ export class PositionDetailComponent implements OnInit {
     private modalService: ModalService
   ) {
     this.createForm();
+    this.readDepartments();
+    this.readSalaryRanges();
   }
 
   ngOnInit() {
@@ -61,8 +65,6 @@ export class PositionDetailComponent implements OnInit {
       }
     });
     log.debug('ngOnInit:', this.id);
-    this.readDepartments();
-    this.readSalaryRanges();
   }
 
   // Handle Create button click
@@ -107,6 +109,8 @@ export class PositionDetailComponent implements OnInit {
           positionDescription: this.position.positionDescription,
           departmentId: this.position.departmentId,
           salaryRangeId: this.position.salaryRangeId,
+          department: this.position.departmentId,
+          salaryRange: this.position.salaryRangeId,
         });
       },
       error: (error) => {
