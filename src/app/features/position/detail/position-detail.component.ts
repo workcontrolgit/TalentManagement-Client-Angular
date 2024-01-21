@@ -13,6 +13,8 @@ import { ToastService } from '@app/services/toast/toast.service';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
+import { Department } from '@app/@shared/interfaces/department';
+import { SalaryRange } from '@app/@shared/interfaces/salaryrange';
 
 const log = new Logger('Detail');
 
@@ -32,6 +34,9 @@ export class PositionDetailComponent implements OnInit {
   position!: Position;
   isAddNew: boolean = false;
   submitted = false;
+
+  departments!: Department[];
+  salaryRanges!: SalaryRange[];
 
   constructor(
     private toastService: ToastService,
@@ -56,6 +61,8 @@ export class PositionDetailComponent implements OnInit {
       }
     });
     log.debug('ngOnInit:', this.id);
+    this.readDepartments();
+    this.readSalaryRanges();
   }
 
   // Handle Create button click
@@ -87,9 +94,9 @@ export class PositionDetailComponent implements OnInit {
   }
   // CRUD > Read, map to REST/HTTP GET
   read(id: any): void {
-    this.apiHttpService.get(this.apiEndpointsService.getPositionByIdEndpoint(id), id).subscribe(
+    this.apiHttpService.get(this.apiEndpointsService.getPositionByIdEndpoint(id), id).subscribe({
       //Assign resp to class-level model object.
-      (resp: DataResponsePosition) => {
+      next: (resp: DataResponsePosition) => {
         //Assign data to class-level model object.
         this.position = resp.data;
         //Populate reactive form controls with model object properties.
@@ -102,39 +109,77 @@ export class PositionDetailComponent implements OnInit {
           salaryRangeId: this.position.salaryRangeId,
         });
       },
-      (error) => {
+      error: (error) => {
         log.debug(error);
-      }
-    );
+      },
+    });
   }
-  // CRUD > Delete, map to REST/HTTP DELETE
+
   delete(id: any): void {
-    this.apiHttpService.delete(this.apiEndpointsService.deletePositionByIdEndpoint(id), id).subscribe(
-      (resp: any) => {
+    this.apiHttpService.delete(this.apiEndpointsService.deletePositionByIdEndpoint(id), id).subscribe({
+      next: (resp: any) => {
         log.debug(resp);
         this.showToaster('Great job!', 'Data is deleted');
         this.entryForm.reset();
         this.isAddNew = true;
       },
-      (error) => {
+      error: (error) => {
         log.debug(error);
-      }
-    );
+      },
+    });
   }
 
   // CRUD > Create, map to REST/HTTP POST
   create(data: any): void {
-    this.apiHttpService.post(this.apiEndpointsService.postPositionsEndpoint(), data).subscribe((resp: any) => {
-      this.id = resp.data; //guid return in data
-      this.showToaster('Great job!', 'Data is inserted');
-      this.entryForm.reset();
+    this.apiHttpService.post(this.apiEndpointsService.postPositionsEndpoint(), data).subscribe({
+      next: (resp: any) => {
+        this.id = resp.data; //guid return in data
+        this.showToaster('Great job!', 'Data is inserted');
+        this.entryForm.reset();
+      },
+      error: (error) => {
+        log.debug(error);
+      },
     });
   }
 
   // CRUD > Update, map to REST/HTTP PUT
   put(id: string, data: any): void {
-    this.apiHttpService.put(this.apiEndpointsService.putPositionsPagedEndpoint(id), data).subscribe((resp: any) => {
-      this.id = resp.data; //guid return in data
+    this.apiHttpService.put(this.apiEndpointsService.putPositionsPagedEndpoint(id), data).subscribe({
+      next: (resp: any) => {
+        this.id = resp.data; //guid return in data
+      },
+      error: (error) => {
+        log.debug(error);
+      },
+    });
+  }
+
+  readDepartments(): void {
+    this.apiHttpService.get(this.apiEndpointsService.getDepartmentsEndpoint()).subscribe({
+      //Assign resp to class-level model object.
+      next: (resp: Department[]) => {
+        //Assign data to class-level model object.
+        this.departments = resp;
+        log.debug('Departments ', this.departments);
+      },
+      error: (error) => {
+        log.debug(error);
+      },
+    });
+  }
+
+  readSalaryRanges(): void {
+    this.apiHttpService.get(this.apiEndpointsService.getSalaryRangesEndpoint()).subscribe({
+      //Assign resp to class-level model object.
+      next: (resp: SalaryRange[]) => {
+        //Assign data to class-level model object.
+        this.salaryRanges = resp;
+        log.debug('SalaryRanges ', this.salaryRanges);
+      },
+      error: (error) => {
+        log.debug(error);
+      },
     });
   }
 
