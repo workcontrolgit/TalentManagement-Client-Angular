@@ -40,15 +40,6 @@ export class PositionDetailComponent implements OnInit {
   departments!: Department[];
   salaryRanges!: SalaryRange[];
 
-  selectedCar!: number;
-
-  cars = [
-    { id: 1, name: 'Volvo' },
-    { id: 2, name: 'Saab' },
-    { id: 3, name: 'Opel' },
-    { id: 4, name: 'Audi' },
-  ];
-
   constructor(
     private toastService: ToastService,
     private route: ActivatedRoute,
@@ -58,7 +49,8 @@ export class PositionDetailComponent implements OnInit {
     private modalService: ModalService
   ) {
     this.createForm();
-    this.selectedCar = 1;
+    this.readDepartments();
+    this.readSalaryRanges();
   }
 
   ngOnInit() {
@@ -73,8 +65,6 @@ export class PositionDetailComponent implements OnInit {
       }
     });
     log.debug('ngOnInit:', this.id);
-    this.readDepartments();
-    this.readSalaryRanges();
   }
 
   // Handle Create button click
@@ -119,6 +109,8 @@ export class PositionDetailComponent implements OnInit {
           positionDescription: this.position.positionDescription,
           departmentId: this.position.departmentId,
           salaryRangeId: this.position.salaryRangeId,
+          department: this.position.departmentId,
+          salaryRange: this.position.salaryRangeId,
         });
       },
       error: (error) => {
@@ -204,8 +196,6 @@ export class PositionDetailComponent implements OnInit {
       positionDescription: ['', Validators.required],
       departmentId: ['', Validators.required],
       salaryRangeId: ['', Validators.required],
-      department: ['', Validators.required],
-      salaryRange: ['', Validators.required],
     });
   }
 
