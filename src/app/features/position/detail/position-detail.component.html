@@ -87,7 +87,7 @@
             </small>
           </label>
 
-          <label for="positionSalary">Department</label>
+          <label for="positionSalary">Department Id</label>
 
           <label class="d-block mb-3">
             <input
@@ -105,7 +105,7 @@
             </small>
           </label>
 
-          <label for="positionSalary">Salary Range</label>
+          <label for="positionSalary">Salary Range Id</label>
 
           <label class="d-block mb-3">
             <input
@@ -120,6 +120,27 @@
             <span hidden translate>PositionSalary</span>
             <small [hidden]="f.salaryRangeId.valid || f.salaryRangeId.untouched" class="text-danger" translate>
               Position Salary Range is required and must be selected
+            </small>
+          </label>
+
+          <!--departments -->
+          <label for="department">Department</label>
+          <label class="d-block mb-3">
+            <ng-select [items]="departments" bindLabel="name" formControlName="department" bindValue="id"> </ng-select>
+            <span hidden translate>Department</span>
+            <small [hidden]="f.department.valid || f.department.untouched" class="text-danger" translate>
+              Department is required and must be selected
+            </small>
+          </label>
+
+          <label for="salaryRange">Salary Range</label>
+
+          <label class="d-block mb-3">
+            <ng-select [items]="salaryRanges" bindLabel="name" formControlName="salaryRange" bindValue="id">
+            </ng-select>
+            <span hidden translate>Salary Range</span>
+            <small [hidden]="f.salaryRange.valid || f.salaryRange.untouched" class="text-danger" translate>
+              Salary Range is required and must be selected
             </small>
           </label>
         </div>

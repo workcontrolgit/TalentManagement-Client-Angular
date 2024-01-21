@@ -8,13 +8,15 @@ import { Position } from '@shared/interfaces/position';
 import { DataResponsePosition } from '@shared/interfaces/data-response-position';
 import { ModalService } from '@app/services/modal/modal.service';
 
-import { RxwebValidators, RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
+import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 import { ToastService } from '@app/services/toast/toast.service';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { Department } from '@app/@shared/interfaces/department';
 import { SalaryRange } from '@app/@shared/interfaces/salaryrange';
+
+import { NgSelectModule } from '@ng-select/ng-select';
 
 const log = new Logger('Detail');
 
@@ -23,7 +25,7 @@ const log = new Logger('Detail');
   templateUrl: './position-detail.component.html',
   styleUrls: ['./position-detail.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, RxReactiveFormsModule, CommonModule, RouterLink, TranslateModule],
+  imports: [ReactiveFormsModule, RxReactiveFormsModule, CommonModule, RouterLink, TranslateModule, NgSelectModule],
 })
 export class PositionDetailComponent implements OnInit {
   formMode = 'New';
@@ -38,6 +40,15 @@ export class PositionDetailComponent implements OnInit {
   departments!: Department[];
   salaryRanges!: SalaryRange[];
 
+  selectedCar!: number;
+
+  cars = [
+    { id: 1, name: 'Volvo' },
+    { id: 2, name: 'Saab' },
+    { id: 3, name: 'Opel' },
+    { id: 4, name: 'Audi' },
+  ];
+
   constructor(
     private toastService: ToastService,
     private route: ActivatedRoute,
@@ -47,6 +58,7 @@ export class PositionDetailComponent implements OnInit {
     private modalService: ModalService
   ) {
     this.createForm();
+    this.selectedCar = 1;
   }
 
   ngOnInit() {
@@ -192,6 +204,8 @@ export class PositionDetailComponent implements OnInit {
       positionDescription: ['', Validators.required],
       departmentId: ['', Validators.required],
       salaryRangeId: ['', Validators.required],
+      department: ['', Validators.required],
+      salaryRange: ['', Validators.required],
     });
   }
 
