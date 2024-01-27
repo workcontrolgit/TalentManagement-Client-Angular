@@ -8,7 +8,9 @@
         </div>
         <div class="float-end">
           <!-- HTML markup for form mode New or Edit -->
-          <a class="btn text-dark" [routerLink]="['/position']"><i class="fa fa-arrow-left"></i> Back</a>
+          <a class="btn text-dark" ngbTooltip="Click to Return to Previous Page" [routerLink]="['/position']"
+            ><i class="fa fa-arrow-left"></i> Back</a
+          >
         </div>
       </div>
       <div class="card-body">
@@ -85,7 +87,7 @@
               class="text-danger"
               translate
             >
-              Don't forget to add a description! It helps candidates understand the role.
+              Don't forget to add a description! It helps employees to understand the role.
             </small>
           </label>
 
@@ -102,7 +104,7 @@
             </ng-select>
             <span hidden translate>Department</span>
             <small [hidden]="f.departmentId.valid || f.departmentId.untouched" class="text-danger" translate>
-              Please select the department for this position. It's necessary for organizational sorting.
+              Please select the department for this position. It's necessary for org chart.
             </small>
           </label>
 
@@ -139,6 +141,7 @@
             class="btn btn-primary w-20"
             type="submit"
             [disabled]="entryForm.invalid || !isAddNew"
+            ngbTooltip="Click to Add New Record"
           >
             <span translate><i class="fas fa-plus"></i> Save</span>
           </button>
@@ -149,6 +152,7 @@
             class="btn btn-primary w-20"
             type="submit"
             [disabled]="entryForm.invalid || isAddNew"
+            ngbTooltip="Click to Save Changes"
           >
             <span translate><i class="fas fa-edit"></i> Update</span>
           </button>
@@ -158,6 +162,7 @@
             class="btn btn-danger w-20"
             type="submit"
             [disabled]="entryForm.invalid || isAddNew"
+            ngbTooltip="Click to Remove Record"
           >
             <span translate><i class="fas fa-trash-alt"></i> Delete</span>
           </button>

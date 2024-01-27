@@ -4,7 +4,9 @@
       <div class="float-start"><h3 class="text-secondary">Positions</h3></div>
       <div class="float-end">
         <!-- Add button with routerLink to the detail page -->
-        <a class="btn btn-primary" [routerLink]="['/position/detail']"><i class="fa fa-plus"></i> Add</a>
+        <a class="btn btn-primary" ngbTooltip="Click to Create New Entry" [routerLink]="['/position/detail']"
+          ><i class="fa fa-plus"></i> Add</a
+        >
       </div>
     </div>
     <div class="card-body">

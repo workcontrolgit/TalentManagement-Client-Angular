@@ -2,22 +2,34 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Logger } from '@app/core';
-import { ApiHttpService } from '@app/services/api/api-http.service';
-import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
-import { Position } from '@shared/interfaces/position';
-import { DataResponsePosition } from '@shared/interfaces/data-response-position';
-import { ModalService } from '@app/services/modal/modal.service';
-
-import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
-import { ToastService } from '@app/services/toast/toast.service';
-
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
+
+// api services
+import { ApiHttpService } from '@app/services/api/api-http.service';
+import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
+// interface class mapping to web api DTO (data transfer object)
+import { DataResponsePosition } from '@shared/interfaces/data-response-position';
+
+// validation
+import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
+
+// ui service modal and toaster
+import { ModalService } from '@app/services/modal/modal.service';
+import { ToastService } from '@app/services/toast/toast.service';
+
+// interface classes
+import { Position } from '@shared/interfaces/position';
 import { Department } from '@app/@shared/interfaces/department';
 import { SalaryRange } from '@app/@shared/interfaces/salaryrange';
 
+// dropdownbox library ng-select https://github.com/ng-select/ng-select
 import { NgSelectModule } from '@ng-select/ng-select';
 
+// boostrap tooltip https://ng-bootstrap.github.io/#/components/tooltip/examples
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+
+// logger
 const log = new Logger('Detail');
 
 @Component({
@@ -25,7 +37,15 @@ const log = new Logger('Detail');
   templateUrl: './position-detail.component.html',
   styleUrls: ['./position-detail.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, RxReactiveFormsModule, CommonModule, RouterLink, TranslateModule, NgSelectModule],
+  imports: [
+    ReactiveFormsModule,
+    RxReactiveFormsModule,
+    CommonModule,
+    RouterLink,
+    TranslateModule,
+    NgSelectModule,
+    NgbTooltipModule,
+  ],
 })
 export class PositionDetailComponent implements OnInit {
   formMode = 'New';
