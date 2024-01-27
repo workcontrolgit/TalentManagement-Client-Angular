@@ -10,13 +10,16 @@ import { Router, RouterLink } from '@angular/router';
 
 import { DataTablesModule } from 'angular-datatables';
 
+// boostrap tooltip https://ng-bootstrap.github.io/#/components/tooltip/examples
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+
 const log = new Logger('Position');
 @Component({
   selector: 'app-position-list',
   templateUrl: './position-list.component.html',
   styleUrls: ['./position-list.component.scss'],
   standalone: true,
-  imports: [RouterLink, DataTablesModule],
+  imports: [RouterLink, DataTablesModule, NgbTooltipModule],
 })
 export class PositionListComponent implements OnInit {
   dtOptions: DataTables.Settings = {};

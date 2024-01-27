@@ -8,7 +8,9 @@
         </div>
         <div class="float-end">
           <!-- HTML markup for form mode New or Edit -->
-          <a class="btn text-dark" [routerLink]="['/position']"><i class="fa fa-arrow-left"></i> Back</a>
+          <a class="btn text-dark" ngbTooltip="Click to Return to Previous Page" [routerLink]="['/position']"
+            ><i class="fa fa-arrow-left"></i> Back</a
+          >
         </div>
       </div>
       <div class="card-body">
@@ -16,7 +18,7 @@
           Position Number, Title, Description or Salary incorrect.
         </div>
         <div class="form-group">
-          <label for="id">Id</label>
+          <label for="id" class="fw-bold">Id</label>
           <label class="d-block mb-3">
             <input
               type="text"
@@ -31,7 +33,7 @@
             <small [hidden]="f.id.valid || f.id.untouched" class="text-danger" translate> Id is required </small>
           </label>
 
-          <label for="positionNumber">Position Number</label>
+          <label for="positionNumber" class="fw-bold">Position Number</label>
           <label class="d-block mb-3">
             <input
               type="text"
@@ -44,11 +46,11 @@
             />
             <span hidden translate>PositionNumber</span>
             <small [hidden]="f.positionNumber.valid || f.positionNumber.untouched" class="text-danger" translate>
-              Position Number is required
+              Please enter a position number. This information is required.
             </small>
           </label>
 
-          <label for="positionTitle">Position Title</label>
+          <label for="positionTitle" class="fw-bold">Position Title</label>
 
           <label class="d-block mb-3">
             <input
@@ -57,69 +59,75 @@
               formControlName="positionTitle"
               [ngClass]="{ 'is-invalid': f.positionTitle.errors }"
               autocomplete="current-positionTitle"
-              [placeholder]="'Enter title here' | translate"
+              [placeholder]="'Enter Position Title Here' | translate"
               required
             />
-            <span hidden translate>PositionTitle</span>
+            <span hidden translate>Position Title</span>
             <small [hidden]="f.positionTitle.valid || f.positionTitle.untouched" class="text-danger" translate>
-              Position Title is required
+              Please provide the title of the position. This field is required.
             </small>
           </label>
-          <label for="positionDescription">Position Description</label>
+          <label for="positionDescription" class="fw-bold">Position Description</label>
 
           <label class="d-block mb-3">
-            <input
+            <textarea
               type="text"
+              rows="5"
               class="form-control"
               formControlName="positionDescription"
               [ngClass]="{ 'is-invalid': f.positionDescription.errors }"
               autocomplete="current-positionDescription"
-              [placeholder]="'Enter description here' | translate"
+              [placeholder]="'Describe the key responsibilities and qualifications...' | translate"
               required
-            />
+            >
+            </textarea>
             <span hidden translate>PositionDescription</span>
             <small
               [hidden]="f.positionDescription.valid || f.positionDescription.untouched"
               class="text-danger"
               translate
             >
-              Position Description is required
+              Don't forget to add a description! It helps employees to understand the role.
             </small>
           </label>
 
-          <label for="positionSalary">Department</label>
-
+          <!--departments -->
+          <label for="department" class="fw-bold">Department</label>
           <label class="d-block mb-3">
-            <input
-              type="text"
-              class="form-control"
+            <ng-select
+              [items]="departments"
+              bindLabel="name"
               formControlName="departmentId"
-              [ngClass]="{ 'is-invalid': f.departmentId.errors }"
-              autocomplete="current-departmentId"
-              [placeholder]="'Select from list' | translate"
-              required
-            />
+              bindValue="id"
+              placeholder="Select Department"
+            >
+            </ng-select>
             <span hidden translate>Department</span>
             <small [hidden]="f.departmentId.valid || f.departmentId.untouched" class="text-danger" translate>
-              Department is required and must be selected
+              Please select the department for this position. It's necessary for org chart.
             </small>
           </label>
 
-          <label for="positionSalary">Salary Range</label>
+          <label for="salaryRange" class="fw-bold">Salary Group/Range</label>
 
           <label class="d-block mb-3">
-            <input
-              type="text"
-              class="form-control"
+            <ng-select
+              [items]="salaryRanges"
+              bindLabel="name"
               formControlName="salaryRangeId"
-              [ngClass]="{ 'is-invalid': f.salaryRangeId.errors }"
-              autocomplete="current-salaryRangeId"
-              [placeholder]="'Select from list' | translate"
-              required
-            />
-            <span hidden translate>PositionSalary</span>
+              bindValue="id"
+              placeholder="Select Salary Range"
+            >
+              <ng-template ng-label-tmp let-item="item">
+                <span>{{ item.name }} ({{ item.minSalary }} - {{ item.maxSalary }})</span>
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                <span>{{ item.name }} ({{ item.minSalary }} - {{ item.maxSalary }})</span>
+              </ng-template>
+            </ng-select>
+            <span hidden translate>Salary Range</span>
             <small [hidden]="f.salaryRangeId.valid || f.salaryRangeId.untouched" class="text-danger" translate>
-              Position Salary Range is required and must be selected
+              Please choose a salary range. This information is vital for budgeting and candidate expectations.
             </small>
           </label>
         </div>
@@ -133,6 +141,7 @@
             class="btn btn-primary w-20"
             type="submit"
             [disabled]="entryForm.invalid || !isAddNew"
+            ngbTooltip="Click to Add New Record"
           >
             <span translate><i class="fas fa-plus"></i> Save</span>
           </button>
@@ -143,6 +152,7 @@
             class="btn btn-primary w-20"
             type="submit"
             [disabled]="entryForm.invalid || isAddNew"
+            ngbTooltip="Click to Save Changes"
           >
             <span translate><i class="fas fa-edit"></i> Update</span>
           </button>
@@ -152,6 +162,7 @@
             class="btn btn-danger w-20"
             type="submit"
             [disabled]="entryForm.invalid || isAddNew"
+            ngbTooltip="Click to Remove Record"
           >
             <span translate><i class="fas fa-trash-alt"></i> Delete</span>
           </button>

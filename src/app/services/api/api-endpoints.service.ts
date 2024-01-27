@@ -59,6 +59,10 @@ export class ApiEndpointsService {
   public putPositionsPagedEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
   // call Employees endpoint
   public postEmployeesPagedEndpoint = (): string => this.createUrl('Employees/Paged');
+  // call Departments endpoint
+  public getDepartmentsEndpoint = (): string => this.createUrl('Departments');
+  // call SalaryRanges endpoint
+  public getSalaryRangesEndpoint = (): string => this.createUrl('SalaryRanges');
 
   /* #region URL CREATOR */
   // URL

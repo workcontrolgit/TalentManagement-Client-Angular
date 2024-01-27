@@ -2,18 +2,34 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Logger } from '@app/core';
-import { ApiHttpService } from '@app/services/api/api-http.service';
-import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
-import { Position } from '@shared/interfaces/position';
-import { DataResponsePosition } from '@shared/interfaces/data-response-position';
-import { ModalService } from '@app/services/modal/modal.service';
-
-import { RxwebValidators, RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
-import { ToastService } from '@app/services/toast/toast.service';
-
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 
+// api services
+import { ApiHttpService } from '@app/services/api/api-http.service';
+import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
+// interface class mapping to web api DTO (data transfer object)
+import { DataResponsePosition } from '@shared/interfaces/data-response-position';
+
+// validation
+import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
+
+// ui service modal and toaster
+import { ModalService } from '@app/services/modal/modal.service';
+import { ToastService } from '@app/services/toast/toast.service';
+
+// interface classes
+import { Position } from '@shared/interfaces/position';
+import { Department } from '@app/@shared/interfaces/department';
+import { SalaryRange } from '@app/@shared/interfaces/salaryrange';
+
+// dropdownbox library ng-select https://github.com/ng-select/ng-select
+import { NgSelectModule } from '@ng-select/ng-select';
+
+// boostrap tooltip https://ng-bootstrap.github.io/#/components/tooltip/examples
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+
+// logger
 const log = new Logger('Detail');
 
 @Component({
@@ -21,7 +37,15 @@ const log = new Logger('Detail');
   templateUrl: './position-detail.component.html',
   styleUrls: ['./position-detail.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, RxReactiveFormsModule, CommonModule, RouterLink, TranslateModule],
+  imports: [
+    ReactiveFormsModule,
+    RxReactiveFormsModule,
+    CommonModule,
+    RouterLink,
+    TranslateModule,
+    NgSelectModule,
+    NgbTooltipModule,
+  ],
 })
 export class PositionDetailComponent implements OnInit {
   formMode = 'New';
@@ -33,6 +57,9 @@ export class PositionDetailComponent implements OnInit {
   isAddNew: boolean = false;
   submitted = false;
 
+  departments!: Department[];
+  salaryRanges!: SalaryRange[];
+
   constructor(
     private toastService: ToastService,
     private route: ActivatedRoute,
@@ -42,6 +69,8 @@ export class PositionDetailComponent implements OnInit {
     private modalService: ModalService
   ) {
     this.createForm();
+    this.readDepartments();
+    this.readSalaryRanges();
   }
 
   ngOnInit() {
@@ -87,9 +116,9 @@ export class PositionDetailComponent implements OnInit {
   }
   // CRUD > Read, map to REST/HTTP GET
   read(id: any): void {
-    this.apiHttpService.get(this.apiEndpointsService.getPositionByIdEndpoint(id), id).subscribe(
+    this.apiHttpService.get(this.apiEndpointsService.getPositionByIdEndpoint(id), id).subscribe({
       //Assign resp to class-level model object.
-      (resp: DataResponsePosition) => {
+      next: (resp: DataResponsePosition) => {
         //Assign data to class-level model object.
         this.position = resp.data;
         //Populate reactive form controls with model object properties.
@@ -100,41 +129,81 @@ export class PositionDetailComponent implements OnInit {
           positionDescription: this.position.positionDescription,
           departmentId: this.position.departmentId,
           salaryRangeId: this.position.salaryRangeId,
+          department: this.position.departmentId,
+          salaryRange: this.position.salaryRangeId,
         });
       },
-      (error) => {
+      error: (error) => {
         log.debug(error);
-      }
-    );
+      },
+    });
   }
-  // CRUD > Delete, map to REST/HTTP DELETE
+
   delete(id: any): void {
-    this.apiHttpService.delete(this.apiEndpointsService.deletePositionByIdEndpoint(id), id).subscribe(
-      (resp: any) => {
+    this.apiHttpService.delete(this.apiEndpointsService.deletePositionByIdEndpoint(id), id).subscribe({
+      next: (resp: any) => {
         log.debug(resp);
         this.showToaster('Great job!', 'Data is deleted');
         this.entryForm.reset();
         this.isAddNew = true;
       },
-      (error) => {
+      error: (error) => {
         log.debug(error);
-      }
-    );
+      },
+    });
   }
 
   // CRUD > Create, map to REST/HTTP POST
   create(data: any): void {
-    this.apiHttpService.post(this.apiEndpointsService.postPositionsEndpoint(), data).subscribe((resp: any) => {
-      this.id = resp.data; //guid return in data
-      this.showToaster('Great job!', 'Data is inserted');
-      this.entryForm.reset();
+    this.apiHttpService.post(this.apiEndpointsService.postPositionsEndpoint(), data).subscribe({
+      next: (resp: any) => {
+        this.id = resp.data; //guid return in data
+        this.showToaster('Great job!', 'Data is inserted');
+        this.entryForm.reset();
+      },
+      error: (error) => {
+        log.debug(error);
+      },
     });
   }
 
   // CRUD > Update, map to REST/HTTP PUT
   put(id: string, data: any): void {
-    this.apiHttpService.put(this.apiEndpointsService.putPositionsPagedEndpoint(id), data).subscribe((resp: any) => {
-      this.id = resp.data; //guid return in data
+    this.apiHttpService.put(this.apiEndpointsService.putPositionsPagedEndpoint(id), data).subscribe({
+      next: (resp: any) => {
+        this.id = resp.data; //guid return in data
+      },
+      error: (error) => {
+        log.debug(error);
+      },
+    });
+  }
+
+  readDepartments(): void {
+    this.apiHttpService.get(this.apiEndpointsService.getDepartmentsEndpoint()).subscribe({
+      //Assign resp to class-level model object.
+      next: (resp: Department[]) => {
+        //Assign data to class-level model object.
+        this.departments = resp;
+        log.debug('Departments ', this.departments);
+      },
+      error: (error) => {
+        log.debug(error);
+      },
+    });
+  }
+
+  readSalaryRanges(): void {
+    this.apiHttpService.get(this.apiEndpointsService.getSalaryRangesEndpoint()).subscribe({
+      //Assign resp to class-level model object.
+      next: (resp: SalaryRange[]) => {
+        //Assign data to class-level model object.
+        this.salaryRanges = resp;
+        log.debug('SalaryRanges ', this.salaryRanges);
+      },
+      error: (error) => {
+        log.debug(error);
+      },
     });
   }
 
