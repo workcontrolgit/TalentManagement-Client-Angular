@@ -1,6 +1,6 @@
 # Blog post
 
-[Upgrading from Angular 16 to 17 and Exploring the Latest Control Flow Language Features](https://medium.com/scrum-and-coke/upgrade-angular-16-to-17-and-try-out-new-control-flow-language-7a50e62a73c7)
+[Building a Talent Management SPA with Angular 17 and .NET Core 8 Tutorial Series](https://medium.com/scrum-and-coke/building-a-talent-management-spa-with-angular-17-and-net-core-8-tutorial-series-f28f0edc9069)
 
 # Talent Management Demo
 
