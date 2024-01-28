@@ -96,8 +96,8 @@ export class PositionDetailComponent implements OnInit {
 
   // Handle Update button click
   onUpdate() {
-    log.debug('onUpdate: ', this.entryForm.value);
-    log.debug('onUpdate: ', this.entryForm.get('positionNumber')!.value);
+    // log.debug('onUpdate: ', this.entryForm.value);
+    // log.debug('onUpdate: ', this.entryForm.get('positionNumber')!.value);
     this.put(this.entryForm.get('id')!.value, this.entryForm.value);
     this.showToaster('Great job!', 'Data is updated');
   }
