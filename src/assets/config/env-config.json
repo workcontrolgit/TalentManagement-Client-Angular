@@ -16,13 +16,13 @@
     {
       "subEnvironment": "localhost",
       "apiEndpoint": "https://localhost:44378/api/v1",
-      "apiMockEndpoint": "https://apiresources.azurewebsites.net/api/v1",
+      "apiMockEndpoint": "https://localhost:44378/api/v1",
       "issuer": "https://cat-token-identity.azurewebsites.net"
     },
     {
       "subEnvironment": "server",
-      "apiEndpoint": "https://apiresources.azurewebsites.net/api/v1",
-      "apiMockEndpoint": "https://apiresources.azurewebsites.net/api/v1",
+      "apiEndpoint": "https://talentmanagementwebapi.azurewebsites.net/api/v1",
+      "apiMockEndpoint": "https://talentmanagementwebapi.azurewebsites.net/api/v1",
       "issuer": "https://cat-token-identity.azurewebsites.net"
     }
   ]

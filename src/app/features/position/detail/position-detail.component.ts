@@ -90,12 +90,14 @@ export class PositionDetailComponent implements OnInit {
   // Handle Create button click
   onCreate() {
     this.create(this.entryForm.value);
-    log.debug('OnInsert: ', this.entryForm.value);
-    log.debug('OnInsert: ', this.entryForm.get('positionNumber')!.value);
+    log.debug('onCreate: ', this.entryForm.value);
+    log.debug('onCreate: ', this.entryForm.get('positionNumber')!.value);
   }
 
   // Handle Update button click
   onUpdate() {
+    log.debug('onUpdate: ', this.entryForm.value);
+    log.debug('onUpdate: ', this.entryForm.get('positionNumber')!.value);
     this.put(this.entryForm.get('id')!.value, this.entryForm.value);
     this.showToaster('Great job!', 'Data is updated');
   }
@@ -129,8 +131,6 @@ export class PositionDetailComponent implements OnInit {
           positionDescription: this.position.positionDescription,
           departmentId: this.position.departmentId,
           salaryRangeId: this.position.salaryRangeId,
-          department: this.position.departmentId,
-          salaryRange: this.position.salaryRangeId,
         });
       },
       error: (error) => {
@@ -169,7 +169,7 @@ export class PositionDetailComponent implements OnInit {
 
   // CRUD > Update, map to REST/HTTP PUT
   put(id: string, data: any): void {
-    this.apiHttpService.put(this.apiEndpointsService.putPositionsPagedEndpoint(id), data).subscribe({
+    this.apiHttpService.put(this.apiEndpointsService.putPositionsEndpoint(id), data).subscribe({
       next: (resp: any) => {
         this.id = resp.data; //guid return in data
       },
