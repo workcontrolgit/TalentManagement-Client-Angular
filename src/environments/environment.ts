@@ -36,26 +36,17 @@ export const environment = {
   defaultLanguage: 'en-US',
   supportedLanguages: ['en-US'],
   externalApiUrl: envConfig.externalApiUrl,
-  // Source code for API Project to run on localhost
-  // https://github.com/workcontrolgit/TalentManagement-ApiResources-Net7
-  // apiEndpoint: 'https://localhost:44378/api/v1',
   apiEndpoint: subEnvironmentSetting[0].apiEndpoint, //demo API project in azure
   apiMockEndpoint: subEnvironmentSetting[0].apiMockEndpoint,
 
   // settings for connection to Duende IdentityServer
   auth: {
-    // source code for Duende IdentityServer to run on localhost
-    // https://github.com/workcontrolgit/CATTokenService.AdminUI.Duende
-    // issuer: 'https://localhost:44310', // running on localhost
     issuer: subEnvironmentSetting[0].issuer, // demo IdentityServer in Azure
     clientId: envConfig.clientId, // client id setup in IdentityServer4
     responseType: envConfig.responseType, //code flow PKCE
     redirectUri: stripTrailingSlash(baseUrl()),
     postLogoutRedirectUri: stripTrailingSlash(baseUrl()),
     silentRefreshRedirectUri: stripTrailingSlash(baseUrl()) + envConfig.silentRefreshRedirectUri,
-    // redirectUri: window.location.origin,
-    // postLogoutRedirectUri: window.location.origin,
-    // silentRefreshRedirectUri: window.location.origin + envConfig.silentRefreshRedirectUri,
     scope: 'openid profile email roles app.api.employeeprofile.read', // Ask offline_access to support refresh token refreshes
     useSilentRefresh: envConfig.useSilentRefresh, // Needed for Code Flow to suggest using iframe-based refreshes
     silentRefreshTimeout: envConfig.silentRefreshTimeout, // For faster testing
@@ -66,25 +57,3 @@ export const environment = {
     nonceStateSeparator: envConfig.nonceStateSeparator, // Real semicolon gets mangled by IdentityServer's URI encoding
   },
 };
-
-// export function baseUrl() {
-//   return document.getElementsByTagName('base')[0].href;
-// }
-
-// export function getSubEnvironment() {
-//   return baseUrl().includes('localhost') ? 'localhost' : 'server';
-// }
-
-// export function stripTrailingSlash(url: string)
-// {
-//     return (document.getElementsByTagName('base')[0].href).endsWith('/') ? (document.getElementsByTagName('base')[0].href).slice(0, -1) : (document.getElementsByTagName('base')[0].href);
-// }
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

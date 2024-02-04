@@ -23,16 +23,10 @@ export const environment = {
   defaultLanguage: 'en-US',
   supportedLanguages: ['en-US'],
   externalApiUrl: envConfig.externalApiUrl,
-  // Source code for API Project to run on localhost
-  // https://github.com/workcontrolgit/TalentManagement-ApiResources-Net7
-  // apiEndpoint: 'https://localhost:44378/api/v1',
   apiEndpoint: subEnvironmentSetting[0].apiEndpoint, //demo API project in azure
   apiMockEndpoint: subEnvironmentSetting[0].apiMockEndpoint,
   // settings for connection to Duende IdentityServer
   auth: {
-    // source code for Duende IdentityServer to run on localhost
-    // https://github.com/workcontrolgit/CATTokenService.AdminUI.Duende
-    // issuer: 'https://localhost:44310', // running on localhost
     issuer: subEnvironmentSetting[0].issuer, // demo IdentityServer in Azure
     clientId: envConfig.clientId, // client id setup in IdentityServer4
     responseType: envConfig.responseType, //code flow PKCE
