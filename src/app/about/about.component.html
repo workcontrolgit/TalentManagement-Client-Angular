@@ -1,16 +1,18 @@
 <div class="container-fluid">
   <div class="jumbotron text-center">
-    <h1>
+    <!-- <h1>
       <span translate>APP_NAME</span>
-    </h1>
+    </h1> -->
+    <img class="logo" src="assets/talmentmanagement.png" alt="application logo" />
+
     <p><i class="far fa-bookmark"></i> <span translate>Version</span> {{ version }}</p>
   </div>
   <hr />
-
+  <h4>About</h4>
   <p>
-    Welcome to our comprehensive tutorial series on building a Talent Management Single Page Application (SPA) using
-    Angular 17 and .NET Core 8. This series is designed to take you through the development of a robust, modern web
-    application that manages talent within an organization.
+    Welcome to our comprehensive tutorial series on building a Talent Management Single Page Application (SPA) with
+    Angular 17 and NET Core 8. This series is meticulously crafted to guide you through the creation of a robust, modern
+    web application designed for talent management within an organization.
   </p>
   <a
     href="https://medium.com/scrum-and-coke/building-a-talent-management-spa-with-angular-17-and-net-core-8-tutorial-series-f28f0edc9069"
@@ -19,7 +21,52 @@
   </a>
   <hr />
   <h4>Demo Accounts</h4>
-  <p>Account (ashtyn1, Pa$$word123), Assigned Roles ("Employee","Manager", "HRAdmin")</p>
-  <p>Account (rosamond33, Pa$$word123), Assigned Roles ("Employee","Manager")</p>
-  <p>Account (antoinette16, Pa$$word123), Assigned Roles ("Employee"")</p>
+
+  The tutorial provides demo accounts for users to explore the Talent Management SPA's functionalities. Each account is
+  equipped with a unique set of roles to showcase different levels of access and features available within the
+  application.
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Account Username</th>
+        <th>Password</th>
+        <th>Assigned Roles</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ashtyn1</td>
+        <td>Pa$$word123</td>
+        <td>Employee, Manager, HRAdmin</td>
+        <td>
+          Offers comprehensive access, demonstrating capabilities available to employees, managers, and HR
+          administrators.
+        </td>
+      </tr>
+      <tr>
+        <td>rosamond33</td>
+        <td>Pa$$word123</td>
+        <td>Employee, Manager</td>
+        <td>
+          Illustrates functionalities accessible to both employees and managers, excluding HR administrative privileges.
+        </td>
+      </tr>
+      <tr>
+        <td>antoinette16</td>
+        <td>Pa$$word123</td>
+        <td>Employee</td>
+        <td>
+          Provides a view into the basic features available to employees, showcasing the core functionalities of the
+          SPA.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    These demo accounts enable users to experience the application from different perspectives, highlighting the varied
+    interactions possible between the roles of Employee, Manager, and HRAdmin.
+  </p>
 </div>
