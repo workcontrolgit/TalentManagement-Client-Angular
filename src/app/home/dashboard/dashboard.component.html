@@ -1,28 +1,27 @@
 <div *ngFor="let item of itemList">
   <div class="card-group my-3">
     <div class="card">
-      <a routerLink="/position" class="text-underline-hover">
-        <div class="card-body card-body-small">
-          <i class="fas fa-clipboard-list fa-2x text-primary"></i>
-          <h2 class="d-flex pl-3 font-weight-light float-end">{{ item.position_count }}</h2>
-          <h4 class="card-title pt-1 pb-0 text-dark link-underline link-underline-opacity-0">Positions</h4>
-        </div>
-      </a>
-    </div>
-
-    <div class="card">
       <a routerLink="/employee" class="text-underline-hover">
         <div class="card-body">
-          <i class="fas fa-users fa-2x text-secondary"></i>
+          <i class="fa-solid fa-people-group fa-2x text-secondary"></i>
           <h2 class="d-flex pl-3 font-weight-light float-end text-dark">{{ item.employee_count }}</h2>
           <h4 class="card-title pt-1 pb-0 text-dark">Employees</h4>
         </div>
       </a>
     </div>
     <div class="card">
-      <a class="card-link" routerLink="/assignment">
+      <a routerLink="/position" class="text-underline-hover">
+        <div class="card-body card-body-small">
+          <i class="fas fa-sitemap fa-2x text-primary"></i>
+          <h2 class="d-flex pl-3 font-weight-light float-end">{{ item.position_count }}</h2>
+          <h4 class="card-title pt-1 pb-0 text-dark link-underline link-underline-opacity-0">Positions</h4>
+        </div>
+      </a>
+    </div>
+    <div class="card">
+      <a class="text-underline-hover" routerLink="/department">
         <div class="card-body">
-          <i class="fas fa-tags fa-2x text-success"></i>
+          <i class="fa-solid fa-building-user fa-2x text-success"></i>
           <h2 class="d-flex pl-3 font-weight-light float-end text-dark">{{ item.assignment_count }}</h2>
           <h4 class="card-title pt-1 pb-0 text-dark">Departments</h4>
         </div>
