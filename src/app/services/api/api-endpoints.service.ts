@@ -45,9 +45,6 @@ export class ApiEndpointsService {
 
   public invalidUrlEndpoint = (): string => this.createUrl('invalidurl', true);
 
-  // call regular endpoint without boolean true at end
-  public getPersonsEndpoint = (): string => this.createUrl('Persons');
-
   /* #end region EXAMPLES */
 
   // TALENT MANAGEMENT

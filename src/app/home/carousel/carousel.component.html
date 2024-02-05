@@ -1,0 +1,50 @@
+<!-- 
+@if (images) {
+	<ngb-carousel>
+		<ng-template ngbSlide>
+			<div class="picsum-img-wrapper">
+				<img [src]="images[0]"  class="d-block w-100" alt="Random first slide" />
+			</div>
+			<div class="carousel-caption">
+				<h3>First slide label</h3>
+				<p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+			</div>
+		</ng-template>
+		<ng-template ngbSlide>
+			<div class="picsum-img-wrapper">
+				<img [src]="images[1]"  class="d-block w-100" alt="Random second slide" />
+			</div>
+			<div class="carousel-caption">
+				<h3>Second slide label</h3>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+			</div>
+		</ng-template>
+		<ng-template ngbSlide>
+			<div class="picsum-img-wrapper">
+				<img [src]="images[2]"  class="d-block w-100" alt="Random third slide" />
+			</div>
+			<div class="carousel-caption">
+				<h3>Third slide label</h3>
+				<p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+			</div>
+		</ng-template>
+	</ngb-carousel>
+} -->
+
+<ngb-carousel
+  *ngIf="images"
+  [showNavigationArrows]="showNavigationArrows"
+  [showNavigationIndicators]="showNavigationIndicators"
+>
+  <ng-template ngbSlide *ngFor="let image of images">
+    <div class="picsum-img-wrapper">
+      <img [src]="image" alt="Random slide" class="d-block w-100" />
+    </div>
+    <div class="carousel-caption">
+      <blockquote class="blockquote">
+        <h3>You don’t need to have a 100-person company to develop that idea.</h3>
+        <footer class="blockquote-footer">Larry Page, <cite title="Source Title">co-founder of Google</cite></footer>
+      </blockquote>
+    </div>
+  </ng-template>
+</ngb-carousel>
