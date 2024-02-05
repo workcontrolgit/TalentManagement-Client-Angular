@@ -3,14 +3,15 @@ import { finalize } from 'rxjs/operators';
 
 import { QuoteService } from './quote.service';
 import { LoaderComponent } from '../@shared/loader/loader.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { CarouselComponent } from './carousel/carousel.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   standalone: true,
-  imports: [TranslateModule, LoaderComponent],
+  imports: [LoaderComponent, DashboardComponent, CarouselComponent],
 })
 export class HomeComponent implements OnInit {
   quote: string | undefined;
