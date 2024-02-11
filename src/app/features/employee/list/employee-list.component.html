@@ -6,8 +6,18 @@
       </div>
     </div>
     <div class="card-body">
-      <div class="row">
+      <div class="row table-responsive">
         <table datatable [dtOptions]="dtOptions" class="table table-hover">
+          <thead>
+            <tr>
+              <th>Last Name</th>
+              <th>First Name</th>
+              <th>Email</th>
+              <th class="d-none d-sm-table-cell">Employee Number</th>
+              <th class="d-none d-sm-table-cell">Position Title</th>
+            </tr>
+          </thead>
+
           @if (employees.length !== 0) {
           <tbody>
             @for (employee of employees; track employee) {
@@ -15,8 +25,8 @@
               <td>{{ employee.lastName }}</td>
               <td>{{ employee.firstName }}</td>
               <td>{{ employee.email }}</td>
-              <td>{{ employee.employeeNumber }}</td>
-              <td>{{ employee.position.positionTitle }}</td>
+              <td class="d-none d-sm-table-cell">{{ employee.employeeNumber }}</td>
+              <td class="d-none d-sm-table-cell">{{ employee.position.positionTitle }}</td>
             </tr>
             }
           </tbody>
