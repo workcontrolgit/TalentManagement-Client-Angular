@@ -40,7 +40,7 @@ export class EmployeeListComponent implements OnInit {
 
   ngOnInit() {
     this.dtOptions = {
-      pagingType: 'full_numbers',
+      pagingType: 'simple_numbers',
       pageLength: 10,
       serverSide: true,
       processing: true,
