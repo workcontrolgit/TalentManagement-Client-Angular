@@ -17,7 +17,6 @@ const log = new Logger('App');
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: true,
   imports: [RouterOutlet, ToastsContainer],
 })
 export class AppComponent implements OnInit, OnDestroy {

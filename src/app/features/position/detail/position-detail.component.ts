@@ -36,7 +36,6 @@ const log = new Logger('Detail');
   selector: 'app-detail',
   templateUrl: './position-detail.component.html',
   styleUrls: ['./position-detail.component.scss'],
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     RxReactiveFormsModule,

@@ -8,7 +8,6 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-should-login',
   templateUrl: './should-login.component.html',
   styleUrls: ['./should-login.component.scss'],
-  standalone: true,
   imports: [TranslateModule],
 })
 export class ShouldLoginComponent {

@@ -11,7 +11,6 @@ import { NgbCollapse, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu } from '@n
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  standalone: true,
   imports: [
     TranslateModule,
     NgbCollapse,
