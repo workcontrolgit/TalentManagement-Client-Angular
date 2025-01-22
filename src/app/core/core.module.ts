@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import { ModuleWithProviders, NgModule, Optional, SkipSelf, inject, provideAppInitializer } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RouteReuseStrategy, RouterModule } from '@angular/router';
@@ -40,7 +40,10 @@ export class CoreModule {
     return {
       ngModule: CoreModule,
       providers: [
-        { provide: APP_INITIALIZER, useFactory: authAppInitializerFactory, deps: [AuthService], multi: true },
+        provideAppInitializer(() => {
+          const initializerFn = authAppInitializerFactory(inject(AuthService));
+          return initializerFn();
+        }),
         { provide: AuthConfig, useValue: authConfig },
         { provide: OAuthModuleConfig, useValue: authModuleConfig },
         { provide: OAuthStorage, useFactory: storageFactory },

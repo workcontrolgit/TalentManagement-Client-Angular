@@ -5,7 +5,6 @@ import { PositionListComponent } from './list/position-list.component';
   selector: 'app-position',
   templateUrl: './position.component.html',
   styleUrls: ['./position.component.scss'],
-  standalone: true,
   imports: [PositionListComponent],
 })
 export class PositionComponent implements OnInit {

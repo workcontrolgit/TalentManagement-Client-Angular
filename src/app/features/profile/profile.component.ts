@@ -8,7 +8,6 @@ import { NgbDatepickerModule, NgbOffcanvas, OffcanvasDismissReasons } from '@ng-
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
-  standalone: true,
   imports: [TranslateModule, NgbDatepickerModule],
 })
 export class ProfileComponent implements OnInit {

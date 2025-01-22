@@ -5,7 +5,6 @@ import { EmployeeListComponent } from './list/employee-list.component';
   selector: 'app-employee',
   templateUrl: './employee.component.html',
   styleUrls: ['./employee.component.scss'],
-  standalone: true,
   imports: [EmployeeListComponent],
 })
 export class EmployeeComponent implements OnInit {

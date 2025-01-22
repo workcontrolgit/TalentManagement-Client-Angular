@@ -10,7 +10,6 @@ import { CarouselComponent } from './carousel/carousel.component';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  standalone: true,
   imports: [DashboardComponent, CarouselComponent],
 })
 export class HomeComponent implements OnInit {

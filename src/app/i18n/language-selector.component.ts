@@ -9,7 +9,6 @@ import { NgbDropdown, NgbDropdownToggle, NgbDropdownMenu } from '@ng-bootstrap/n
   selector: 'app-language-selector',
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
-  standalone: true,
   imports: [NgbDropdown, NgClass, NgbDropdownToggle, NgbDropdownMenu, TranslateModule],
 })
 export class LanguageSelectorComponent implements OnInit {

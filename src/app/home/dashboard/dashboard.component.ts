@@ -6,7 +6,6 @@ import { RouterLink } from '@angular/router';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  standalone: true,
   imports: [CommonModule, RouterLink],
 })
 export class DashboardComponent implements OnInit {

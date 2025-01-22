@@ -18,7 +18,6 @@ const log = new Logger('Position');
   selector: 'app-position-list',
   templateUrl: './position-list.component.html',
   styleUrls: ['./position-list.component.scss'],
-  standalone: true,
   imports: [RouterLink, DataTablesModule, NgbTooltipModule],
 })
 export class PositionListComponent implements OnInit {
