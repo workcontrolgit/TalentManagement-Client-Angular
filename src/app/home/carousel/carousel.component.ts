@@ -4,7 +4,6 @@ import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-carousel',
-  standalone: true,
   imports: [NgbCarouselModule, CommonModule],
   templateUrl: './carousel.component.html',
 })

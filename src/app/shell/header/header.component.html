@@ -1,5 +1,5 @@
-<header>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-0">
+<header class="modern-header">
+  <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand" href="/" translate>APP_NAME</a>
       <button
@@ -10,10 +10,12 @@
         (click)="toggleMenu()"
         [attr.aria-expanded]="!menuHidden"
       >
-        <span class="navbar-toggler-icon"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
       </button>
-      <div id="navbar-menu" class="collapse navbar-collapse float-xs-none" [ngbCollapse]="menuHidden">
-        <div class="navbar-nav me-auto mb-2 mb-lg-0">
+      <div id="navbar-menu" class="collapse navbar-collapse" [ngbCollapse]="menuHidden">
+        <div class="navbar-nav me-auto">
           <a class="nav-item nav-link" routerLink="/home" routerLinkActive="active">
             <i class="fas fa-home"></i>
             <span translate>Home</span>
@@ -31,21 +33,23 @@
             <span translate>About</span>
           </a>
         </div>
-        <div class="navbar-nav ml-auto">
+        <div class="navbar-nav ms-auto">
           <app-language-selector [inNavbar]="true"></app-language-selector>
-          <div class="nav-item" ngbDropdown display="dynamic">
-            <a id="user-dropdown" class="nav-link" ngbDropdownToggle>
+          <div class="nav-item user-dropdown" ngbDropdown display="dynamic">
+            <a id="user-dropdown" class="nav-link user-avatar" ngbDropdownToggle>
               <i class="fas fa-user-circle"></i>
             </a>
-            <div ngbDropdownMenu aria-labelledby="user-dropdown">
+            <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu aria-labelledby="user-dropdown">
               @if((isAuthenticated | async) === true) {
-              <h6 class="dropdown-header">
-                <span translate>Logged in as</span> <b>{{ username }}</b>
-              </h6>
+              <div class="dropdown-header">
+                <span translate>Logged in as</span> <strong>{{ username }}</strong>
+              </div>
               <div class="dropdown-divider"></div>
-              <button class="dropdown-item" (click)="logout()" translate>Logout</button>
+              <button class="dropdown-item" (click)="logout()" translate>
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+              </button>
               } @else {
-              <button class="dropdown-item" (click)="login()">Login</button>
+              <button class="dropdown-item" (click)="login()"><i class="fas fa-sign-in-alt me-2"></i>Login</button>
               }
             </div>
           </div>

@@ -1,72 +1,132 @@
-<div class="container-fluid">
-  <div class="jumbotron text-center">
-    <!-- <h1>
-      <span translate>APP_NAME</span>
-    </h1> -->
-    <img class="logo" src="assets/talmentmanagement.png" alt="application logo" />
-
-    <p><i class="far fa-bookmark"></i> <span translate>Version</span> {{ version }}</p>
+<div class="modern-about-page">
+  <div class="hero-section">
+    <div class="hero-content">
+      <div class="logo-container">
+        <img class="logo" src="assets/talmentmanagement.png" alt="Talent Management Application" />
+        <div class="logo-glow"></div>
+      </div>
+      <h1 class="hero-title">
+        <span class="gradient-text">Talent Management</span>
+        <span class="subtitle">Application</span>
+      </h1>
+      <div class="version-badge">
+        <i class="fas fa-tag"></i>
+        <span translate>Version</span> {{ version }}
+      </div>
+    </div>
   </div>
-  <hr />
-  <h4>About</h4>
-  <p>
-    Welcome to our comprehensive tutorial series on building a Talent Management Single Page Application (SPA) with
-    Angular 17 and NET Core 8. This series is meticulously crafted to guide you through the creation of a robust, modern
-    web application designed for talent management within an organization.
-  </p>
-  <a
-    href="https://medium.com/scrum-and-coke/building-a-talent-management-spa-with-angular-17-and-net-core-8-tutorial-series-f28f0edc9069"
-  >
-    Building a Talent Management SPA with Angular 17 and .NET Core 8 Tutorial Series
-  </a>
-  <hr />
-  <h4>Demo Accounts</h4>
 
-  The tutorial provides demo accounts for users to explore the Talent Management SPA's functionalities. Each account is
-  equipped with a unique set of roles to showcase different levels of access and features available within the
-  application.
+  <div class="content-sections">
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon">
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <h2 class="section-title">About This Application</h2>
+      </div>
+      <div class="section-content">
+        <p class="description">
+          Welcome to our comprehensive tutorial series on building a Talent Management Single Page Application (SPA)
+          with Angular 17 and .NET Core 8. This series is meticulously crafted to guide you through the creation of a
+          robust, modern web application designed for talent management within an organization.
+        </p>
+        <div class="tutorial-link">
+          <a
+            href="https://medium.com/scrum-and-coke/building-a-talent-management-spa-with-angular-17-and-net-core-8-tutorial-series-f28f0edc9069"
+            target="_blank"
+            class="link-button"
+          >
+            <i class="fas fa-external-link-alt"></i>
+            <span>View Tutorial Series</span>
+          </a>
+        </div>
+      </div>
+    </div>
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Account Username</th>
-        <th>Password</th>
-        <th>Assigned Roles</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>ashtyn1</td>
-        <td>Pa$$word123</td>
-        <td>Employee, Manager, HRAdmin</td>
-        <td>
-          Offers comprehensive access, demonstrating capabilities available to employees, managers, and HR
-          administrators.
-        </td>
-      </tr>
-      <tr>
-        <td>rosamond33</td>
-        <td>Pa$$word123</td>
-        <td>Employee, Manager</td>
-        <td>
-          Illustrates functionalities accessible to both employees and managers, excluding HR administrative privileges.
-        </td>
-      </tr>
-      <tr>
-        <td>antoinette16</td>
-        <td>Pa$$word123</td>
-        <td>Employee</td>
-        <td>
-          Provides a view into the basic features available to employees, showcasing the core functionalities of the
-          SPA.
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h2 class="section-title">Demo Accounts</h2>
+      </div>
+      <div class="section-content">
+        <p class="demo-description">
+          The tutorial provides demo accounts for users to explore the Talent Management SPA's functionalities. Each
+          account is equipped with a unique set of roles to showcase different levels of access and features available
+          within the application.
+        </p>
 
-  <p>
-    These demo accounts enable users to experience the application from different perspectives, highlighting the varied
-    interactions possible between the roles of Employee, Manager, and HRAdmin.
-  </p>
+        <div class="accounts-grid">
+          <div class="account-card">
+            <div class="account-header">
+              <div class="account-avatar">
+                <i class="fas fa-user-shield"></i>
+              </div>
+              <div class="account-info">
+                <h3 class="username">ashtyn1</h3>
+                <div class="password">Pa$$word123</div>
+              </div>
+            </div>
+            <div class="roles-section">
+              <div class="role-badge admin">Employee</div>
+              <div class="role-badge manager">Manager</div>
+              <div class="role-badge hr">HRAdmin</div>
+            </div>
+            <p class="account-description">
+              Offers comprehensive access, demonstrating capabilities available to employees, managers, and HR
+              administrators.
+            </p>
+          </div>
+
+          <div class="account-card">
+            <div class="account-header">
+              <div class="account-avatar">
+                <i class="fas fa-user-tie"></i>
+              </div>
+              <div class="account-info">
+                <h3 class="username">rosamond33</h3>
+                <div class="password">Pa$$word123</div>
+              </div>
+            </div>
+            <div class="roles-section">
+              <div class="role-badge admin">Employee</div>
+              <div class="role-badge manager">Manager</div>
+            </div>
+            <p class="account-description">
+              Illustrates functionalities accessible to both employees and managers, excluding HR administrative
+              privileges.
+            </p>
+          </div>
+
+          <div class="account-card">
+            <div class="account-header">
+              <div class="account-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="account-info">
+                <h3 class="username">antoinette16</h3>
+                <div class="password">Pa$$word123</div>
+              </div>
+            </div>
+            <div class="roles-section">
+              <div class="role-badge admin">Employee</div>
+            </div>
+            <p class="account-description">
+              Provides a view into the basic features available to employees, showcasing the core functionalities of the
+              SPA.
+            </p>
+          </div>
+        </div>
+
+        <div class="demo-note">
+          <i class="fas fa-lightbulb"></i>
+          <p>
+            These demo accounts enable users to experience the application from different perspectives, highlighting the
+            varied interactions possible between the roles of Employee, Manager, and HRAdmin.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -7,7 +7,6 @@ import { CommonModule } from '@angular/common';
   selector: 'app-employee-detail',
   templateUrl: './employee-detail.component.html',
   styleUrls: ['./employee-detail.component.scss'],
-  standalone: true,
   imports: [CommonModule],
 })
 export class EmployeeDetailComponent implements OnInit {

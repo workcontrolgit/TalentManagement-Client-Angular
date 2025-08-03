@@ -17,7 +17,7 @@
       "subEnvironment": "localhost",
       "apiEndpoint": "https://localhost:44378/api/v1",
       "apiMockEndpoint": "https://localhost:44378/api/v1",
-      "issuer": "https://cat-token-identity.azurewebsites.net"
+      "issuer": "https://localhost:44310"
     },
     {
       "subEnvironment": "server",

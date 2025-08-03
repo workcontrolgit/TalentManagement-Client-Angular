@@ -1,31 +1,108 @@
-<div *ngFor="let item of itemList">
-  <div class="card-group my-3">
-    <div class="card">
-      <a routerLink="/employee" class="text-underline-hover">
-        <div class="card-body">
-          <i class="fa-solid fa-people-group fa-2x text-secondary"></i>
-          <h2 class="d-flex pl-3 font-weight-light float-end text-dark">{{ item.employee_count }}</h2>
-          <h4 class="card-title pt-1 pb-0 text-dark">Employees</h4>
-        </div>
-      </a>
+<div class="modern-dashboard">
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">Dashboard Overview</h1>
+    <p class="dashboard-subtitle">Monitor your talent management metrics at a glance</p>
+  </div>
+
+  <div *ngFor="let item of itemList">
+    <div class="stats-grid">
+      <div class="stat-card employee-card">
+        <a routerLink="/employee" class="card-link">
+          <div class="card-content">
+            <div class="icon-wrapper employee-icon">
+              <i class="fa-solid fa-people-group"></i>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ item.employee_count | number }}</div>
+              <div class="stat-label">Employees</div>
+              <div class="stat-trend">
+                <i class="fas fa-arrow-up"></i>
+                <span>+12% from last month</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>Manage employees</span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+      </div>
+
+      <div class="stat-card position-card">
+        <a routerLink="/position" class="card-link">
+          <div class="card-content">
+            <div class="icon-wrapper position-icon">
+              <i class="fas fa-sitemap"></i>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ item.position_count | number }}</div>
+              <div class="stat-label">Positions</div>
+              <div class="stat-trend">
+                <i class="fas fa-arrow-up"></i>
+                <span>+5% from last month</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>View positions</span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+      </div>
+
+      <div class="stat-card department-card">
+        <a routerLink="/department" class="card-link">
+          <div class="card-content">
+            <div class="icon-wrapper department-icon">
+              <i class="fa-solid fa-building-user"></i>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ item.assignment_count | number }}</div>
+              <div class="stat-label">Departments</div>
+              <div class="stat-trend">
+                <i class="fas fa-minus"></i>
+                <span>No change</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>Manage departments</span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+      </div>
     </div>
-    <div class="card">
-      <a routerLink="/position" class="text-underline-hover">
-        <div class="card-body card-body-small">
-          <i class="fas fa-sitemap fa-2x text-primary"></i>
-          <h2 class="d-flex pl-3 font-weight-light float-end">{{ item.position_count }}</h2>
-          <h4 class="card-title pt-1 pb-0 text-dark link-underline link-underline-opacity-0">Positions</h4>
+  </div>
+
+  <div class="quick-actions">
+    <h2 class="section-title">Quick Actions</h2>
+    <div class="actions-grid">
+      <div class="action-card">
+        <div class="action-icon">
+          <i class="fas fa-user-plus"></i>
         </div>
-      </a>
-    </div>
-    <div class="card">
-      <a class="text-underline-hover" routerLink="/department">
-        <div class="card-body">
-          <i class="fa-solid fa-building-user fa-2x text-success"></i>
-          <h2 class="d-flex pl-3 font-weight-light float-end text-dark">{{ item.assignment_count }}</h2>
-          <h4 class="card-title pt-1 pb-0 text-dark">Departments</h4>
+        <h3>Add Employee</h3>
+        <p>Register a new team member</p>
+        <button class="action-button" routerLink="/employee/new">Get Started</button>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon">
+          <i class="fas fa-briefcase"></i>
         </div>
-      </a>
+        <h3>Create Position</h3>
+        <p>Define a new role</p>
+        <button class="action-button" routerLink="/position/new">Create Now</button>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3>View Reports</h3>
+        <p>Analyze performance metrics</p>
+        <button class="action-button" routerLink="/reports">View Reports</button>
+      </div>
     </div>
   </div>
 </div>

@@ -6,7 +6,6 @@ import { RouterLink } from '@angular/router';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  standalone: true,
   imports: [CommonModule, RouterLink],
 })
 export class DashboardComponent implements OnInit {
@@ -17,8 +16,8 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.itemList = [
       {
-        position_count: 50,
-        employee_count: 1000,
+        position_count: 67,
+        employee_count: 1050,
         assignment_count: 5,
       },
     ];
