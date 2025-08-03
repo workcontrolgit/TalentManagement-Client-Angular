@@ -1,15 +1,22 @@
-// Container styling
-.position-container {
-  padding: 1rem;
+@use "src/theme/theme-variables" as *;
 
-  @media (min-width: 768px) {
-    padding: 2rem;
+.modern-position-page {
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 300px;
+    background: radial-gradient(circle at 20% 50%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 90% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
   }
-}
 
-// Component wrapper
-:host {
-  display: block;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  position: relative;
+  z-index: 1;
 }

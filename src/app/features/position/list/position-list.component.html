@@ -1,67 +1,123 @@
-<div class="container-fluid mt-3">
-  <div class="card">
-    <div class="card-header">
-      <div class="float-start"><h3 class="text-secondary">Positions</h3></div>
-      <div class="float-end">
-        <!-- Add button with routerLink to the detail page -->
-        <a class="btn btn-primary" ngbTooltip="Click to Create New Entry" [routerLink]="['/position/detail']"
-          ><i class="fa fa-plus"></i> Add</a
-        >
-      </div>
-    </div>
-    <div class="card-body">
-      @if(isLoading()) {
-      <div class="d-flex justify-content-center align-items-center py-4">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <span class="ms-2">{{ displayMessage() }}</span>
-      </div>
-      } @else if(error()) {
-      <div class="alert alert-danger" role="alert">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        {{ error() }}
-      </div>
-      }
-      <div class="row table-responsive">
-        <table datatable [dtOptions]="dtOptions" class="table table-hover">
-          <thead>
-            <tr>
-              <th>Position Number</th>
-              <th>Position Title</th>
-              <th class="d-none d-sm-table-cell">Department</th>
-              <th class="d-none d-sm-table-cell">Salary Range</th>
-            </tr>
-          </thead>
-          @if(hasPositions()) {
+<div class="modern-position-list">
+  <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
-          <tbody>
-            @for(position of positions(); track position.id) {
-            <tr (click)="wholeRowClick(position)">
-              <td>
-                {{ position.positionNumber }}
-              </td>
-              <td>{{ position.positionTitle }}</td>
-              <td class="d-none d-sm-table-cell">{{ position.department.name }}</td>
-              <td class="d-none d-sm-table-cell">
-                {{ position.salaryRange.minSalary }} - {{ position.salaryRange.maxSalary }}
-              </td>
-            </tr>
-            }
-          </tbody>
-
-          } @else {
-          <tbody>
-            <tr>
-              <td colspan="4" class="no-data-available">No data!</td>
-            </tr>
-          </tbody>
-          }
-        </table>
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1 class="page-title">
+          <i class="fas fa-briefcase"></i>
+          <span>Positions</span>
+        </h1>
+        <p class="page-subtitle">Manage organizational positions and roles</p>
       </div>
-    </div>
-    <div class="card-footer">
-      Hint: Searchable and sortable columns are Position Number, Position Title and Department
+      <div class="header-actions">
+        <button class="action-btn primary" [routerLink]="['/position/detail']">
+          <i class="fas fa-plus"></i>
+          <span>Add Position</span>
+        </button>
+        <button class="action-btn secondary">
+          <i class="fas fa-download"></i>
+          <span>Export</span>
+        </button>
+      </div>
     </div>
   </div>
+
+  <div class="position-grid" [style.display]="viewMode === 'grid' ? 'grid' : 'none'">
+    @if (isLoading()) {
+    <div class="loading-state">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+      <h3>Loading Positions...</h3>
+      <p>Please wait while we fetch organizational positions</p>
+    </div>
+    } @else if (positions().length !== 0) { @for (position of positions(); track position.id) {
+    <div class="position-card" (click)="wholeRowClick(position)">
+      <div class="position-icon">
+        <div class="icon-circle">
+          <i class="fas fa-briefcase"></i>
+        </div>
+        <div class="status-indicator active"></div>
+      </div>
+
+      <div class="position-info">
+        <h3 class="position-title">{{ position.positionTitle }}</h3>
+        <p class="position-number">{{ position.positionNumber }}</p>
+        <div class="position-meta">
+          <div class="meta-item">
+            <i class="fas fa-building"></i>
+            <span>{{ position.department.name }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-dollar-sign"></i>
+            <span>${{ position.salaryRange.minSalary }} - ${{ position.salaryRange.maxSalary }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="position-actions">
+        <button class="quick-action" title="View Details">
+          <i class="fas fa-eye"></i>
+        </button>
+        <button class="quick-action" title="Edit">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="quick-action" title="More Options">
+          <i class="fas fa-ellipsis-v"></i>
+        </button>
+      </div>
+    </div>
+    } } @else {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-briefcase"></i>
+      </div>
+      <h3>No Positions Found</h3>
+      <p>Get started by adding your first organizational position</p>
+      <button class="action-btn primary" [routerLink]="['/position/detail']">
+        <i class="fas fa-plus"></i>
+        <span>Add First Position</span>
+      </button>
+    </div>
+    }
+  </div>
+
+  <div class="table-view-toggle">
+    <button class="toggle-btn" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
+      <i class="fas fa-th"></i>
+      <span>Grid</span>
+    </button>
+    <button class="toggle-btn" [class.active]="viewMode === 'table'" (click)="setViewMode('table')">
+      <i class="fas fa-table"></i>
+      <span>Table</span>
+    </button>
+  </div>
+
+  @if (viewMode === 'table') {
+  <div class="modern-table-container">
+    <div class="table-wrapper">
+      <table datatable [dtOptions]="dtOptions" class="modern-table">
+        <thead>
+          <tr>
+            <th>Position</th>
+            <th>Department</th>
+            <th>Salary Range</th>
+            <th class="d-none d-lg-table-cell">Position ID</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- DataTables will populate this automatically -->
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span class="table-hint">
+        <i class="fas fa-info-circle"></i>
+        All columns are searchable and sortable
+      </span>
+    </div>
+  </div>
+  }
 </div>

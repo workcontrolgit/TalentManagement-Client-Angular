@@ -6,6 +6,7 @@ import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 import { DataTablesResponse } from '@shared/interfaces/data-tables-response';
 import { Logger } from '@app/core';
+import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/breadcrumb.component';
 
 import { Router, RouterLink } from '@angular/router';
 
@@ -13,12 +14,14 @@ import { DataTablesModule } from 'angular-datatables';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 
+declare var $: any;
+
 const log = new Logger('Position');
 @Component({
   selector: 'app-position-list',
   templateUrl: './position-list.component.html',
   styleUrls: ['./position-list.component.scss'],
-  imports: [RouterLink, DataTablesModule, NgbTooltipModule, CommonModule],
+  imports: [RouterLink, DataTablesModule, NgbTooltipModule, CommonModule, BreadcrumbComponent],
   standalone: true,
 })
 export class PositionListComponent implements OnInit {
@@ -33,6 +36,15 @@ export class PositionListComponent implements OnInit {
   readonly positions = signal<Position[]>([]);
   readonly isLoading = signal<boolean>(false);
   readonly error = signal<string | null>(null);
+
+  // View mode management
+  viewMode: 'grid' | 'table' = 'grid';
+
+  // Breadcrumb navigation
+  breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Home', link: '/home', icon: 'fas fa-home' },
+    { label: 'Positions', icon: 'fas fa-briefcase' },
+  ];
 
   // Computed properties
   readonly hasPositions = computed(() => this.positions().length > 0);
@@ -54,7 +66,39 @@ export class PositionListComponent implements OnInit {
     log.debug('Navigation to position detail:', position.id);
   }
 
+  setViewMode(mode: 'grid' | 'table'): void {
+    this.viewMode = mode;
+  }
+
+  private loadPositionData(): void {
+    const initialRequest = {
+      draw: 1,
+      start: 0,
+      length: 50,
+      search: { value: '', regex: false },
+      order: [{ column: 0, dir: 'asc' }],
+      columns: [],
+    };
+
+    this.isLoading.set(true);
+    this.apiHttpService
+      .post(this.apiEndpointsService.postPositionsPagedEndpoint(), initialRequest)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (resp: DataTablesResponse) => {
+          this.positions.set(resp.data || []);
+          this.isLoading.set(false);
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          this.error.set('Failed to load positions. Please try again.');
+          log.error('Error loading positions:', error);
+        },
+      });
+  }
+
   ngOnInit(): void {
+    this.loadPositionData();
     this.dtOptions = {
       pagingType: 'simple_numbers',
       pageLength: 10,
@@ -74,7 +118,7 @@ export class PositionListComponent implements OnInit {
               callback({
                 recordsTotal: resp.recordsTotal || 0,
                 recordsFiltered: resp.recordsFiltered || 0,
-                data: [],
+                data: resp.data || [],
               });
               log.debug('Positions loaded successfully', resp.data?.length);
             },
@@ -93,29 +137,95 @@ export class PositionListComponent implements OnInit {
       // Set column title and data field
       columns: [
         {
-          title: 'Position Number',
-          data: 'PositionNumber',
-        },
-        {
-          title: 'Position Title',
-          data: 'PositionTitle',
+          title: 'Position',
+          data: null,
+          className: 'position-cell',
+          render: (data: any, type: any, row: any) => {
+            return `
+              <div class="position-info-inline">
+                <div class="icon-small">
+                  <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="info-text">
+                  <div class="name">${row.positionTitle || ''}</div>
+                  <div class="subtitle">${row.positionNumber || ''}</div>
+                </div>
+              </div>
+            `;
+          },
         },
         {
           title: 'Department',
-          data: 'Department',
+          data: null,
+          render: (data: any, type: any, row: any) => {
+            return `<div class="department-badge">${row.department?.name || ''}</div>`;
+          },
         },
         {
-          title: 'Salary Range (min-max)',
-          data: '',
+          title: 'Salary Range',
+          data: null,
+          render: (data: any, type: any, row: any) => {
+            const minSalary = row.salaryRange?.minSalary || 0;
+            const maxSalary = row.salaryRange?.maxSalary || 0;
+            return `
+              <div class="salary-info">
+                <div class="range">$${minSalary} - $${maxSalary}</div>
+              </div>
+            `;
+          },
+        },
+        {
+          title: 'Position ID',
+          data: null,
+          render: (data: any, type: any, row: any) => {
+            return `<span class="position-id">${row.id || ''}</span>`;
+          },
+        },
+        {
+          title: 'Actions',
+          data: null,
+          orderable: false,
+          render: () => {
+            return `
+              <div class="table-actions">
+                <button class="table-action-btn" title="View Details">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            `;
+          },
         },
       ],
       columnDefs: [
-        { orderable: true, targets: 0 }, // Enable sorting on first column
-        { orderable: true, targets: 1 }, // Enable sorting on second column
-        { orderable: true, targets: 2 }, // Disable sorting on third column
-        { orderable: false, targets: 3 }, // Enable sorting on fourth column
-        //   // Specify orderable for other columns as needed
+        { orderable: true, targets: 0 }, // Enable sorting on Position
+        { orderable: true, targets: 1 }, // Enable sorting on Department
+        { orderable: false, targets: 2 }, // Disable sorting on Salary Range
+        { orderable: true, targets: 3 }, // Enable sorting on Position ID
+        { orderable: false, targets: 4 }, // Disable sorting on Actions
       ],
+      rowCallback: (row: Node, data: any) => {
+        // Add CSS class for styling
+        $(row).addClass('table-row');
+
+        // Add click event to action buttons
+        $('td:last-child button', row)
+          .off('click')
+          .on('click', (e: any) => {
+            e.stopPropagation();
+            this.wholeRowClick(data);
+          });
+
+        // Add click event to entire row (excluding action buttons)
+        $(row)
+          .off('click')
+          .on('click', (e: any) => {
+            if (!$(e.target).closest('button').length) {
+              this.wholeRowClick(data);
+            }
+          });
+
+        return row;
+      },
     };
   }
 }

@@ -59,6 +59,11 @@
         background-color: #2563eb;
       }
     }
+
+    // Hide burger menu on desktop screens (lg and above)
+    @media (min-width: 992px) {
+      display: none !important;
+    }
   }
 
   .navbar-nav {
@@ -190,6 +195,14 @@
   }
 }
 
+// Desktop: Always show navigation
+@media (min-width: 992px) {
+  .navbar-collapse {
+    display: flex !important;
+  }
+}
+
+// Mobile/Tablet: Collapsed navigation styling
 @media (max-width: 991.98px) {
   .navbar-collapse {
     margin-top: 1rem;
