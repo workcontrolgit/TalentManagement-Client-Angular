@@ -7,7 +7,7 @@
 // @import "theme/theme-variables";
 
 // 3rd party libraries
-// @import "bootstrap/scss/bootstrap";
+// @use "bootstrap/scss/bootstrap";
 // @import "@fortawesome/fontawesome-free/scss/fontawesome";
 // @import "@fortawesome/fontawesome-free/scss/brands";
 // @import "@fortawesome/fontawesome-free/scss/regular";
@@ -17,3 +17,7 @@
 
 // Theme customization
 // @import "theme/theme";
+
+// @use "bootstrap/scss/functions";
+// @use "bootstrap/scss/variables";
+// @use "bootstrap/scss/mixins";
