@@ -5,6 +5,7 @@ import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 import { DataTablesResponse } from '@shared/interfaces/data-tables-response';
 import { ModalService } from '@app/services/modal/modal.service';
+import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/breadcrumb.component';
 
 import { Logger } from '@app/core';
 
@@ -16,12 +17,19 @@ const log = new Logger('Employee');
   selector: 'app-employee-list',
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
-  imports: [DataTablesModule],
+  imports: [DataTablesModule, BreadcrumbComponent],
 })
 export class EmployeeListComponent implements OnInit {
   dtOptions: DataTables.Settings = {};
   employees: Employee[] = [];
   message = '';
+  viewMode: 'grid' | 'table' = 'grid';
+  isLoading = true;
+
+  breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Home', link: '/home', icon: 'fas fa-home' },
+    { label: 'Employees', icon: 'fa-solid fa-people-group' },
+  ];
 
   constructor(
     private apiHttpService: ApiHttpService,
@@ -38,6 +46,9 @@ export class EmployeeListComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Load initial employee data for grid view
+    this.loadEmployeeData();
+
     this.dtOptions = {
       pagingType: 'simple_numbers',
       pageLength: 10,
@@ -84,5 +95,28 @@ export class EmployeeListComponent implements OnInit {
 
   openModal(title: string, employee: Employee) {
     this.modalService.OpenEmployeeDetailDialog(title, employee);
+  }
+
+  setViewMode(mode: 'grid' | 'table') {
+    this.viewMode = mode;
+  }
+
+  private loadEmployeeData() {
+    // Create a simple request for initial load (first page, no filters)
+    const initialRequest = {
+      draw: 1,
+      start: 0,
+      length: 50, // Load more employees for grid view
+      search: { value: '', regex: false },
+      order: [{ column: 0, dir: 'asc' }],
+      columns: [],
+    };
+
+    this.apiHttpService
+      .post(this.apiEndpointsService.postEmployeesPagedEndpoint(), initialRequest)
+      .subscribe((resp: DataTablesResponse) => {
+        this.employees = resp.data;
+        this.isLoading = false;
+      });
   }
 }

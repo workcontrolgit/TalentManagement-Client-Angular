@@ -10,6 +10,19 @@
       </div>
     </div>
     <div class="card-body">
+      @if(isLoading()) {
+      <div class="d-flex justify-content-center align-items-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <span class="ms-2">{{ displayMessage() }}</span>
+      </div>
+      } @else if(error()) {
+      <div class="alert alert-danger" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ error() }}
+      </div>
+      }
       <div class="row table-responsive">
         <table datatable [dtOptions]="dtOptions" class="table table-hover">
           <thead>
@@ -20,10 +33,10 @@
               <th class="d-none d-sm-table-cell">Salary Range</th>
             </tr>
           </thead>
-          @if(positions.length !== 0) {
+          @if(hasPositions()) {
 
           <tbody>
-            @for(position of positions; track position.id) {
+            @for(position of positions(); track position.id) {
             <tr (click)="wholeRowClick(position)">
               <td>
                 {{ position.positionNumber }}
