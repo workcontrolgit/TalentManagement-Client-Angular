@@ -1,5 +1,4 @@
-@import "src/theme/theme-variables";
-@import "bootstrap/scss/mixins/breakpoints";
+@use "src/theme/theme-variables" as *;
 
 .login-container {
   position: absolute;
@@ -19,10 +18,10 @@
 }
 
 .ng-invalid.ng-touched:not(form) {
-  border-left: 4px solid theme-color("danger");
+  border-left: 4px solid #dc3545;
 }
 
-@include media-breakpoint-down(sm) {
+@media (max-width: 575.98px) {
   .container {
     width: 100%;
   }
