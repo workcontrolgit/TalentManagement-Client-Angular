@@ -1,6 +1,12 @@
 {
   "permissions": {
-    "allow": ["Bash(npm install:*)", "Bash(npm cache clean:*)", "Bash(npm run start:*)", "Bash(npx ng:*)"],
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm cache clean:*)",
+      "Bash(npm run start:*)",
+      "Bash(npx ng:*)",
+      "Bash(ng serve:*)"
+    ],
     "deny": []
   }
 }

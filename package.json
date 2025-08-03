@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "ng": "ng",
+    "write:env": "echo Environment configuration already set up",
     "build": "npm run write:env -s && ng build",
     "start": "npm run write:env -s && ng serve",
     "deploy": "npm run write:env -s && ng deploy",
@@ -41,7 +42,7 @@
     "@rxweb/reactive-form-validators": "^13.0.1",
     "angular-datatables": "^15.0.1",
     "angular-oauth2-oidc": "^15.0.1",
-    "bootstrap": "^5.2.3",
+    "bootstrap": "^5.3.7",
     "datatables.net": "^1.13.4",
     "datatables.net-bs5": "^1.13.4",
     "glob": "^11.0.0",

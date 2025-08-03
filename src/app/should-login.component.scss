@@ -1,5 +1,5 @@
-@use "src/theme/theme-variables" as *;
-@use "bootstrap/scss/mixins/breakpoints" as *;
+@import "src/theme/theme-variables";
+@import "bootstrap/scss/mixins/breakpoints";
 
 .login-container {
   position: absolute;
@@ -22,7 +22,7 @@
   border-left: 4px solid theme-color("danger");
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
   .container {
     width: 100%;
   }
