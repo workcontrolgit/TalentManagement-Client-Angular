@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { PositionListComponent } from './list/position-list.component';
 
 @Component({
@@ -6,10 +6,6 @@ import { PositionListComponent } from './list/position-list.component';
   templateUrl: './position.component.html',
   styleUrls: ['./position.component.scss'],
   imports: [PositionListComponent],
+  standalone: true,
 })
-export class PositionComponent implements OnInit {
-  active = 1;
-  constructor() {}
-
-  ngOnInit() {}
-}
+export class PositionComponent {}

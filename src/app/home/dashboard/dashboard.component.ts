@@ -16,8 +16,8 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.itemList = [
       {
-        position_count: 50,
-        employee_count: 1000,
+        position_count: 67,
+        employee_count: 1050,
         assignment_count: 5,
       },
     ];

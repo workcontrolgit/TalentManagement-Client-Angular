@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, signal, computed } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Logger } from '@app/core';
@@ -45,189 +46,255 @@ const log = new Logger('Detail');
     NgSelectModule,
     NgbTooltipModule,
   ],
+  standalone: true,
 })
 export class PositionDetailComponent implements OnInit {
-  formMode = 'New';
-  sub: any;
-  id: any;
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly toastService = inject(ToastService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly apiHttpService = inject(ApiHttpService);
+  private readonly apiEndpointsService = inject(ApiEndpointsService);
+  private readonly modalService = inject(ModalService);
+
   entryForm!: FormGroup;
-  error: string | undefined;
-  position!: Position;
-  isAddNew: boolean = false;
-  submitted = false;
 
-  departments!: Department[];
-  salaryRanges!: SalaryRange[];
+  // Signal-based state management
+  readonly formMode = signal<'New' | 'Edit'>('New');
+  readonly isLoading = signal<boolean>(false);
+  readonly error = signal<string | null>(null);
+  readonly position = signal<Position | null>(null);
+  readonly departments = signal<Department[]>([]);
+  readonly salaryRanges = signal<SalaryRange[]>([]);
 
-  constructor(
-    private toastService: ToastService,
-    private route: ActivatedRoute,
-    private formBuilder: FormBuilder,
-    private apiHttpService: ApiHttpService,
-    private apiEndpointsService: ApiEndpointsService,
-    private modalService: ModalService
-  ) {
+  // Computed properties
+  readonly isAddNew = computed(() => this.formMode() === 'New');
+  readonly canSave = computed(() => this.entryForm?.valid && !this.isLoading());
+  readonly canDelete = computed(() => !this.isAddNew() && !this.isLoading());
+
+  constructor() {
     this.createForm();
-    this.readDepartments();
-    this.readSalaryRanges();
+    this.loadDepartments();
+    this.loadSalaryRanges();
   }
 
-  ngOnInit() {
-    this.sub = this.route.params.subscribe((params) => {
-      this.id = params['id'];
-      if (this.id !== undefined) {
-        this.read(this.route.snapshot.paramMap.get('id'));
-        this.formMode = 'Edit';
+  ngOnInit(): void {
+    this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const id = params['id'];
+      if (id) {
+        this.formMode.set('Edit');
+        this.loadPosition(id);
       } else {
-        this.isAddNew = true;
-        this.formMode = 'New';
+        this.formMode.set('New');
+        this.resetForm();
       }
+      log.debug('Form mode set to:', this.formMode());
     });
-    log.debug('ngOnInit:', this.id);
   }
 
-  // Handle Create button click
-  onCreate() {
-    this.create(this.entryForm.value);
-    log.debug('onCreate: ', this.entryForm.value);
-    log.debug('onCreate: ', this.entryForm.get('positionNumber')!.value);
+  onCreate(): void {
+    if (!this.entryForm.valid) {
+      this.error.set('Please fill all required fields correctly');
+      return;
+    }
+
+    this.createPosition(this.entryForm.value);
   }
 
-  // Handle Update button click
-  onUpdate() {
-    // log.debug('onUpdate: ', this.entryForm.value);
-    // log.debug('onUpdate: ', this.entryForm.get('positionNumber')!.value);
-    this.put(this.entryForm.get('id')!.value, this.entryForm.value);
-    this.showToaster('Great job!', 'Data is updated');
+  onUpdate(): void {
+    if (!this.entryForm.valid) {
+      this.error.set('Please fill all required fields correctly');
+      return;
+    }
+
+    const id = this.entryForm.get('id')?.value;
+    if (!id) {
+      this.error.set('Position ID is required for update');
+      return;
+    }
+
+    this.updatePosition(id, this.entryForm.value);
   }
 
-  // Handle Delete button click
-  onDelete() {
-    this.modalService
-      .OpenConfirmDialog('Position deletion', 'Are you sure you want to delete?')
-      .then((Yes) => {
-        if (Yes) {
-          this.delete(this.entryForm.get('id')!.value);
-          log.debug('onDelete: ', this.entryForm.value);
-        }
-      })
-      .catch(() => {
-        log.debug('onDelete: ', 'Cancel');
+  async onDelete(): Promise<void> {
+    const id = this.entryForm.get('id')?.value;
+    if (!id) {
+      this.error.set('Position ID is required for deletion');
+      return;
+    }
+
+    try {
+      const confirmed = await this.modalService.OpenConfirmDialog(
+        'Position deletion',
+        'Are you sure you want to delete this position? This action cannot be undone.'
+      );
+
+      if (confirmed) {
+        this.deletePosition(id);
+      }
+    } catch (error) {
+      log.debug('Delete cancelled by user');
+    }
+  }
+  private loadPosition(id: string): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.apiHttpService
+      .get(this.apiEndpointsService.getPositionByIdEndpoint(id), id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (resp: DataResponsePosition) => {
+          if (resp.data) {
+            this.position.set(resp.data);
+            this.populateForm(resp.data);
+            this.isLoading.set(false);
+            log.debug('Position loaded successfully:', resp.data.id);
+          }
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          this.error.set('Failed to load position details. Please try again.');
+          log.error('Error loading position:', error);
+        },
       });
   }
-  // CRUD > Read, map to REST/HTTP GET
-  read(id: any): void {
-    this.apiHttpService.get(this.apiEndpointsService.getPositionByIdEndpoint(id), id).subscribe({
-      //Assign resp to class-level model object.
-      next: (resp: DataResponsePosition) => {
-        //Assign data to class-level model object.
-        this.position = resp.data;
-        //Populate reactive form controls with model object properties.
-        this.entryForm.setValue({
-          id: this.position.id,
-          positionNumber: this.position.positionNumber,
-          positionTitle: this.position.positionTitle,
-          positionDescription: this.position.positionDescription,
-          departmentId: this.position.departmentId,
-          salaryRangeId: this.position.salaryRangeId,
-        });
-      },
-      error: (error) => {
-        log.debug(error);
-      },
-    });
+
+  private deletePosition(id: string): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.apiHttpService
+      .delete(this.apiEndpointsService.deletePositionByIdEndpoint(id), id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.showToaster('Success!', 'Position deleted successfully');
+          this.resetForm();
+          this.formMode.set('New');
+          log.debug('Position deleted successfully');
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          this.error.set('Failed to delete position. Please try again.');
+          log.error('Error deleting position:', error);
+        },
+      });
   }
 
-  delete(id: any): void {
-    this.apiHttpService.delete(this.apiEndpointsService.deletePositionByIdEndpoint(id), id).subscribe({
-      next: (resp: any) => {
-        log.debug(resp);
-        this.showToaster('Great job!', 'Data is deleted');
-        this.entryForm.reset();
-        this.isAddNew = true;
-      },
-      error: (error) => {
-        log.debug(error);
-      },
-    });
+  private createPosition(data: Partial<Position>): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.apiHttpService
+      .post(this.apiEndpointsService.postPositionsEndpoint(), data)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (resp) => {
+          this.isLoading.set(false);
+          this.showToaster('Success!', 'Position created successfully');
+          this.resetForm();
+          log.debug('Position created successfully:', resp.data);
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          this.error.set('Failed to create position. Please try again.');
+          log.error('Error creating position:', error);
+        },
+      });
   }
 
-  // CRUD > Create, map to REST/HTTP POST
-  create(data: any): void {
-    this.apiHttpService.post(this.apiEndpointsService.postPositionsEndpoint(), data).subscribe({
-      next: (resp: any) => {
-        this.id = resp.data; //guid return in data
-        this.showToaster('Great job!', 'Data is inserted');
-        this.entryForm.reset();
-      },
-      error: (error) => {
-        log.debug(error);
-      },
-    });
+  private updatePosition(id: string, data: Partial<Position>): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.apiHttpService
+      .put(this.apiEndpointsService.putPositionsEndpoint(id), data)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.showToaster('Success!', 'Position updated successfully');
+          log.debug('Position updated successfully');
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          this.error.set('Failed to update position. Please try again.');
+          log.error('Error updating position:', error);
+        },
+      });
   }
 
-  // CRUD > Update, map to REST/HTTP PUT
-  put(id: string, data: any): void {
-    this.apiHttpService.put(this.apiEndpointsService.putPositionsEndpoint(id), data).subscribe({
-      next: (resp: any) => {
-        this.id = resp.data; //guid return in data
-      },
-      error: (error) => {
-        log.debug(error);
-      },
-    });
+  private loadDepartments(): void {
+    this.apiHttpService
+      .get(this.apiEndpointsService.getDepartmentsEndpoint())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (departments: Department[]) => {
+          this.departments.set(departments || []);
+          log.debug('Departments loaded:', departments?.length);
+        },
+        error: (error) => {
+          this.error.set('Failed to load departments');
+          log.error('Error loading departments:', error);
+        },
+      });
   }
 
-  readDepartments(): void {
-    this.apiHttpService.get(this.apiEndpointsService.getDepartmentsEndpoint()).subscribe({
-      //Assign resp to class-level model object.
-      next: (resp: Department[]) => {
-        //Assign data to class-level model object.
-        this.departments = resp;
-        log.debug('Departments ', this.departments);
-      },
-      error: (error) => {
-        log.debug(error);
-      },
-    });
+  private loadSalaryRanges(): void {
+    this.apiHttpService
+      .get(this.apiEndpointsService.getSalaryRangesEndpoint())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (salaryRanges: SalaryRange[]) => {
+          this.salaryRanges.set(salaryRanges || []);
+          log.debug('Salary ranges loaded:', salaryRanges?.length);
+        },
+        error: (error) => {
+          this.error.set('Failed to load salary ranges');
+          log.error('Error loading salary ranges:', error);
+        },
+      });
   }
 
-  readSalaryRanges(): void {
-    this.apiHttpService.get(this.apiEndpointsService.getSalaryRangesEndpoint()).subscribe({
-      //Assign resp to class-level model object.
-      next: (resp: SalaryRange[]) => {
-        //Assign data to class-level model object.
-        this.salaryRanges = resp;
-        log.debug('SalaryRanges ', this.salaryRanges);
-      },
-      error: (error) => {
-        log.debug(error);
-      },
-    });
-  }
-
-  // reactive form
-  private createForm() {
+  private createForm(): void {
     this.entryForm = this.formBuilder.group({
       id: [''],
-      positionNumber: ['', Validators.required],
-      positionTitle: ['', Validators.required],
-      positionDescription: ['', Validators.required],
+      positionNumber: ['', [Validators.required, Validators.minLength(2)]],
+      positionTitle: ['', [Validators.required, Validators.minLength(3)]],
+      positionDescription: ['', [Validators.required, Validators.minLength(10)]],
       departmentId: ['', Validators.required],
       salaryRangeId: ['', Validators.required],
     });
   }
 
-  // call modal service
-  showToaster(title: string, message: string) {
+  private populateForm(position: Position): void {
+    this.entryForm.patchValue({
+      id: position.id,
+      positionNumber: position.positionNumber,
+      positionTitle: position.positionTitle,
+      positionDescription: position.positionDescription,
+      departmentId: position.departmentId,
+      salaryRangeId: position.salaryRangeId,
+    });
+  }
+
+  private resetForm(): void {
+    this.entryForm.reset();
+    this.error.set(null);
+    this.position.set(null);
+  }
+
+  private showToaster(title: string, message: string): void {
     this.toastService.show(title, message, {
       classname: 'bg-success text-light',
-      delay: 2000,
+      delay: 3000,
       autohide: true,
     });
   }
 
-  // convenience getter for easy access to form fields
+  // Convenience getter for easy access to form fields
   get f() {
     return this.entryForm.controls;
   }

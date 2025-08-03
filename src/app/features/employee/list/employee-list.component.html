@@ -1,45 +1,156 @@
-<div class="container-fluid mt-3">
-  <div class="card">
-    <div class="card-header">
-      <div class="float-start">
-        <h3 class="text-secondary">Employees</h3>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="row table-responsive">
-        <table datatable [dtOptions]="dtOptions" class="table table-hover">
-          <thead>
-            <tr>
-              <th>Last Name</th>
-              <th>First Name</th>
-              <th>Email</th>
-              <th class="d-none d-sm-table-cell">Employee Number</th>
-              <th class="d-none d-sm-table-cell">Position Title</th>
-            </tr>
-          </thead>
+<div class="modern-employee-list">
+  <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
 
-          @if (employees.length !== 0) {
-          <tbody>
-            @for (employee of employees; track employee) {
-            <tr (click)="wholeRowClick(employee)">
-              <td>{{ employee.lastName }}</td>
-              <td>{{ employee.firstName }}</td>
-              <td>{{ employee.email }}</td>
-              <td class="d-none d-sm-table-cell">{{ employee.employeeNumber }}</td>
-              <td class="d-none d-sm-table-cell">{{ employee.position.positionTitle }}</td>
-            </tr>
-            }
-          </tbody>
-          } @else {
-          <tbody>
-            <tr>
-              <td colspan="4" class="no-data-available">No data!</td>
-            </tr>
-          </tbody>
-          }
-        </table>
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1 class="page-title">
+          <i class="fa-solid fa-people-group"></i>
+          <span>Employees</span>
+        </h1>
+        <p class="page-subtitle">Manage your organization's talent and team members</p>
+      </div>
+      <div class="header-actions">
+        <button class="action-btn primary">
+          <i class="fas fa-plus"></i>
+          <span>Add Employee</span>
+        </button>
+        <button class="action-btn secondary">
+          <i class="fas fa-download"></i>
+          <span>Export</span>
+        </button>
       </div>
     </div>
-    <div class="card-footer">Hint: All columns are searchable and sortable.</div>
   </div>
+
+  <div class="employee-grid" [style.display]="viewMode === 'grid' ? 'grid' : 'none'">
+    @if (isLoading) {
+    <div class="loading-state">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+      <h3>Loading Employees...</h3>
+      <p>Please wait while we fetch your team members</p>
+    </div>
+    } @else if (employees.length !== 0) { @for (employee of employees; track employee) {
+    <div class="employee-card" (click)="wholeRowClick(employee)">
+      <div class="employee-avatar">
+        <div class="avatar-circle">
+          <span>{{ employee.firstName.charAt(0) }}{{ employee.lastName.charAt(0) }}</span>
+        </div>
+        <div class="status-indicator active"></div>
+      </div>
+
+      <div class="employee-info">
+        <h3 class="employee-name">{{ employee.firstName }} {{ employee.lastName }}</h3>
+        <p class="employee-position">{{ employee.position.positionTitle }}</p>
+        <div class="employee-meta">
+          <div class="meta-item">
+            <i class="fas fa-envelope"></i>
+            <span>{{ employee.email }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-id-badge"></i>
+            <span>{{ employee.employeeNumber }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="employee-actions">
+        <button class="quick-action" title="View Details">
+          <i class="fas fa-eye"></i>
+        </button>
+        <button class="quick-action" title="Edit">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="quick-action" title="More Options">
+          <i class="fas fa-ellipsis-v"></i>
+        </button>
+      </div>
+    </div>
+    } } @else {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fa-solid fa-people-group"></i>
+      </div>
+      <h3>No Employees Found</h3>
+      <p>Get started by adding your first team member</p>
+      <button class="action-btn primary">
+        <i class="fas fa-plus"></i>
+        <span>Add First Employee</span>
+      </button>
+    </div>
+    }
+  </div>
+
+  <div class="table-view-toggle">
+    <button class="toggle-btn" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
+      <i class="fas fa-th"></i>
+      <span>Grid</span>
+    </button>
+    <button class="toggle-btn" [class.active]="viewMode === 'table'" (click)="setViewMode('table')">
+      <i class="fas fa-table"></i>
+      <span>Table</span>
+    </button>
+  </div>
+
+  @if (viewMode === 'table') {
+  <div class="modern-table-container">
+    <div class="table-wrapper">
+      <table datatable [dtOptions]="dtOptions" class="modern-table">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Position</th>
+            <th>Contact</th>
+            <th class="d-none d-lg-table-cell">Employee ID</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (employee of employees; track employee) {
+          <tr class="table-row" (click)="wholeRowClick(employee)">
+            <td class="employee-cell">
+              <div class="employee-info-inline">
+                <div class="avatar-small">
+                  <span>{{ employee.firstName.charAt(0) }}{{ employee.lastName.charAt(0) }}</span>
+                </div>
+                <div class="info-text">
+                  <div class="name">{{ employee.firstName }} {{ employee.lastName }}</div>
+                  <div class="subtitle">{{ employee.prefix }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="position-badge">{{ employee.position.positionTitle }}</div>
+            </td>
+            <td>
+              <div class="contact-info">
+                <div class="email">{{ employee.email }}</div>
+                <div class="phone">{{ employee.phone }}</div>
+              </div>
+            </td>
+            <td class="d-none d-lg-table-cell">
+              <span class="employee-id">{{ employee.employeeNumber }}</span>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="table-action-btn" title="View Details">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span class="table-hint">
+        <i class="fas fa-info-circle"></i>
+        All columns are searchable and sortable
+      </span>
+    </div>
+  </div>
+  }
 </div>
