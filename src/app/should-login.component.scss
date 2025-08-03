@@ -1,5 +1,5 @@
-@import "src/theme/theme-variables";
-@import "bootstrap/scss/mixins/_breakpoints";
+@use "src/theme/theme-variables" as *;
+@use "bootstrap/scss/mixins/breakpoints" as *;
 
 .login-container {
   position: absolute;
