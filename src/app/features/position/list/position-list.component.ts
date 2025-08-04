@@ -137,7 +137,14 @@ export class PositionListComponent implements OnInit {
       // Set column title and data field
       columns: [
         {
-          title: 'Position',
+          title: 'Position Number',
+          data: null,
+          render: (data: any, type: any, row: any) => {
+            return `<span class="position-number">${row.positionNumber || ''}</span>`;
+          },
+        },
+        {
+          title: 'Title',
           data: null,
           className: 'position-cell',
           render: (data: any, type: any, row: any) => {
@@ -148,7 +155,6 @@ export class PositionListComponent implements OnInit {
                 </div>
                 <div class="info-text">
                   <div class="name">${row.positionTitle || ''}</div>
-                  <div class="subtitle">${row.positionNumber || ''}</div>
                 </div>
               </div>
             `;
@@ -175,14 +181,7 @@ export class PositionListComponent implements OnInit {
           },
         },
         {
-          title: 'Position ID',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return `<span class="position-id">${row.id || ''}</span>`;
-          },
-        },
-        {
-          title: 'Actions',
+          title: 'Action',
           data: null,
           orderable: false,
           render: () => {
@@ -197,11 +196,11 @@ export class PositionListComponent implements OnInit {
         },
       ],
       columnDefs: [
-        { orderable: true, targets: 0 }, // Enable sorting on Position
-        { orderable: true, targets: 1 }, // Enable sorting on Department
-        { orderable: false, targets: 2 }, // Disable sorting on Salary Range
-        { orderable: true, targets: 3 }, // Enable sorting on Position ID
-        { orderable: false, targets: 4 }, // Disable sorting on Actions
+        { orderable: true, targets: 0 }, // Enable sorting on Position Number
+        { orderable: true, targets: 1 }, // Enable sorting on Title
+        { orderable: true, targets: 2 }, // Enable sorting on Department
+        { orderable: false, targets: 3 }, // Disable sorting on Salary Range
+        { orderable: false, targets: 4 }, // Disable sorting on Action
       ],
       rowCallback: (row: Node, data: any) => {
         // Add CSS class for styling

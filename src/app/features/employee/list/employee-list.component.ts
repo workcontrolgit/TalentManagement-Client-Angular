@@ -70,11 +70,11 @@ export class EmployeeListComponent implements OnInit {
       // Set column title and data field
       columns: [
         {
-          title: 'Last Name',
+          title: 'Name',
           data: '',
         },
         {
-          title: 'First Name',
+          title: 'Title',
           data: '',
         },
         {
@@ -82,12 +82,9 @@ export class EmployeeListComponent implements OnInit {
           data: '',
         },
         {
-          title: 'Employee Number',
+          title: 'Action',
           data: '',
-        },
-        {
-          title: 'Position Title',
-          data: '',
+          orderable: false,
         },
       ],
     };
