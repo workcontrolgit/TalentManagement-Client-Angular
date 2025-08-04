@@ -100,11 +100,10 @@
       <table datatable [dtOptions]="dtOptions" class="modern-table">
         <thead>
           <tr>
-            <th>Employee</th>
-            <th>Position</th>
-            <th>Contact</th>
-            <th class="d-none d-lg-table-cell">Employee ID</th>
-            <th>Actions</th>
+            <th>Name</th>
+            <th>Title</th>
+            <th>Email</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -125,13 +124,7 @@
               <div class="position-badge">{{ employee.position.positionTitle }}</div>
             </td>
             <td>
-              <div class="contact-info">
-                <div class="email">{{ employee.email }}</div>
-                <div class="phone">{{ employee.phone }}</div>
-              </div>
-            </td>
-            <td class="d-none d-lg-table-cell">
-              <span class="employee-id">{{ employee.employeeNumber }}</span>
+              <div class="email">{{ employee.email }}</div>
             </td>
             <td>
               <div class="table-actions">
