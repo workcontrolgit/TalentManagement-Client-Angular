@@ -43,7 +43,7 @@
 
       <div class="employee-info">
         <h3 class="employee-name">{{ employee.firstName }} {{ employee.lastName }}</h3>
-        <p class="employee-position">{{ employee.position.positionTitle }}</p>
+        <p class="employee-position">{{ employee.position?.positionTitle }}</p>
         <div class="employee-meta">
           <div class="meta-item">
             <i class="fas fa-envelope"></i>
@@ -121,7 +121,7 @@
               </div>
             </td>
             <td>
-              <div class="position-badge">{{ employee.position.positionTitle }}</div>
+              <div class="position-badge">{{ employee.position?.positionTitle }}</div>
             </td>
             <td>
               <div class="email">{{ employee.email }}</div>

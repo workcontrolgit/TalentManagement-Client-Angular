@@ -293,6 +293,7 @@
               <label for="positionId" class="form-label fw-bold">
                 <i class="fas fa-briefcase me-1"></i>Position <span class="text-danger">*</span>
               </label>
+
               <ng-select
                 id="positionId"
                 formControlName="positionId"
@@ -303,14 +304,9 @@
                 [class.is-invalid]="f['positionId'].invalid && f['positionId'].touched"
                 [class.is-valid]="f['positionId'].valid && f['positionId'].touched"
                 [clearable]="false"
+                [compareWith]="comparePositions"
               >
               </ng-select>
-              <!-- Debug info -->
-              <div class="mt-1 small text-muted">
-                Debug: Selected Value = {{ f['positionId'].value }}, Type = {{ typeof f['positionId'].value }}
-                <br />Available Options: {{ positions().length }} <br />Employee Position ID:
-                {{ employee()?.position?.id }}
-              </div>
               @if(f['positionId'].invalid && f['positionId'].touched) {
               <div class="invalid-feedback">
                 <div>Position selection is required</div>

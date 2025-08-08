@@ -9,7 +9,7 @@
       </div>
       <div class="header-info">
         <h2 class="employee-name">{{ employee.prefix }} {{ employee.firstName }} {{ employee.lastName }}</h2>
-        <p class="employee-position">{{ employee.position.positionTitle }}</p>
+        <p class="employee-position">{{ employee.position?.positionTitle || 'No position assigned' }}</p>
         <div class="employee-id-badge">ID: {{ employee.employeeNumber }}</div>
       </div>
     </div>
@@ -46,7 +46,7 @@
           <div class="info-item">
             <div class="info-label">Position</div>
             <div class="info-value">
-              <div class="position-badge">{{ employee.position.positionTitle }}</div>
+              <div class="position-badge">{{ employee.position?.positionTitle || 'No position assigned' }}</div>
             </div>
           </div>
           <div class="info-item">
