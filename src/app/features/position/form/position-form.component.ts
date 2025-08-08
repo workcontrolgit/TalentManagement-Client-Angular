@@ -34,9 +34,9 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 const log = new Logger('Detail');
 
 @Component({
-  selector: 'app-detail',
-  templateUrl: './position-detail.component.html',
-  styleUrls: ['./position-detail.component.scss'],
+  selector: 'app-position-form',
+  templateUrl: './position-form.component.html',
+  styleUrls: ['./position-form.component.scss'],
   imports: [
     ReactiveFormsModule,
     RxReactiveFormsModule,
@@ -48,7 +48,7 @@ const log = new Logger('Detail');
   ],
   standalone: true,
 })
-export class PositionDetailComponent implements OnInit {
+export class PositionFormComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly toastService = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
