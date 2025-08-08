@@ -1,4 +1,4 @@
-import { Component, OnInit, DestroyRef, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, AfterViewInit, DestroyRef, inject, signal, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -46,7 +46,7 @@ const log = new Logger('EmployeeForm');
   ],
   standalone: true,
 })
-export class EmployeeFormComponent implements OnInit {
+export class EmployeeFormComponent implements OnInit, AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly toastService = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
@@ -95,6 +95,22 @@ export class EmployeeFormComponent implements OnInit {
       }
       log.debug('Form mode set to:', this.formMode());
     });
+  }
+
+  ngAfterViewInit(): void {
+    // Final attempt to set position after view is fully initialized
+    setTimeout(() => {
+      const currentEmployee = this.employee();
+      const positions = this.positions();
+
+      if (currentEmployee?.positionId && positions.length > 0 && this.formMode() === 'Edit') {
+        const currentFormValue = this.entryForm.get('positionId')?.value;
+        if (currentFormValue !== currentEmployee.positionId) {
+          this.entryForm.get('positionId')?.setValue(currentEmployee.positionId, { emitEvent: true });
+          this.entryForm.get('positionId')?.updateValueAndValidity();
+        }
+      }
+    }, 500);
   }
 
   onCreate(): void {
@@ -266,12 +282,22 @@ export class EmployeeFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (resp: any) => {
-          this.positions.set(resp.data || []);
-          log.debug('Positions loaded:', resp.data?.length, resp.data);
+          const positions = resp.data || [];
+          this.positions.set(positions);
 
           // If we have an employee loaded but form wasn't populated yet due to missing positions, populate now
-          if (this.employee() && this.formMode() === 'Edit') {
-            this.populateForm(this.employee()!);
+          const currentEmployee = this.employee();
+          if (currentEmployee && this.formMode() === 'Edit') {
+            this.populateForm(currentEmployee);
+
+            // Force position selection after positions are loaded
+            setTimeout(() => {
+              const positionId = currentEmployee.positionId;
+              if (positionId) {
+                this.entryForm.get('positionId')?.setValue(positionId, { emitEvent: true });
+                this.entryForm.get('positionId')?.updateValueAndValidity();
+              }
+            }, 100);
           }
         },
         error: (error) => {
@@ -309,23 +335,15 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   private populateForm(employee: Employee): void {
-    log.debug('Populating form with employee:', employee);
-    log.debug('Employee position:', employee.position);
-    log.debug('Available positions:', this.positions());
-
-    // Check if the position exists in available positions
-    const currentPosition = employee.position?.id;
+    // Check if positions are loaded
     const availablePositions = this.positions();
-    const positionExists = availablePositions.find((p) => p.id === currentPosition);
+    if (availablePositions.length === 0) {
+      // Positions not loaded yet, will retry after positions load
+      return;
+    }
 
-    log.debug('Current position ID:', currentPosition);
-    log.debug('Position exists in available positions:', positionExists);
-    log.debug(
-      'Position data types - Current:',
-      typeof currentPosition,
-      'Available:',
-      availablePositions.map((p) => ({ id: p.id, type: typeof p.id }))
-    );
+    // Use employee.positionId directly since that's what the API returns
+    const positionId = employee.positionId || '';
 
     this.entryForm.patchValue({
       id: employee.id,
@@ -338,22 +356,26 @@ export class EmployeeFormComponent implements OnInit {
       employeeNumber: employee.employeeNumber,
       prefix: employee.prefix,
       phone: employee.phone,
-      positionId: employee.position?.id || '',
+      positionId: positionId,
       salary: employee.salary,
     });
 
-    log.debug('Form values after patch:', this.entryForm.value);
-    log.debug('PositionId in form:', this.entryForm.get('positionId')?.value);
-    log.debug('Form control value type:', typeof this.entryForm.get('positionId')?.value);
-
-    // Force form to update and check after a small delay
-    setTimeout(() => {
-      log.debug('After timeout - PositionId in form:', this.entryForm.get('positionId')?.value);
-      log.debug('After timeout - Form valid:', this.entryForm.valid);
-      this.formValid.set(this.entryForm.valid);
-    }, 100);
+    // Force position selection after form is patched
+    if (employee.positionId && availablePositions.length > 0) {
+      setTimeout(() => {
+        this.entryForm.get('positionId')?.setValue(employee.positionId, { emitEvent: true });
+        this.entryForm.get('positionId')?.updateValueAndValidity();
+      }, 200);
+    }
 
     this.formValid.set(this.entryForm.valid);
+  }
+
+  // Compare function for ng-select to ensure proper selection
+  comparePositions(pos1: any, pos2: any): boolean {
+    const id1 = pos1?.id || pos1;
+    const id2 = pos2?.id || pos2;
+    return id1 === id2;
   }
 
   private resetForm(): void {

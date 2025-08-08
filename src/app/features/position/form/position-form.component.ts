@@ -34,9 +34,9 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 const log = new Logger('Detail');
 
 @Component({
-  selector: 'app-detail',
-  templateUrl: './position-detail.component.html',
-  styleUrls: ['./position-detail.component.scss'],
+  selector: 'app-position-form',
+  templateUrl: './position-form.component.html',
+  styleUrls: ['./position-form.component.scss'],
   imports: [
     ReactiveFormsModule,
     RxReactiveFormsModule,
@@ -48,7 +48,7 @@ const log = new Logger('Detail');
   ],
   standalone: true,
 })
-export class PositionDetailComponent implements OnInit {
+export class PositionFormComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly toastService = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
@@ -66,10 +66,16 @@ export class PositionDetailComponent implements OnInit {
   readonly position = signal<Position | null>(null);
   readonly departments = signal<Department[]>([]);
   readonly salaryRanges = signal<SalaryRange[]>([]);
+  readonly formValid = signal<boolean>(false);
 
   // Computed properties
   readonly isAddNew = computed(() => this.formMode() === 'New');
-  readonly canSave = computed(() => this.entryForm?.valid && !this.isLoading());
+  readonly canSave = computed(() => {
+    const isValid = this.formValid();
+    const loading = this.isLoading();
+    console.log('canSave check - form valid:', isValid, 'loading:', loading);
+    return isValid && !loading;
+  });
   readonly canDelete = computed(() => !this.isAddNew() && !this.isLoading());
 
   constructor() {
@@ -102,7 +108,10 @@ export class PositionDetailComponent implements OnInit {
   }
 
   onUpdate(): void {
+    console.log('onUpdate called!', 'form valid:', this.entryForm.valid, 'form value:', this.entryForm.value);
     if (!this.entryForm.valid) {
+      console.log('Form invalid, form errors:', this.entryForm.errors);
+      this.markFormGroupTouched();
       this.error.set('Please fill all required fields correctly');
       return;
     }
@@ -231,8 +240,11 @@ export class PositionDetailComponent implements OnInit {
       .get(this.apiEndpointsService.getDepartmentsEndpoint())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (departments: Department[]) => {
-          this.departments.set(departments || []);
+        next: (response: any) => {
+          console.log('Departments API response:', response);
+          // Handle both direct array response and wrapped response
+          const departments = Array.isArray(response) ? response : response?.data || response || [];
+          this.departments.set(departments);
           log.debug('Departments loaded:', departments?.length);
         },
         error: (error) => {
@@ -247,8 +259,11 @@ export class PositionDetailComponent implements OnInit {
       .get(this.apiEndpointsService.getSalaryRangesEndpoint())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (salaryRanges: SalaryRange[]) => {
-          this.salaryRanges.set(salaryRanges || []);
+        next: (response: any) => {
+          console.log('Salary ranges API response:', response);
+          // Handle both direct array response and wrapped response
+          const salaryRanges = Array.isArray(response) ? response : response?.data || response || [];
+          this.salaryRanges.set(salaryRanges);
           log.debug('Salary ranges loaded:', salaryRanges?.length);
         },
         error: (error) => {
@@ -267,6 +282,12 @@ export class PositionDetailComponent implements OnInit {
       departmentId: ['', Validators.required],
       salaryRangeId: ['', Validators.required],
     });
+
+    // Subscribe to form validity changes
+    this.entryForm.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((status) => {
+      this.formValid.set(status === 'VALID');
+      console.log('Form status changed:', status, 'valid:', status === 'VALID');
+    });
   }
 
   private populateForm(position: Position): void {
@@ -278,12 +299,15 @@ export class PositionDetailComponent implements OnInit {
       departmentId: position.departmentId,
       salaryRangeId: position.salaryRangeId,
     });
+    // Trigger form validity update
+    this.formValid.set(this.entryForm.valid);
   }
 
   private resetForm(): void {
     this.entryForm.reset();
     this.error.set(null);
     this.position.set(null);
+    this.formValid.set(false);
   }
 
   private showToaster(title: string, message: string): void {
@@ -291,6 +315,13 @@ export class PositionDetailComponent implements OnInit {
       classname: 'bg-success text-light',
       delay: 3000,
       autohide: true,
+    });
+  }
+
+  private markFormGroupTouched(): void {
+    Object.keys(this.entryForm.controls).forEach((key) => {
+      const control = this.entryForm.get(key);
+      control?.markAsTouched();
     });
   }
 

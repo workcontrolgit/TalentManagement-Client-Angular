@@ -178,7 +178,7 @@
               </label>
               <ng-select
                 [items]="salaryRanges()"
-                bindLabel="name"
+                bindLabel="description"
                 formControlName="salaryRangeId"
                 bindValue="id"
                 placeholder="Select Salary Range"
@@ -190,10 +190,10 @@
                 [searchable]="true"
               >
                 <ng-template ng-label-tmp let-item="item">
-                  <span>{{ item.name }} (${{ item.minSalary | number }} - ${{ item.maxSalary | number }})</span>
+                  <span>{{ item.description }} (${{ item.minSalary | number }} - ${{ item.maxSalary | number }})</span>
                 </ng-template>
                 <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-                  <span>{{ item.name }} (${{ item.minSalary | number }} - ${{ item.maxSalary | number }})</span>
+                  <span>{{ item.description }} (${{ item.minSalary | number }} - ${{ item.maxSalary | number }})</span>
                 </ng-template>
               </ng-select>
               @if(f['salaryRangeId'].invalid && (f['salaryRangeId'].dirty || f['salaryRangeId'].touched)) {

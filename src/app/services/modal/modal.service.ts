@@ -4,7 +4,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorDialogComponent } from '@shared/errors/error-dialog.component';
 import { ConfirmationDialogComponent } from '@shared/confirmation-dialog/confirmation-dialog.component';
 import { EmployeeDetailComponent } from '@app/features/employee/detail/employee-detail/employee-detail.component';
+import { PositionDetailComponent } from '@app/features/position/detail/position-detail/position-detail.component';
 import { Employee } from '@shared/interfaces/employee';
+import { Position } from '@shared/interfaces/position';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +21,12 @@ export class ModalService {
     const modalRef = this.modalService.open(EmployeeDetailComponent);
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.employee = employee;
+  }
+
+  OpenPositionDetailDialog(title: string, position: Position): void {
+    const modalRef = this.modalService.open(PositionDetailComponent);
+    modalRef.componentInstance.title = title;
+    modalRef.componentInstance.position = position;
   }
 
   OpenErrorDialog(title: string, message: string, status?: string): void {

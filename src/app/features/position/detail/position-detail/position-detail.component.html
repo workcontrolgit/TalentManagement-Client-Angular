@@ -1,0 +1,95 @@
+<div class="modern-position-detail">
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="position-icon-large">
+        <div class="icon-circle">
+          <i class="fas fa-briefcase"></i>
+        </div>
+        <div class="status-indicator active"></div>
+      </div>
+      <div class="header-info">
+        <h2 class="position-title">{{ position.positionTitle }}</h2>
+        <p class="position-number">{{ position.positionNumber }}</p>
+        <div class="position-id-badge">ID: {{ position.id }}</div>
+      </div>
+    </div>
+    <button type="button" class="close-btn" aria-label="Close" (click)="this.activeModal.dismiss()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="detail-sections">
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-info-circle"></i>
+          Position Information
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Position Title</div>
+            <div class="info-value">{{ position.positionTitle }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Position Number</div>
+            <div class="info-value position-id">{{ position.positionNumber }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-file-alt"></i>
+          Description
+        </h3>
+        <div class="description-content">
+          <p>{{ position.positionDescription }}</p>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-building"></i>
+          Department & Salary
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Department</div>
+            <div class="info-value">
+              <div class="department-badge">{{ position.department?.name || 'Not assigned' }}</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Salary Range</div>
+            <div class="info-value">
+              <div class="salary-badge">
+                @if (position.salaryRange) {
+                {{ position.salaryRange.description }} (${{ position.salaryRange.minSalary | number }} - ${{
+                  position.salaryRange.maxSalary | number
+                }}) } @else { Not specified }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="action-buttons">
+      <button type="button" class="action-btn secondary" (click)="this.activeModal.dismiss()">
+        <i class="fas fa-times"></i>
+        <span>Close</span>
+      </button>
+      <button
+        type="button"
+        class="action-btn primary"
+        (click)="editPosition()"
+        style="pointer-events: auto; z-index: 999"
+      >
+        <i class="fas fa-edit"></i>
+        <span>Edit Position</span>
+      </button>
+    </div>
+  </div>
+</div>
