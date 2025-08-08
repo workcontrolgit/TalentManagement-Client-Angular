@@ -11,10 +11,10 @@
         <p class="page-subtitle">Manage your organization's talent and team members</p>
       </div>
       <div class="header-actions">
-        <button class="action-btn primary">
+        <a routerLink="/employee/new" class="action-btn primary">
           <i class="fas fa-plus"></i>
           <span>Add Employee</span>
-        </button>
+        </a>
         <button class="action-btn secondary">
           <i class="fas fa-download"></i>
           <span>Export</span>
@@ -57,12 +57,12 @@
       </div>
 
       <div class="employee-actions">
-        <button class="quick-action" title="View Details">
+        <button class="quick-action" title="View Details" (click)="wholeRowClick(employee)">
           <i class="fas fa-eye"></i>
         </button>
-        <button class="quick-action" title="Edit">
+        <a [routerLink]="['/employee/edit', employee.id]" class="quick-action" title="Edit">
           <i class="fas fa-edit"></i>
-        </button>
+        </a>
         <button class="quick-action" title="More Options">
           <i class="fas fa-ellipsis-v"></i>
         </button>
@@ -75,10 +75,10 @@
       </div>
       <h3>No Employees Found</h3>
       <p>Get started by adding your first team member</p>
-      <button class="action-btn primary">
+      <a routerLink="/employee/new" class="action-btn primary">
         <i class="fas fa-plus"></i>
         <span>Add First Employee</span>
-      </button>
+      </a>
     </div>
     }
   </div>
@@ -128,9 +128,9 @@
             </td>
             <td>
               <div class="table-actions">
-                <button class="table-action-btn" title="View Details">
-                  <i class="fas fa-eye"></i>
-                </button>
+                <a [routerLink]="['/employee/edit', employee.id]" class="table-action-btn" title="Edit Employee">
+                  <i class="fas fa-edit"></i>
+                </a>
               </div>
             </td>
           </tr>

@@ -1,0 +1,405 @@
+<div class="container-fluid">
+  <form [formGroup]="entryForm" novalidate>
+    <div class="card shadow-sm">
+      <div class="card-header bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="text-secondary mb-0">
+              <i class="fa-solid fa-people-group me-2"></i>
+              {{ formMode() === 'New' ? 'New Employee' : 'Edit Employee' }}
+            </h3>
+          </div>
+          <div>
+            <a
+              class="btn btn-outline-secondary"
+              ngbTooltip="Return to Employee List"
+              [routerLink]="['/employee']"
+              [class.disabled]="isLoading()"
+            >
+              <i class="fas fa-arrow-left me-1"></i> Back
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Loading State -->
+        @if(isLoading()) {
+        <div class="d-flex justify-content-center align-items-center py-4">
+          <div class="spinner-border text-primary me-2" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <span>Processing...</span>
+        </div>
+        }
+
+        <!-- Error State -->
+        @if(error()) {
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          {{ error() }}
+        </div>
+        }
+
+        <div class="row">
+          <!-- Employee ID -->
+          <div class="col-12">
+            <div class="mb-3">
+              <label for="id" class="form-label fw-bold"> <i class="fas fa-fingerprint me-1"></i>Employee ID </label>
+              <input
+                type="text"
+                id="id"
+                class="form-control bg-light"
+                formControlName="id"
+                readonly
+                ngbTooltip="Auto-generated unique identifier"
+              />
+            </div>
+          </div>
+
+          <!-- Personal Information Section -->
+          <div class="col-12">
+            <h4 class="section-title"><i class="fas fa-user me-2"></i>Personal Information</h4>
+          </div>
+
+          <!-- First Name -->
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label for="firstName" class="form-label fw-bold">
+                <i class="fas fa-user me-1"></i>First Name <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                class="form-control"
+                [class.is-invalid]="f['firstName'].invalid && f['firstName'].touched"
+                [class.is-valid]="f['firstName'].valid && f['firstName'].touched"
+                formControlName="firstName"
+                placeholder="Enter first name"
+                ngbTooltip="Employee's first name"
+              />
+              @if(f['firstName'].invalid && f['firstName'].touched) {
+              <div class="invalid-feedback">
+                @if(f['firstName'].errors?.['required']) {
+                <div>First name is required</div>
+                } @if(f['firstName'].errors?.['minlength']) {
+                <div>First name must be at least 2 characters long</div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Middle Name -->
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label for="middleName" class="form-label fw-bold"> <i class="fas fa-user me-1"></i>Middle Name </label>
+              <input
+                type="text"
+                id="middleName"
+                class="form-control"
+                formControlName="middleName"
+                placeholder="Enter middle name"
+                ngbTooltip="Employee's middle name (optional)"
+              />
+            </div>
+          </div>
+
+          <!-- Last Name -->
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label for="lastName" class="form-label fw-bold">
+                <i class="fas fa-user me-1"></i>Last Name <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                class="form-control"
+                [class.is-invalid]="f['lastName'].invalid && f['lastName'].touched"
+                [class.is-valid]="f['lastName'].valid && f['lastName'].touched"
+                formControlName="lastName"
+                placeholder="Enter last name"
+                ngbTooltip="Employee's last name"
+              />
+              @if(f['lastName'].invalid && f['lastName'].touched) {
+              <div class="invalid-feedback">
+                @if(f['lastName'].errors?.['required']) {
+                <div>Last name is required</div>
+                } @if(f['lastName'].errors?.['minlength']) {
+                <div>Last name must be at least 2 characters long</div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Prefix -->
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label for="prefix" class="form-label fw-bold"> <i class="fas fa-id-badge me-1"></i>Prefix </label>
+              <select id="prefix" class="form-select" formControlName="prefix">
+                <option value="">Select prefix...</option>
+                <option value="Mr.">Mr.</option>
+                <option value="Mrs.">Mrs.</option>
+                <option value="Ms.">Ms.</option>
+                <option value="Dr.">Dr.</option>
+                <option value="Prof.">Prof.</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Gender -->
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label for="gender" class="form-label fw-bold">
+                <i class="fas fa-venus-mars me-1"></i>Gender <span class="text-danger">*</span>
+              </label>
+              <select
+                id="gender"
+                class="form-select"
+                [class.is-invalid]="f['gender'].invalid && f['gender'].touched"
+                [class.is-valid]="f['gender'].valid && f['gender'].touched"
+                formControlName="gender"
+              >
+                <option value="">Select gender...</option>
+                <option value="0">Male</option>
+                <option value="1">Female</option>
+                <option value="2">Other</option>
+              </select>
+              @if(f['gender'].invalid && f['gender'].touched) {
+              <div class="invalid-feedback">
+                <div>Gender selection is required</div>
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Birthday -->
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label for="birthday" class="form-label fw-bold">
+                <i class="fas fa-birthday-cake me-1"></i>Birthday <span class="text-danger">*</span>
+              </label>
+              <input
+                type="date"
+                id="birthday"
+                class="form-control"
+                [class.is-invalid]="f['birthday'].invalid && f['birthday'].touched"
+                [class.is-valid]="f['birthday'].valid && f['birthday'].touched"
+                formControlName="birthday"
+                ngbTooltip="Employee's date of birth"
+              />
+              @if(f['birthday'].invalid && f['birthday'].touched) {
+              <div class="invalid-feedback">
+                <div>Birthday is required</div>
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Contact Information Section -->
+          <div class="col-12 mt-3">
+            <h4 class="section-title"><i class="fas fa-address-book me-2"></i>Contact Information</h4>
+          </div>
+
+          <!-- Email -->
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="email" class="form-label fw-bold">
+                <i class="fas fa-envelope me-1"></i>Email Address <span class="text-danger">*</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                [class.is-invalid]="f['email'].invalid && f['email'].touched"
+                [class.is-valid]="f['email'].valid && f['email'].touched"
+                formControlName="email"
+                placeholder="Enter email address"
+                ngbTooltip="Employee's email address"
+              />
+              @if(f['email'].invalid && f['email'].touched) {
+              <div class="invalid-feedback">
+                @if(f['email'].errors?.['required']) {
+                <div>Email address is required</div>
+                } @if(f['email'].errors?.['email']) {
+                <div>Please enter a valid email address</div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="phone" class="form-label fw-bold">
+                <i class="fas fa-phone me-1"></i>Phone Number <span class="text-danger">*</span>
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                class="form-control"
+                [class.is-invalid]="f['phone'].invalid && f['phone'].touched"
+                [class.is-valid]="f['phone'].valid && f['phone'].touched"
+                formControlName="phone"
+                placeholder="Enter phone number"
+                ngbTooltip="Employee's phone number"
+              />
+              @if(f['phone'].invalid && f['phone'].touched) {
+              <div class="invalid-feedback">
+                <div>Phone number is required</div>
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Work Information Section -->
+          <div class="col-12 mt-3">
+            <h4 class="section-title"><i class="fas fa-briefcase me-2"></i>Work Information</h4>
+          </div>
+
+          <!-- Employee Number -->
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label for="employeeNumber" class="form-label fw-bold">
+                <i class="fas fa-id-badge me-1"></i>Employee Number <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                id="employeeNumber"
+                class="form-control"
+                [class.is-invalid]="f['employeeNumber'].invalid && f['employeeNumber'].touched"
+                [class.is-valid]="f['employeeNumber'].valid && f['employeeNumber'].touched"
+                formControlName="employeeNumber"
+                placeholder="Enter employee number"
+                ngbTooltip="Unique employee number"
+              />
+              @if(f['employeeNumber'].invalid && f['employeeNumber'].touched) {
+              <div class="invalid-feedback">
+                @if(f['employeeNumber'].errors?.['required']) {
+                <div>Employee number is required</div>
+                } @if(f['employeeNumber'].errors?.['minlength']) {
+                <div>Employee number must be at least 2 characters long</div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Position -->
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label for="positionId" class="form-label fw-bold">
+                <i class="fas fa-briefcase me-1"></i>Position <span class="text-danger">*</span>
+              </label>
+              <ng-select
+                id="positionId"
+                formControlName="positionId"
+                placeholder="Select position..."
+                [items]="positions()"
+                bindLabel="positionTitle"
+                bindValue="id"
+                [class.is-invalid]="f['positionId'].invalid && f['positionId'].touched"
+                [class.is-valid]="f['positionId'].valid && f['positionId'].touched"
+                [clearable]="false"
+              >
+              </ng-select>
+              <!-- Debug info -->
+              <div class="mt-1 small text-muted">
+                Debug: Selected Value = {{ f['positionId'].value }}, Type = {{ typeof f['positionId'].value }}
+                <br />Available Options: {{ positions().length }} <br />Employee Position ID:
+                {{ employee()?.position?.id }}
+              </div>
+              @if(f['positionId'].invalid && f['positionId'].touched) {
+              <div class="invalid-feedback">
+                <div>Position selection is required</div>
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Salary -->
+          <div class="col-md-4">
+            <div class="mb-3">
+              <label for="salary" class="form-label fw-bold">
+                <i class="fas fa-dollar-sign me-1"></i>Salary <span class="text-danger">*</span>
+              </label>
+              <input
+                type="number"
+                id="salary"
+                class="form-control"
+                [class.is-invalid]="f['salary'].invalid && f['salary'].touched"
+                [class.is-valid]="f['salary'].valid && f['salary'].touched"
+                formControlName="salary"
+                placeholder="Enter salary"
+                min="0"
+                step="0.01"
+                ngbTooltip="Employee's annual salary"
+              />
+              @if(f['salary'].invalid && f['salary'].touched) {
+              <div class="invalid-feedback">
+                @if(f['salary'].errors?.['required']) {
+                <div>Salary is required</div>
+                } @if(f['salary'].errors?.['min']) {
+                <div>Salary must be greater than or equal to 0</div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between">
+          <div>
+            @if(canDelete()) {
+            <button
+              type="button"
+              class="btn btn-danger"
+              [disabled]="isLoading()"
+              (click)="onDelete()"
+              ngbTooltip="Delete this employee permanently"
+            >
+              <i class="fas fa-trash me-1"></i>
+              @if(isLoading()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              } Delete
+            </button>
+            }
+          </div>
+          <div>
+            @if(isAddNew()) {
+            <button
+              type="button"
+              class="btn btn-success"
+              [disabled]="!canSave()"
+              (click)="onCreate()"
+              ngbTooltip="Create new employee"
+            >
+              <i class="fas fa-plus me-1"></i>
+              @if(isLoading()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              } Create
+            </button>
+            } @else {
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!canSave()"
+              (click)="onUpdate()"
+              ngbTooltip="Save changes to employee"
+            >
+              <i class="fas fa-save me-1"></i>
+              @if(isLoading()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              } Save Changes
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

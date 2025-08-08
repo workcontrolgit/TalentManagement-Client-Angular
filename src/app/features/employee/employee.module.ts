@@ -6,6 +6,7 @@ import { DataTablesModule } from 'angular-datatables';
 
 import { EmployeeComponent } from './employee.component';
 import { EmployeeListComponent } from './list/employee-list.component';
+import { EmployeeFormComponent } from './form/employee-form.component';
 import { EmployeeRoutingModule } from './employee-routing.module';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -19,6 +20,7 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
     DataTablesModule,
     EmployeeComponent,
     EmployeeListComponent,
+    EmployeeFormComponent,
   ],
 })
 export class EmployeeModule {}

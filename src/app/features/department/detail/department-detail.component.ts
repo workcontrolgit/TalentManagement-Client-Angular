@@ -57,10 +57,17 @@ export class DepartmentDetailComponent implements OnInit {
   readonly isLoading = signal<boolean>(false);
   readonly error = signal<string | null>(null);
   readonly department = signal<Department | null>(null);
+  readonly formValid = signal<boolean>(false);
 
   // Computed properties
   readonly isAddNew = computed(() => this.formMode() === 'New');
-  readonly canSave = computed(() => this.entryForm?.valid && !this.isLoading());
+  readonly canSave = computed(() => {
+    const valid = this.formValid();
+    const loading = this.isLoading();
+    const canSave = valid && !loading;
+    log.debug('canSave computed:', { valid, loading, canSave });
+    return canSave;
+  });
   readonly canDelete = computed(() => !this.isAddNew() && !this.isLoading());
 
   constructor() {
@@ -226,6 +233,16 @@ export class DepartmentDetailComponent implements OnInit {
       lastModifiedBy: [''],
       lastModified: [''],
     });
+
+    // Subscribe to form status changes to update the signal
+    this.entryForm.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((status) => {
+      this.formValid.set(status === 'VALID');
+      log.debug('Form status changed:', status, 'Valid:', status === 'VALID');
+    });
+
+    // Set initial form validity
+    this.formValid.set(this.entryForm.valid);
+    log.debug('Initial form validity:', this.entryForm.valid);
   }
 
   private populateForm(department: Department): void {
@@ -237,12 +254,14 @@ export class DepartmentDetailComponent implements OnInit {
       lastModifiedBy: department.lastModifiedBy,
       lastModified: department.lastModified,
     });
+    this.formValid.set(this.entryForm.valid);
   }
 
   private resetForm(): void {
     this.entryForm.reset();
     this.error.set(null);
     this.department.set(null);
+    this.formValid.set(this.entryForm.valid);
   }
 
   private showToaster(title: string, message: string): void {

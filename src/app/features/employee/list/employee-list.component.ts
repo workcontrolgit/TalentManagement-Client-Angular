@@ -10,6 +10,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/bre
 import { Logger } from '@app/core';
 
 import { DataTablesModule } from 'angular-datatables';
+import { RouterLink } from '@angular/router';
 
 const log = new Logger('Employee');
 
@@ -17,7 +18,7 @@ const log = new Logger('Employee');
   selector: 'app-employee-list',
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
-  imports: [DataTablesModule, BreadcrumbComponent],
+  imports: [DataTablesModule, BreadcrumbComponent, RouterLink],
 })
 export class EmployeeListComponent implements OnInit {
   dtOptions: DataTables.Settings = {};
