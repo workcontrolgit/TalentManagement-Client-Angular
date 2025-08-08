@@ -232,6 +232,9 @@
       cursor: pointer;
       transition: all 0.3s ease;
       text-decoration: none;
+      pointer-events: auto;
+      position: relative;
+      z-index: 10;
 
       &.primary {
         background: linear-gradient(135deg, #2563eb, #3b82f6);
