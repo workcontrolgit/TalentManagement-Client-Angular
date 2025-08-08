@@ -1,0 +1,181 @@
+<div class="modern-salaryrange-list">
+  <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1 class="page-title">
+          <i class="fas fa-dollar-sign"></i>
+          <span>Salary Ranges</span>
+        </h1>
+        <p class="page-subtitle">Manage organizational salary ranges and compensation levels</p>
+      </div>
+      <div class="header-actions">
+        <button class="action-btn primary" [routerLink]="['/salaryrange/new']">
+          <i class="fas fa-plus"></i>
+          <span>Add Salary Range</span>
+        </button>
+        <button class="action-btn secondary">
+          <i class="fas fa-download"></i>
+          <span>Export</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="salaryrange-grid" [style.display]="viewMode() === 'grid' ? 'grid' : 'none'">
+    @if (isLoading()) {
+    <div class="loading-state">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+      <h3>Loading Salary Ranges...</h3>
+      <p>Please wait while we fetch salary range information</p>
+    </div>
+    } @else if (salaryRanges().length !== 0) { @for (salaryRange of salaryRanges(); track salaryRange.id) {
+    <div class="salaryrange-card" (click)="wholeRowClick(salaryRange)">
+      <div class="salaryrange-icon">
+        <div class="icon-circle">
+          <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="status-indicator active"></div>
+      </div>
+
+      <div class="salaryrange-info">
+        <h3 class="salaryrange-title">{{ salaryRange.name }}</h3>
+        <div class="salary-amounts">
+          <span class="min-salary">${{ salaryRange.minSalary | number : '1.0-0' }}</span>
+          <span class="range-separator">-</span>
+          <span class="max-salary">${{ salaryRange.maxSalary | number : '1.0-0' }}</span>
+        </div>
+        <div class="salaryrange-meta">
+          <div class="meta-item">
+            <i class="fas fa-chart-bar"></i>
+            <span>Range: ${{ salaryRange.maxSalary - salaryRange.minSalary | number : '1.0-0' }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-users"></i>
+            <span>{{ salaryRange.positions?.length || 0 }} Positions</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="salaryrange-actions">
+        <button class="quick-action" title="View Details" (click)="viewSalaryRange($event, salaryRange)">
+          <i class="fas fa-eye"></i>
+        </button>
+        <button class="quick-action" title="Edit" (click)="editSalaryRange($event, salaryRange)">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="quick-action" title="More Options">
+          <i class="fas fa-ellipsis-v"></i>
+        </button>
+      </div>
+    </div>
+    } } @else {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-dollar-sign"></i>
+      </div>
+      <h3>No Salary Ranges Found</h3>
+      <p>Get started by creating your first salary range to define compensation levels.</p>
+      <button class="action-btn primary" [routerLink]="['/salaryrange/new']">
+        <i class="fas fa-plus"></i>
+        <span>Add First Salary Range</span>
+      </button>
+    </div>
+    }
+  </div>
+
+  <!-- DataTables View -->
+  <div class="table-container" [style.display]="viewMode() === 'table' ? 'block' : 'none'">
+    <div class="view-controls">
+      <div class="controls-left">
+        <button
+          class="view-toggle-btn"
+          [class.active]="viewMode() === 'grid'"
+          (click)="setViewMode('grid')"
+          title="Grid View"
+        >
+          <i class="fas fa-th-large"></i>
+        </button>
+        <button
+          class="view-toggle-btn"
+          [class.active]="viewMode() === 'table'"
+          (click)="setViewMode('table')"
+          title="Table View"
+        >
+          <i class="fas fa-table"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table datatable [dtOptions]="dtOptions" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Minimum Salary</th>
+            <th>Maximum Salary</th>
+            <th>Range</th>
+            <th>Positions</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (salaryRange of salaryRanges(); track salaryRange.id) {
+          <tr (click)="wholeRowClick(salaryRange)">
+            <td>
+              <div class="name-cell">
+                <strong>{{ salaryRange.name }}</strong>
+              </div>
+            </td>
+            <td>
+              <span class="salary-amount">${{ salaryRange.minSalary | number : '1.0-0' }}</span>
+            </td>
+            <td>
+              <span class="salary-amount">${{ salaryRange.maxSalary | number : '1.0-0' }}</span>
+            </td>
+            <td>
+              <span class="salary-range">${{ salaryRange.maxSalary - salaryRange.minSalary | number : '1.0-0' }}</span>
+            </td>
+            <td>
+              <span class="position-count">{{ salaryRange.positions?.length || 0 }}</span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1" (click)="editSalaryRange($event, salaryRange)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteSalaryRange($event, salaryRange)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- View Toggle Controls for Grid -->
+  <div class="floating-controls" [style.display]="viewMode() === 'grid' ? 'flex' : 'none'">
+    <div class="view-controls">
+      <button
+        class="view-toggle-btn"
+        [class.active]="viewMode() === 'grid'"
+        (click)="setViewMode('grid')"
+        title="Grid View"
+      >
+        <i class="fas fa-th-large"></i>
+      </button>
+      <button
+        class="view-toggle-btn"
+        [class.active]="viewMode() === 'table'"
+        (click)="setViewMode('table')"
+        title="Table View"
+      >
+        <i class="fas fa-table"></i>
+      </button>
+    </div>
+  </div>
+</div>

@@ -69,6 +69,11 @@ export class ApiEndpointsService {
   public deleteDepartmentByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Departments', [id]);
   // call SalaryRanges endpoint
   public getSalaryRangesEndpoint = (): string => this.createUrl('SalaryRanges');
+  public getSalaryRangeByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('SalaryRanges', [id]);
+  public postSalaryRangesPagedEndpoint = (): string => this.createUrl('SalaryRanges/Paged');
+  public postSalaryRangesEndpoint = (): string => this.createUrl('SalaryRanges');
+  public putSalaryRangesEndpoint = (id: string): string => this.createUrlWithPathVariables('SalaryRanges', [id]);
+  public deleteSalaryRangeByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('SalaryRanges', [id]);
 
   /* #region URL CREATOR */
   // URL

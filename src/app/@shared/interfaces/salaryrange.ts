@@ -1,7 +1,7 @@
 export interface SalaryRange {
   minSalary: number;
   maxSalary: number;
-  description: string;
+  name: string;
   positions: any[];
   createdBy: string;
   created: Date;

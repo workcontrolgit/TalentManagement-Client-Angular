@@ -1,0 +1,163 @@
+<div class="modern-salaryrange-detail">
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="salaryrange-avatar-large">
+        <div class="avatar-circle">
+          <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="status-indicator active"></div>
+      </div>
+      <div class="header-info">
+        <h2 class="salaryrange-name">{{ salaryRange.name }}</h2>
+        <p class="salary-amounts">
+          {{ salaryRange.minSalary | currency : 'USD' : 'symbol' : '1.0-0' }} -
+          {{ salaryRange.maxSalary | currency : 'USD' : 'symbol' : '1.0-0' }}
+        </p>
+        <div class="salaryrange-id-badge">Range: {{ salaryRangeAmount | currency : 'USD' : 'symbol' : '1.0-0' }}</div>
+      </div>
+    </div>
+    <button type="button" class="close-btn" aria-label="Close" (click)="this.activeModal.dismiss()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="detail-sections">
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-info-circle"></i>
+          Basic Information
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Range Name</div>
+            <div class="info-value">{{ salaryRange.name }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Salary Range ID</div>
+            <div class="info-value salary-id">{{ salaryRange.id }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-money-bill-wave"></i>
+          Salary Details
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Minimum Salary</div>
+            <div class="info-value">
+              <div class="salary-badge min-salary">
+                {{ salaryRange.minSalary | currency : 'USD' : 'symbol' : '1.0-0' }}
+              </div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Maximum Salary</div>
+            <div class="info-value">
+              <div class="salary-badge max-salary">
+                {{ salaryRange.maxSalary | currency : 'USD' : 'symbol' : '1.0-0' }}
+              </div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Salary Range</div>
+            <div class="info-value">
+              <div class="salary-badge range-amount">
+                {{ salaryRangeAmount | currency : 'USD' : 'symbol' : '1.0-0' }}
+              </div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Average Salary</div>
+            <div class="info-value">
+              <div class="salary-badge average-salary">
+                {{ (salaryRange.minSalary + salaryRange.maxSalary) / 2 | currency : 'USD' : 'symbol' : '1.0-0' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-users"></i>
+          Position Usage
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Positions Using This Range</div>
+            <div class="info-value">
+              <div class="position-count-badge">
+                <i class="fas fa-sitemap"></i>
+                {{ positionCount }} Position{{ positionCount !== 1 ? 's' : '' }}
+              </div>
+            </div>
+          </div>
+          @if (salaryRange.positions && salaryRange.positions.length > 0) {
+          <div class="info-item full-width">
+            <div class="info-label">Positions List</div>
+            <div class="info-value">
+              <div class="positions-list">
+                @for (position of salaryRange.positions; track position.id) {
+                <div class="position-item">
+                  <i class="fas fa-briefcase"></i>
+                  <span>{{ position.positionTitle || position.title || 'Position' }}</span>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+      @if (salaryRange.created || salaryRange.lastModified) {
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-clock"></i>
+          Audit Information
+        </h3>
+        <div class="info-grid">
+          @if (salaryRange.created) {
+          <div class="info-item">
+            <div class="info-label">Created Date</div>
+            <div class="info-value audit-date">{{ salaryRange.created | date : 'medium' }}</div>
+          </div>
+          } @if (salaryRange.createdBy) {
+          <div class="info-item">
+            <div class="info-label">Created By</div>
+            <div class="info-value audit-user">{{ salaryRange.createdBy }}</div>
+          </div>
+          } @if (salaryRange.lastModified) {
+          <div class="info-item">
+            <div class="info-label">Last Modified</div>
+            <div class="info-value audit-date">{{ salaryRange.lastModified | date : 'medium' }}</div>
+          </div>
+          } @if (salaryRange.lastModifiedBy) {
+          <div class="info-item">
+            <div class="info-label">Last Modified By</div>
+            <div class="info-value audit-user">{{ salaryRange.lastModifiedBy }}</div>
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="action-buttons">
+      <button type="button" class="action-btn secondary" (click)="this.activeModal.dismiss()">
+        <i class="fas fa-times"></i>
+        <span>Close</span>
+      </button>
+      <button type="button" class="action-btn primary" (click)="editSalaryRange()">
+        <i class="fas fa-edit"></i>
+        <span>Edit Salary Range</span>
+      </button>
+    </div>
+  </div>
+</div>
