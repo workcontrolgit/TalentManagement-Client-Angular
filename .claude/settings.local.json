@@ -7,7 +7,8 @@
       "Bash(npx ng:*)",
       "Bash(ng serve:*)",
       "Bash(npm run build:*)",
-      "Bash(npm start)"
+      "Bash(npm start)",
+      "Bash(mkdir:*)"
     ],
     "deny": []
   }

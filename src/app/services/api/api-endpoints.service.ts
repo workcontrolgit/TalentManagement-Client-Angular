@@ -58,6 +58,11 @@ export class ApiEndpointsService {
   public postEmployeesPagedEndpoint = (): string => this.createUrl('Employees/Paged');
   // call Departments endpoint
   public getDepartmentsEndpoint = (): string => this.createUrl('Departments');
+  public getDepartmentByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Departments', [id]);
+  public postDepartmentsPagedEndpoint = (): string => this.createUrl('Departments/Paged');
+  public postDepartmentsEndpoint = (): string => this.createUrl('Departments');
+  public putDepartmentsEndpoint = (id: string): string => this.createUrlWithPathVariables('Departments', [id]);
+  public deleteDepartmentByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Departments', [id]);
   // call SalaryRanges endpoint
   public getSalaryRangesEndpoint = (): string => this.createUrl('SalaryRanges');
 

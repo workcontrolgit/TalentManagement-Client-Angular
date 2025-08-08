@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Employee } from '@shared/interfaces/employee';
+import { Department } from '@shared/interfaces/department';
 import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 import { DataTablesResponse } from '@shared/interfaces/data-tables-response';
@@ -10,25 +10,27 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/bre
 import { Logger } from '@app/core';
 
 import { DataTablesModule } from 'angular-datatables';
+import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
-const log = new Logger('Employee');
+const log = new Logger('Department');
 
 @Component({
-  selector: 'app-employee-list',
-  templateUrl: './employee-list.component.html',
-  styleUrls: ['./employee-list.component.scss'],
-  imports: [DataTablesModule, BreadcrumbComponent],
+  selector: 'app-department-list',
+  templateUrl: './department-list.component.html',
+  styleUrls: ['./department-list.component.scss'],
+  imports: [DataTablesModule, BreadcrumbComponent, RouterLink, DatePipe],
 })
-export class EmployeeListComponent implements OnInit {
+export class DepartmentListComponent implements OnInit {
   dtOptions: DataTables.Settings = {};
-  employees: Employee[] = [];
+  departments: Department[] = [];
   message = '';
   viewMode: 'grid' | 'table' = 'grid';
   isLoading = true;
 
   breadcrumbItems: BreadcrumbItem[] = [
     { label: 'Home', link: '/home', icon: 'fas fa-home' },
-    { label: 'Employees', icon: 'fa-solid fa-people-group' },
+    { label: 'Departments', icon: 'fas fa-building' },
   ];
 
   constructor(
@@ -37,17 +39,17 @@ export class EmployeeListComponent implements OnInit {
     private modalService: ModalService
   ) {}
 
-  wholeRowClick(employee: Employee): void {
-    let modalTitle = 'Employee Detail';
+  wholeRowClick(department: Department): void {
+    let modalTitle = 'Department Detail';
 
-    this.openModal(modalTitle, employee);
+    this.openModal(modalTitle, department);
 
-    log.debug('Whole row clicked.', employee);
+    log.debug('Whole row clicked.', department);
   }
 
   ngOnInit() {
-    // Load initial employee data for grid view
-    this.loadEmployeeData();
+    // Load initial department data for grid view
+    this.loadDepartmentData();
 
     this.dtOptions = {
       pagingType: 'simple_numbers',
@@ -55,11 +57,11 @@ export class EmployeeListComponent implements OnInit {
       serverSide: true,
       processing: true,
       ajax: (dataTablesParameters: any, callback) => {
-        // Call WebAPI to get employees
+        // Call WebAPI to get departments
         this.apiHttpService
-          .post(this.apiEndpointsService.postEmployeesPagedEndpoint(), dataTablesParameters)
+          .post(this.apiEndpointsService.postDepartmentsPagedEndpoint(), dataTablesParameters)
           .subscribe((resp: DataTablesResponse) => {
-            this.employees = resp.data;
+            this.departments = resp.data;
             callback({
               recordsTotal: resp.recordsTotal,
               recordsFiltered: resp.recordsFiltered,
@@ -73,21 +75,23 @@ export class EmployeeListComponent implements OnInit {
           title: 'Name',
           data: null,
           render: (data: any, type: any, row: any) => {
-            return `${row.firstName || ''} ${row.lastName || ''}`;
+            return row.name || '';
           },
         },
         {
-          title: 'Title',
+          title: 'Positions',
           data: null,
+          orderable: false,
           render: (data: any, type: any, row: any) => {
-            return row.position?.positionTitle || '';
+            const positionCount = row.positions?.length || 0;
+            return `${positionCount} Position${positionCount !== 1 ? 's' : ''}`;
           },
         },
         {
-          title: 'Email',
+          title: 'Created',
           data: null,
           render: (data: any, type: any, row: any) => {
-            return row.email || '';
+            return row.created ? new Date(row.created).toLocaleDateString() : '';
           },
         },
         {
@@ -95,42 +99,43 @@ export class EmployeeListComponent implements OnInit {
           data: null,
           orderable: false,
           render: () => {
-            return '<button class="btn btn-sm btn-outline-primary">View</button>';
+            return '<button class="btn btn-sm btn-outline-primary">Edit</button>';
           },
         },
       ],
     };
   }
 
-  openModal(title: string, employee: Employee) {
-    this.modalService.OpenEmployeeDetailDialog(title, employee);
+  openModal(title: string, department: Department) {
+    // TODO: Implement department detail modal similar to employee
+    console.log('Department modal:', title, department);
   }
 
   setViewMode(mode: 'grid' | 'table') {
     this.viewMode = mode;
   }
 
-  private loadEmployeeData() {
+  private loadDepartmentData() {
     // Create a simple request for initial load (first page, no filters)
     const initialRequest = {
       draw: 1,
       start: 0,
-      length: 50, // Load more employees for grid view
+      length: 50, // Load more departments for grid view
       search: { value: '', regex: false },
       order: [],
       columns: [],
     };
 
-    this.apiHttpService.post(this.apiEndpointsService.postEmployeesPagedEndpoint(), initialRequest).subscribe({
+    this.apiHttpService.post(this.apiEndpointsService.postDepartmentsPagedEndpoint(), initialRequest).subscribe({
       next: (resp: DataTablesResponse) => {
-        this.employees = resp.data;
+        this.departments = resp.data;
         this.isLoading = false;
       },
       error: (error) => {
         this.isLoading = false;
-        console.error('Error loading employee data:', error);
+        console.error('Error loading department data:', error);
         // Set some fallback data or show error state
-        this.employees = [];
+        this.departments = [];
       },
     });
   }
