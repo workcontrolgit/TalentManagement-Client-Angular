@@ -9,6 +9,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
   templateUrl: './salaryrange-detail-modal.component.html',
   styleUrls: ['./salaryrange-detail-modal.component.scss'],
   imports: [CommonModule, CurrencyPipe],
+  standalone: true,
 })
 export class SalaryRangeDetailModalComponent implements OnInit {
   @Input() title: string = 'Salary Range Detail';

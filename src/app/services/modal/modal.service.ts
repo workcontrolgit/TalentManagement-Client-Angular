@@ -6,9 +6,11 @@ import { ConfirmationDialogComponent } from '@shared/confirmation-dialog/confirm
 import { EmployeeDetailComponent } from '@app/features/employee/detail/employee-detail/employee-detail.component';
 import { PositionDetailComponent } from '@app/features/position/detail/position-detail/position-detail.component';
 import { SalaryRangeDetailModalComponent } from '@app/features/salaryrange/detail/salaryrange-detail-modal/salaryrange-detail-modal.component';
+import { DepartmentDetailModalComponent } from '@app/features/department/detail/department-detail-modal/department-detail-modal.component';
 import { Employee } from '@shared/interfaces/employee';
 import { Position } from '@shared/interfaces/position';
 import { SalaryRange } from '@shared/interfaces/salaryrange';
+import { Department } from '@shared/interfaces/department';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +37,12 @@ export class ModalService {
     const modalRef = this.modalService.open(SalaryRangeDetailModalComponent);
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.salaryRange = salaryRange;
+  }
+
+  OpenDepartmentDetailDialog(title: string, department: Department): void {
+    const modalRef = this.modalService.open(DepartmentDetailModalComponent);
+    modalRef.componentInstance.title = title;
+    modalRef.componentInstance.department = department;
   }
 
   OpenErrorDialog(title: string, message: string, status?: string): void {

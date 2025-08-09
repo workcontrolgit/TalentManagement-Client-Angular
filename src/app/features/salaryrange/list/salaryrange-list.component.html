@@ -87,29 +87,19 @@
     }
   </div>
 
-  <!-- DataTables View -->
-  <div class="table-container" [style.display]="viewMode() === 'table' ? 'block' : 'none'">
-    <div class="view-controls">
-      <div class="controls-left">
-        <button
-          class="view-toggle-btn"
-          [class.active]="viewMode() === 'grid'"
-          (click)="setViewMode('grid')"
-          title="Grid View"
-        >
-          <i class="fas fa-th-large"></i>
-        </button>
-        <button
-          class="view-toggle-btn"
-          [class.active]="viewMode() === 'table'"
-          (click)="setViewMode('table')"
-          title="Table View"
-        >
-          <i class="fas fa-table"></i>
-        </button>
-      </div>
-    </div>
+  <div class="table-view-toggle">
+    <button class="toggle-btn" [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')">
+      <i class="fas fa-th"></i>
+      <span>Grid</span>
+    </button>
+    <button class="toggle-btn" [class.active]="viewMode() === 'table'" (click)="setViewMode('table')">
+      <i class="fas fa-table"></i>
+      <span>Table</span>
+    </button>
+  </div>
 
+  @if (viewMode() === 'table') {
+  <div class="table-container">
     <div class="table-responsive">
       <table datatable [dtOptions]="dtOptions" class="table table-striped">
         <thead>
@@ -156,26 +146,5 @@
       </table>
     </div>
   </div>
-
-  <!-- View Toggle Controls for Grid -->
-  <div class="floating-controls" [style.display]="viewMode() === 'grid' ? 'flex' : 'none'">
-    <div class="view-controls">
-      <button
-        class="view-toggle-btn"
-        [class.active]="viewMode() === 'grid'"
-        (click)="setViewMode('grid')"
-        title="Grid View"
-      >
-        <i class="fas fa-th-large"></i>
-      </button>
-      <button
-        class="view-toggle-btn"
-        [class.active]="viewMode() === 'table'"
-        (click)="setViewMode('table')"
-        title="Table View"
-      >
-        <i class="fas fa-table"></i>
-      </button>
-    </div>
-  </div>
+  }
 </div>
