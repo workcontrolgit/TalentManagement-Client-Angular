@@ -37,7 +37,7 @@
             ],
             "styles": [
               "src/main.scss",
-              "node_modules/bootstrap/scss/bootstrap.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.css",
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
               "node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css"
