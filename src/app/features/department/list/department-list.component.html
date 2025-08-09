@@ -25,61 +25,63 @@
 
   <div class="department-grid" [style.display]="viewMode === 'grid' ? 'grid' : 'none'">
     @if (isLoading) {
-    <div class="loading-state">
-      <div class="loading-spinner">
-        <i class="fas fa-spinner fa-spin"></i>
+      <div class="loading-state">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <h3>Loading Departments...</h3>
+        <p>Please wait while we fetch your departments</p>
       </div>
-      <h3>Loading Departments...</h3>
-      <p>Please wait while we fetch your departments</p>
-    </div>
-    } @else if (departments.length !== 0) { @for (department of departments; track department) {
-    <div class="department-card" (click)="wholeRowClick(department)">
-      <div class="department-icon">
-        <div class="icon-circle">
+    } @else if (departments.length !== 0) {
+      @for (department of departments; track department) {
+        <div class="department-card" (click)="wholeRowClick(department)">
+          <div class="department-icon">
+            <div class="icon-circle">
+              <i class="fas fa-building"></i>
+            </div>
+            <div class="status-indicator active"></div>
+          </div>
+
+          <div class="department-info">
+            <h3 class="department-name">{{ department.name }}</h3>
+            <p class="department-positions">{{ getPositionCount(department) }} Positions</p>
+            <div class="department-meta">
+              <div class="meta-item">
+                <i class="fas fa-user"></i>
+                <span>Created by {{ department.createdBy }}</span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-calendar"></i>
+                <span>{{ department.created | date: 'shortDate' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="department-actions">
+            <a [routerLink]="['/department/edit', department.id]" class="quick-action" title="View Details">
+              <i class="fas fa-eye"></i>
+            </a>
+            <a [routerLink]="['/department/edit', department.id]" class="quick-action" title="Edit">
+              <i class="fas fa-edit"></i>
+            </a>
+            <button class="quick-action" title="More Options">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="empty-state">
+        <div class="empty-icon">
           <i class="fas fa-building"></i>
         </div>
-        <div class="status-indicator active"></div>
-      </div>
-
-      <div class="department-info">
-        <h3 class="department-name">{{ department.name }}</h3>
-        <p class="department-positions">{{ department.positions?.length || 0 }} Positions</p>
-        <div class="department-meta">
-          <div class="meta-item">
-            <i class="fas fa-user"></i>
-            <span>Created by {{ department.createdBy }}</span>
-          </div>
-          <div class="meta-item">
-            <i class="fas fa-calendar"></i>
-            <span>{{ department.created | date : 'shortDate' }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="department-actions">
-        <a [routerLink]="['/department/edit', department.id]" class="quick-action" title="View Details">
-          <i class="fas fa-eye"></i>
+        <h3>No Departments Found</h3>
+        <p>Get started by adding your first department</p>
+        <a routerLink="/department/new" class="action-btn primary">
+          <i class="fas fa-plus"></i>
+          <span>Add First Department</span>
         </a>
-        <a [routerLink]="['/department/edit', department.id]" class="quick-action" title="Edit">
-          <i class="fas fa-edit"></i>
-        </a>
-        <button class="quick-action" title="More Options">
-          <i class="fas fa-ellipsis-v"></i>
-        </button>
       </div>
-    </div>
-    } } @else {
-    <div class="empty-state">
-      <div class="empty-icon">
-        <i class="fas fa-building"></i>
-      </div>
-      <h3>No Departments Found</h3>
-      <p>Get started by adding your first department</p>
-      <a routerLink="/department/new" class="action-btn primary">
-        <i class="fas fa-plus"></i>
-        <span>Add First Department</span>
-      </a>
-    </div>
     }
   </div>
 
@@ -95,55 +97,59 @@
   </div>
 
   @if (viewMode === 'table') {
-  <div class="modern-table-container">
-    <div class="table-wrapper">
-      <table datatable [dtOptions]="dtOptions" class="modern-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Positions</th>
-            <th>Created</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (department of departments; track department) {
-          <tr class="table-row" (click)="wholeRowClick(department)">
-            <td class="department-cell">
-              <div class="department-info-inline">
-                <div class="icon-small">
-                  <i class="fas fa-building"></i>
-                </div>
-                <div class="info-text">
-                  <div class="name">{{ department.name }}</div>
-                  <div class="subtitle">{{ department.createdBy }}</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <div class="position-count">{{ department.positions?.length || 0 }} Positions</div>
-            </td>
-            <td>
-              <div class="created-date">{{ department.created | date : 'shortDate' }}</div>
-            </td>
-            <td>
-              <div class="table-actions">
-                <a [routerLink]="['/department/edit', department.id]" class="table-action-btn" title="Edit Department">
-                  <i class="fas fa-edit"></i>
-                </a>
-              </div>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
+    <div class="modern-table-container">
+      <div class="table-wrapper">
+        <table datatable [dtOptions]="dtOptions" class="modern-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Positions</th>
+              <th>Created</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (department of tableData; track department) {
+              <tr class="table-row" (click)="wholeRowClick(department)">
+                <td class="department-cell">
+                  <div class="department-info-inline">
+                    <div class="icon-small">
+                      <i class="fas fa-building"></i>
+                    </div>
+                    <div class="info-text">
+                      <div class="name">{{ department.name }}</div>
+                      <div class="subtitle">{{ department.createdBy }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="position-count">{{ getPositionCount(department) }} Positions</div>
+                </td>
+                <td>
+                  <div class="created-date">{{ department.created | date: 'shortDate' }}</div>
+                </td>
+                <td>
+                  <div class="table-actions">
+                    <a
+                      [routerLink]="['/department/edit', department.id]"
+                      class="table-action-btn"
+                      title="Edit Department"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span class="table-hint">
+          <i class="fas fa-info-circle"></i>
+          All columns are searchable and sortable
+        </span>
+      </div>
     </div>
-    <div class="table-footer">
-      <span class="table-hint">
-        <i class="fas fa-info-circle"></i>
-        All columns are searchable and sortable
-      </span>
-    </div>
-  </div>
   }
 </div>

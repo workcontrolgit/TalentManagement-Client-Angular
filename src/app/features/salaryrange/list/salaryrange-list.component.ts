@@ -25,11 +25,13 @@ const log = new Logger('SalaryRange');
 })
 export class SalaryRangeListComponent implements OnInit {
   dtOptions: DataTables.Settings = {};
-  private _salaryRanges = signal<SalaryRange[]>([]);
+  private _salaryRanges = signal<SalaryRange[]>([]); // For grid view
+  private _tableData = signal<SalaryRange[]>([]); // For DataTables view
   private _viewMode = signal<'grid' | 'table'>('grid');
   private _isLoading = signal<boolean>(true);
 
   salaryRanges = computed(() => this._salaryRanges());
+  tableData = computed(() => this._tableData());
   viewMode = computed(() => this._viewMode());
   isLoading = computed(() => this._isLoading());
 
@@ -44,7 +46,7 @@ export class SalaryRangeListComponent implements OnInit {
     private apiHttpService: ApiHttpService,
     private apiEndpointsService: ApiEndpointsService,
     private modalService: ModalService,
-    private router: Router
+    private router: Router,
   ) {}
 
   wholeRowClick(salaryRange: SalaryRange): void {
@@ -93,7 +95,12 @@ export class SalaryRangeListComponent implements OnInit {
           .post(this.apiEndpointsService.postSalaryRangesPagedEndpoint(), dataTablesParameters)
           .subscribe({
             next: (resp: DataTablesResponse) => {
-              this._salaryRanges.set(resp.data);
+              this._tableData.set(
+                resp.data.map((sr: SalaryRange) => ({
+                  ...sr,
+                  positions: sr.positions || [],
+                })),
+              );
               callback({
                 recordsTotal: resp.recordsTotal,
                 recordsFiltered: resp.recordsFiltered,
@@ -176,6 +183,10 @@ export class SalaryRangeListComponent implements OnInit {
     this._viewMode.set(mode);
   }
 
+  getPositionCount(salaryRange: SalaryRange): number {
+    return salaryRange.positions?.length ?? 0;
+  }
+
   private loadSalaryRangeData() {
     const initialRequest = {
       draw: 1,
@@ -188,7 +199,12 @@ export class SalaryRangeListComponent implements OnInit {
 
     this.apiHttpService.post(this.apiEndpointsService.postSalaryRangesPagedEndpoint(), initialRequest).subscribe({
       next: (resp: DataTablesResponse) => {
-        this._salaryRanges.set(resp.data);
+        this._salaryRanges.set(
+          resp.data.map((sr: SalaryRange) => ({
+            ...sr,
+            positions: sr.positions || [],
+          })),
+        );
         this._isLoading.set(false);
       },
       error: (error) => {

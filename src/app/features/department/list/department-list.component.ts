@@ -23,7 +23,8 @@ const log = new Logger('Department');
 })
 export class DepartmentListComponent implements OnInit {
   dtOptions: DataTables.Settings = {};
-  departments: Department[] = [];
+  departments: Department[] = []; // For grid view
+  tableData: Department[] = []; // For DataTables view
   message = '';
   viewMode: 'grid' | 'table' = 'grid';
   isLoading = true;
@@ -36,7 +37,7 @@ export class DepartmentListComponent implements OnInit {
   constructor(
     private apiHttpService: ApiHttpService,
     private apiEndpointsService: ApiEndpointsService,
-    private modalService: ModalService
+    private modalService: ModalService,
   ) {}
 
   wholeRowClick(department: Department): void {
@@ -62,7 +63,10 @@ export class DepartmentListComponent implements OnInit {
           .post(this.apiEndpointsService.postDepartmentsPagedEndpoint(), dataTablesParameters)
           .subscribe({
             next: (resp: DataTablesResponse) => {
-              this.departments = resp.data;
+              this.tableData = resp.data.map((dept: Department) => ({
+                ...dept,
+                positions: dept.positions || [],
+              }));
               callback({
                 recordsTotal: resp.recordsTotal,
                 recordsFiltered: resp.recordsFiltered,
@@ -124,6 +128,10 @@ export class DepartmentListComponent implements OnInit {
     this.viewMode = mode;
   }
 
+  getPositionCount(department: Department): number {
+    return department.positions?.length ?? 0;
+  }
+
   private loadDepartmentData() {
     // Create a simple request for initial load (first page, no filters)
     const initialRequest = {
@@ -137,7 +145,10 @@ export class DepartmentListComponent implements OnInit {
 
     this.apiHttpService.post(this.apiEndpointsService.postDepartmentsPagedEndpoint(), initialRequest).subscribe({
       next: (resp: DataTablesResponse) => {
-        this.departments = resp.data;
+        this.departments = resp.data.map((dept: Department) => ({
+          ...dept,
+          positions: dept.positions || [],
+        }));
         this.isLoading = false;
       },
       error: (error) => {
