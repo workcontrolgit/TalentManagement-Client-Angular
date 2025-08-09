@@ -87,17 +87,27 @@ export class SalaryRangeListComponent implements OnInit {
       pagingType: 'simple_numbers',
       pageLength: 10,
       serverSide: true,
-      processing: true,
+      processing: false, // Disable processing indicator to prevent stuck dots
       ajax: (dataTablesParameters: any, callback) => {
         this.apiHttpService
           .post(this.apiEndpointsService.postSalaryRangesPagedEndpoint(), dataTablesParameters)
-          .subscribe((resp: DataTablesResponse) => {
-            this._salaryRanges.set(resp.data);
-            callback({
-              recordsTotal: resp.recordsTotal,
-              recordsFiltered: resp.recordsFiltered,
-              data: [],
-            });
+          .subscribe({
+            next: (resp: DataTablesResponse) => {
+              this._salaryRanges.set(resp.data);
+              callback({
+                recordsTotal: resp.recordsTotal,
+                recordsFiltered: resp.recordsFiltered,
+                data: [],
+              });
+            },
+            error: (error) => {
+              console.error('Error loading DataTables data:', error);
+              callback({
+                recordsTotal: 0,
+                recordsFiltered: 0,
+                data: [],
+              });
+            },
           });
       },
       columns: [

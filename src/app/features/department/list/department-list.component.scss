@@ -490,3 +490,8 @@
 ::ng-deep table.dataTable td.dataTables_empty {
   display: none;
 }
+
+// Hide DataTables processing indicator to prevent stuck loading dots
+::ng-deep .dataTables_processing {
+  display: none !important;
+}
