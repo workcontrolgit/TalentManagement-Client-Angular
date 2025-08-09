@@ -37,8 +37,6 @@
             ],
             "styles": [
               "src/main.scss",
-              "src/theme/theme.scss",
-              "src/theme/theme-variables.scss",
               "node_modules/bootstrap/scss/bootstrap.scss",
               "node_modules/@fortawesome/fontawesome-free/css/all.css",
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
