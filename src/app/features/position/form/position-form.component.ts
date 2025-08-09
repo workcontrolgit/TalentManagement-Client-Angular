@@ -12,9 +12,6 @@ import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 // interface class mapping to web api DTO (data transfer object)
 import { DataResponsePosition } from '@shared/interfaces/data-response-position';
 
-// validation
-import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
-
 // ui service modal and toaster
 import { ModalService } from '@app/services/modal/modal.service';
 import { ToastService } from '@app/services/toast/toast.service';
@@ -37,15 +34,7 @@ const log = new Logger('Detail');
   selector: 'app-position-form',
   templateUrl: './position-form.component.html',
   styleUrls: ['./position-form.component.scss'],
-  imports: [
-    ReactiveFormsModule,
-    RxReactiveFormsModule,
-    CommonModule,
-    RouterLink,
-    TranslateModule,
-    NgSelectModule,
-    NgbTooltipModule,
-  ],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, TranslateModule, NgSelectModule, NgbTooltipModule],
   standalone: true,
 })
 export class PositionFormComponent implements OnInit {
@@ -135,7 +124,7 @@ export class PositionFormComponent implements OnInit {
     try {
       const confirmed = await this.modalService.OpenConfirmDialog(
         'Position deletion',
-        'Are you sure you want to delete this position? This action cannot be undone.'
+        'Are you sure you want to delete this position? This action cannot be undone.',
       );
 
       if (confirmed) {

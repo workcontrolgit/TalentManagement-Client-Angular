@@ -10,9 +10,6 @@ import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
 import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 
-// validation
-import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
-
 // ui service modal and toaster
 import { ModalService } from '@app/services/modal/modal.service';
 import { ToastService } from '@app/services/toast/toast.service';
@@ -30,16 +27,7 @@ const log = new Logger('SalaryRangeDetail');
   selector: 'app-salaryrange-detail',
   templateUrl: './salaryrange-detail.component.html',
   styleUrls: ['./salaryrange-detail.component.scss'],
-  imports: [
-    ReactiveFormsModule,
-    RxReactiveFormsModule,
-    CommonModule,
-    RouterLink,
-    TranslateModule,
-    NgbTooltipModule,
-    DatePipe,
-    CurrencyPipe,
-  ],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, TranslateModule, NgbTooltipModule, DatePipe, CurrencyPipe],
   standalone: true,
 })
 export class SalaryRangeDetailComponent implements OnInit {
@@ -129,7 +117,7 @@ export class SalaryRangeDetailComponent implements OnInit {
     try {
       const confirmed = await this.modalService.OpenConfirmDialog(
         'Salary Range deletion',
-        'Are you sure you want to delete this salary range? This action cannot be undone.'
+        'Are you sure you want to delete this salary range? This action cannot be undone.',
       );
 
       if (confirmed) {
@@ -245,7 +233,7 @@ export class SalaryRangeDetailComponent implements OnInit {
       },
       {
         validators: this.salaryRangeValidator,
-      }
+      },
     );
 
     // Subscribe to form status changes to update the signal

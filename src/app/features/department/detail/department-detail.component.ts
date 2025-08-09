@@ -10,9 +10,6 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 
-// validation
-import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
-
 // ui service modal and toaster
 import { ModalService } from '@app/services/modal/modal.service';
 import { ToastService } from '@app/services/toast/toast.service';
@@ -30,15 +27,7 @@ const log = new Logger('DepartmentDetail');
   selector: 'app-department-detail',
   templateUrl: './department-detail.component.html',
   styleUrls: ['./department-detail.component.scss'],
-  imports: [
-    ReactiveFormsModule,
-    RxReactiveFormsModule,
-    CommonModule,
-    RouterLink,
-    TranslateModule,
-    NgbTooltipModule,
-    DatePipe,
-  ],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, TranslateModule, NgbTooltipModule, DatePipe],
   standalone: true,
 })
 export class DepartmentDetailComponent implements OnInit {
@@ -122,7 +111,7 @@ export class DepartmentDetailComponent implements OnInit {
     try {
       const confirmed = await this.modalService.OpenConfirmDialog(
         'Department deletion',
-        'Are you sure you want to delete this department? This action cannot be undone.'
+        'Are you sure you want to delete this department? This action cannot be undone.',
       );
 
       if (confirmed) {

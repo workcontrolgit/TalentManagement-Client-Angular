@@ -10,9 +10,6 @@ import { CommonModule } from '@angular/common';
 import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 
-// validation
-import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
-
 // ui service modal and toaster
 import { ModalService } from '@app/services/modal/modal.service';
 import { ToastService } from '@app/services/toast/toast.service';
@@ -35,15 +32,7 @@ const log = new Logger('EmployeeForm');
   selector: 'app-employee-form',
   templateUrl: './employee-form.component.html',
   styleUrls: ['./employee-form.component.scss'],
-  imports: [
-    ReactiveFormsModule,
-    RxReactiveFormsModule,
-    CommonModule,
-    RouterLink,
-    TranslateModule,
-    NgbTooltipModule,
-    NgSelectModule,
-  ],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, TranslateModule, NgbTooltipModule, NgSelectModule],
   standalone: true,
 })
 export class EmployeeFormComponent implements OnInit, AfterViewInit {
@@ -147,7 +136,7 @@ export class EmployeeFormComponent implements OnInit, AfterViewInit {
     try {
       const confirmed = await this.modalService.OpenConfirmDialog(
         'Employee deletion',
-        'Are you sure you want to delete this employee? This action cannot be undone.'
+        'Are you sure you want to delete this employee? This action cannot be undone.',
       );
 
       if (confirmed) {
