@@ -2,9 +2,34 @@
   <div class="dashboard-header">
     <h1 class="dashboard-title">Dashboard Overview</h1>
     <p class="dashboard-subtitle">Monitor your talent management metrics at a glance</p>
+
+    <!-- Refresh Button -->
+    <div class="dashboard-actions">
+      <button class="refresh-btn" (click)="refreshStats()" [disabled]="isLoading" title="Refresh Statistics">
+        <i class="fas" [class.fa-sync]="!isLoading" [class.fa-spinner]="isLoading" [class.fa-spin]="isLoading"></i>
+        Refresh
+      </button>
+    </div>
   </div>
 
-  <div *ngFor="let item of itemList">
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-banner">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{ error }}</span>
+    <button class="retry-btn" (click)="refreshStats()">Retry</button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    <h3>Loading Dashboard Statistics</h3>
+    <p>Please wait while we fetch the latest data...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngFor="let item of itemList" [class.loading-overlay]="isLoading">
     <div class="stats-grid">
       <div class="stat-card employee-card">
         <a routerLink="/employee" class="card-link">
@@ -71,6 +96,28 @@
           </div>
         </a>
       </div>
+
+      <div class="stat-card salaryrange-card">
+        <a routerLink="/salaryrange" class="card-link">
+          <div class="card-content">
+            <div class="icon-wrapper salaryrange-icon">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ item.salaryrange_count | number }}</div>
+              <div class="stat-label">Salary Ranges</div>
+              <div class="stat-trend">
+                <i class="fas fa-arrow-up"></i>
+                <span>+3% from last month</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>Manage salary ranges</span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+      </div>
     </div>
   </div>
 
@@ -83,7 +130,7 @@
         </div>
         <h3>Add Employee</h3>
         <p>Register a new team member</p>
-        <button class="action-button" routerLink="/employee">Get Started</button>
+        <button class="action-button" routerLink="/employee/new">Add Employee</button>
       </div>
 
       <div class="action-card">
@@ -91,17 +138,26 @@
           <i class="fas fa-briefcase"></i>
         </div>
         <h3>Create Position</h3>
-        <p>Define a new role</p>
-        <button class="action-button" routerLink="/position">Create Now</button>
+        <p>Define a new organizational role</p>
+        <button class="action-button" routerLink="/position/new">Create Position</button>
       </div>
 
       <div class="action-card">
         <div class="action-icon">
-          <i class="fas fa-chart-line"></i>
+          <i class="fas fa-building"></i>
         </div>
-        <h3>View Reports</h3>
-        <p>Analyze performance metrics</p>
-        <button class="action-button" routerLink="/reports">View Reports</button>
+        <h3>Add Department</h3>
+        <p>Organize your company structure</p>
+        <button class="action-button" routerLink="/department/new">Add Department</button>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon">
+          <i class="fas fa-dollar-sign"></i>
+        </div>
+        <h3>Define Salary Range</h3>
+        <p>Set compensation structures</p>
+        <button class="action-button" routerLink="/salaryrange/new">Add Salary Range</button>
       </div>
     </div>
   </div>
