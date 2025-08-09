@@ -9,7 +9,8 @@
       "Bash(npm run build:*)",
       "Bash(npm start)",
       "Bash(mkdir:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": []
   }

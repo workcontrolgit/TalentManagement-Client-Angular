@@ -90,7 +90,7 @@ export class SalaryRangeListComponent implements OnInit {
       pageLength: 10,
       serverSide: true,
       processing: false, // Disable processing indicator to prevent stuck dots
-      ajax: (dataTablesParameters: any, callback) => {
+      ajax: (dataTablesParameters: any, callback: any) => {
         this.apiHttpService
           .post(this.apiEndpointsService.postSalaryRangesPagedEndpoint(), dataTablesParameters)
           .subscribe({
@@ -104,7 +104,7 @@ export class SalaryRangeListComponent implements OnInit {
               callback({
                 recordsTotal: resp.recordsTotal,
                 recordsFiltered: resp.recordsFiltered,
-                data: [],
+                data: resp.data,
               });
             },
             error: (error) => {

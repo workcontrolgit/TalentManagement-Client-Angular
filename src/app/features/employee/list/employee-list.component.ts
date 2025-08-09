@@ -35,7 +35,7 @@ export class EmployeeListComponent implements OnInit {
   constructor(
     private apiHttpService: ApiHttpService,
     private apiEndpointsService: ApiEndpointsService,
-    private modalService: ModalService
+    private modalService: ModalService,
   ) {}
 
   wholeRowClick(employee: Employee): void {
@@ -55,7 +55,7 @@ export class EmployeeListComponent implements OnInit {
       pageLength: 10,
       serverSide: true,
       processing: true,
-      ajax: (dataTablesParameters: any, callback) => {
+      ajax: (dataTablesParameters: any, callback: any) => {
         // Call WebAPI to get employees
         this.apiHttpService
           .post(this.apiEndpointsService.postEmployeesPagedEndpoint(), dataTablesParameters)
@@ -64,7 +64,7 @@ export class EmployeeListComponent implements OnInit {
             callback({
               recordsTotal: resp.recordsTotal,
               recordsFiltered: resp.recordsFiltered,
-              data: [],
+              data: resp.data,
             });
           });
       },

@@ -57,7 +57,7 @@ export class DepartmentListComponent implements OnInit {
       pageLength: 10,
       serverSide: true,
       processing: false, // Disable processing indicator to prevent stuck dots
-      ajax: (dataTablesParameters: any, callback) => {
+      ajax: (dataTablesParameters: any, callback: any) => {
         // Call WebAPI to get departments
         this.apiHttpService
           .post(this.apiEndpointsService.postDepartmentsPagedEndpoint(), dataTablesParameters)
@@ -70,7 +70,7 @@ export class DepartmentListComponent implements OnInit {
               callback({
                 recordsTotal: resp.recordsTotal,
                 recordsFiltered: resp.recordsFiltered,
-                data: [],
+                data: resp.data,
               });
             },
             error: (error) => {
