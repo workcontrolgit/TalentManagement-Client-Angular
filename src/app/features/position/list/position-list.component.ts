@@ -6,6 +6,7 @@ import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 import { DataTablesResponse } from '@shared/interfaces/data-tables-response';
 import { ModalService } from '@app/services/modal/modal.service';
+import { ExportService } from '@app/services/export/export.service';
 import { Logger } from '@app/core';
 import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/breadcrumb.component';
 
@@ -31,6 +32,7 @@ export class PositionListComponent implements OnInit {
   private readonly apiEndpointsService = inject(ApiEndpointsService);
   private readonly router = inject(Router);
   private readonly modalService = inject(ModalService);
+  private readonly exportService = inject(ExportService);
 
   dtOptions: DataTables.Settings = {};
 
@@ -253,5 +255,14 @@ export class PositionListComponent implements OnInit {
         return row;
       },
     };
+  }
+
+  exportToExcel(): void {
+    const positionData = this.positions();
+    if (positionData && positionData.length > 0) {
+      this.exportService.exportPositionsToExcel(positionData);
+    } else {
+      console.warn('No position data to export');
+    }
   }
 }

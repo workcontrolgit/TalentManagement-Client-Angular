@@ -43,10 +43,12 @@
     "bootstrap": "^5.3.7",
     "datatables.net": "^2.3.2",
     "datatables.net-bs5": "^2.3.2",
+    "file-saver": "^2.0.5",
     "jquery": "^3.7.0",
     "moment": "^2.29.4",
     "rxjs": "^7.8.1",
     "tslib": "^2.5.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
@@ -63,6 +65,7 @@
     "@biesbjerg/ngx-translate-extract-marker": "^1.0.0",
     "@cypress/schematic": "^2.0.3",
     "@ngneat/until-destroy": "^9.0.0",
+    "@types/file-saver": "^2.0.7",
     "@types/jasmine": "^4.0.0",
     "@types/jquery": "^3.5.9",
     "@types/node": "^18.11.17",

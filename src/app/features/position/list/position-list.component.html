@@ -15,7 +15,7 @@
           <i class="fas fa-plus"></i>
           <span>Add Position</span>
         </button>
-        <button class="action-btn secondary">
+        <button class="action-btn secondary" (click)="exportToExcel()">
           <i class="fas fa-download"></i>
           <span>Export</span>
         </button>
@@ -25,61 +25,63 @@
 
   <div class="position-grid" [style.display]="viewMode === 'grid' ? 'grid' : 'none'">
     @if (isLoading()) {
-    <div class="loading-state">
-      <div class="loading-spinner">
-        <i class="fas fa-spinner fa-spin"></i>
+      <div class="loading-state">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <h3>Loading Positions...</h3>
+        <p>Please wait while we fetch organizational positions</p>
       </div>
-      <h3>Loading Positions...</h3>
-      <p>Please wait while we fetch organizational positions</p>
-    </div>
-    } @else if (positions().length !== 0) { @for (position of positions(); track position.id) {
-    <div class="position-card" (click)="wholeRowClick(position)">
-      <div class="position-icon">
-        <div class="icon-circle">
+    } @else if (positions().length !== 0) {
+      @for (position of positions(); track position.id) {
+        <div class="position-card" (click)="wholeRowClick(position)">
+          <div class="position-icon">
+            <div class="icon-circle">
+              <i class="fas fa-briefcase"></i>
+            </div>
+            <div class="status-indicator active"></div>
+          </div>
+
+          <div class="position-info">
+            <h3 class="position-title">{{ position.positionTitle }}</h3>
+            <p class="position-number">{{ position.positionNumber }}</p>
+            <div class="position-meta">
+              <div class="meta-item">
+                <i class="fas fa-building"></i>
+                <span>{{ position.department.name }}</span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-dollar-sign"></i>
+                <span>${{ position.salaryRange.minSalary }} - ${{ position.salaryRange.maxSalary }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="position-actions">
+            <button class="quick-action" title="View Details" (click)="viewPosition($event, position)">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="quick-action" title="Edit" (click)="editPosition($event, position)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="quick-action" title="More Options">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="empty-state">
+        <div class="empty-icon">
           <i class="fas fa-briefcase"></i>
         </div>
-        <div class="status-indicator active"></div>
-      </div>
-
-      <div class="position-info">
-        <h3 class="position-title">{{ position.positionTitle }}</h3>
-        <p class="position-number">{{ position.positionNumber }}</p>
-        <div class="position-meta">
-          <div class="meta-item">
-            <i class="fas fa-building"></i>
-            <span>{{ position.department.name }}</span>
-          </div>
-          <div class="meta-item">
-            <i class="fas fa-dollar-sign"></i>
-            <span>${{ position.salaryRange.minSalary }} - ${{ position.salaryRange.maxSalary }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="position-actions">
-        <button class="quick-action" title="View Details" (click)="viewPosition($event, position)">
-          <i class="fas fa-eye"></i>
-        </button>
-        <button class="quick-action" title="Edit" (click)="editPosition($event, position)">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="quick-action" title="More Options">
-          <i class="fas fa-ellipsis-v"></i>
+        <h3>No Positions Found</h3>
+        <p>Get started by adding your first organizational position</p>
+        <button class="action-btn primary" [routerLink]="['/position/detail']">
+          <i class="fas fa-plus"></i>
+          <span>Add First Position</span>
         </button>
       </div>
-    </div>
-    } } @else {
-    <div class="empty-state">
-      <div class="empty-icon">
-        <i class="fas fa-briefcase"></i>
-      </div>
-      <h3>No Positions Found</h3>
-      <p>Get started by adding your first organizational position</p>
-      <button class="action-btn primary" [routerLink]="['/position/detail']">
-        <i class="fas fa-plus"></i>
-        <span>Add First Position</span>
-      </button>
-    </div>
     }
   </div>
 
@@ -95,29 +97,29 @@
   </div>
 
   @if (viewMode === 'table') {
-  <div class="modern-table-container">
-    <div class="table-wrapper">
-      <table datatable [dtOptions]="dtOptions" class="modern-table">
-        <thead>
-          <tr>
-            <th>Position Number</th>
-            <th>Title</th>
-            <th>Department</th>
-            <th>Salary Range</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- DataTables will populate this automatically -->
-        </tbody>
-      </table>
+    <div class="modern-table-container">
+      <div class="table-wrapper">
+        <table datatable [dtOptions]="dtOptions" class="modern-table">
+          <thead>
+            <tr>
+              <th>Position Number</th>
+              <th>Title</th>
+              <th>Department</th>
+              <th>Salary Range</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- DataTables will populate this automatically -->
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span class="table-hint">
+          <i class="fas fa-info-circle"></i>
+          All columns are searchable and sortable
+        </span>
+      </div>
     </div>
-    <div class="table-footer">
-      <span class="table-hint">
-        <i class="fas fa-info-circle"></i>
-        All columns are searchable and sortable
-      </span>
-    </div>
-  </div>
   }
 </div>

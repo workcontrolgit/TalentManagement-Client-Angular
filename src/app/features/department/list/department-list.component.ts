@@ -5,13 +5,14 @@ import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 import { DataTablesResponse } from '@shared/interfaces/data-tables-response';
 import { ModalService } from '@app/services/modal/modal.service';
+import { ExportService } from '@app/services/export/export.service';
 import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/breadcrumb.component';
 
 import { Logger } from '@app/core';
 
 import { DataTablesModule } from 'angular-datatables';
 import { RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, CommonModule } from '@angular/common';
 
 const log = new Logger('Department');
 
@@ -19,7 +20,7 @@ const log = new Logger('Department');
   selector: 'app-department-list',
   templateUrl: './department-list.component.html',
   styleUrls: ['./department-list.component.scss'],
-  imports: [DataTablesModule, BreadcrumbComponent, RouterLink, DatePipe],
+  imports: [DataTablesModule, BreadcrumbComponent, RouterLink, DatePipe, CommonModule],
 })
 export class DepartmentListComponent implements OnInit {
   dtOptions: DataTables.Settings = {};
@@ -38,6 +39,7 @@ export class DepartmentListComponent implements OnInit {
     private apiHttpService: ApiHttpService,
     private apiEndpointsService: ApiEndpointsService,
     private modalService: ModalService,
+    private exportService: ExportService,
   ) {}
 
   wholeRowClick(department: Department): void {
@@ -158,5 +160,16 @@ export class DepartmentListComponent implements OnInit {
         this.departments = [];
       },
     });
+  }
+
+  exportToExcel(): void {
+    // Try to export from tableData first (table view), then fallback to departments (grid view)
+    const dataToExport = this.tableData?.length > 0 ? this.tableData : this.departments;
+
+    if (dataToExport && dataToExport.length > 0) {
+      this.exportService.exportDepartmentsToExcel(dataToExport);
+    } else {
+      console.warn('No department data to export');
+    }
   }
 }
