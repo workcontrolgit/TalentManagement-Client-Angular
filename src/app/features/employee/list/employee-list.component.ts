@@ -5,11 +5,13 @@ import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 import { DataTablesResponse } from '@shared/interfaces/data-tables-response';
 import { ModalService } from '@app/services/modal/modal.service';
+import { ExportService } from '@app/services/export/export.service';
 import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/breadcrumb.component';
 
 import { Logger } from '@app/core';
 
 import { DataTablesModule } from 'angular-datatables';
+import { RouterLink } from '@angular/router';
 
 const log = new Logger('Employee');
 
@@ -17,7 +19,7 @@ const log = new Logger('Employee');
   selector: 'app-employee-list',
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
-  imports: [DataTablesModule, BreadcrumbComponent],
+  imports: [DataTablesModule, BreadcrumbComponent, RouterLink],
 })
 export class EmployeeListComponent implements OnInit {
   dtOptions: DataTables.Settings = {};
@@ -34,7 +36,8 @@ export class EmployeeListComponent implements OnInit {
   constructor(
     private apiHttpService: ApiHttpService,
     private apiEndpointsService: ApiEndpointsService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private exportService: ExportService,
   ) {}
 
   wholeRowClick(employee: Employee): void {
@@ -54,7 +57,7 @@ export class EmployeeListComponent implements OnInit {
       pageLength: 10,
       serverSide: true,
       processing: true,
-      ajax: (dataTablesParameters: any, callback) => {
+      ajax: (dataTablesParameters: any, callback: any) => {
         // Call WebAPI to get employees
         this.apiHttpService
           .post(this.apiEndpointsService.postEmployeesPagedEndpoint(), dataTablesParameters)
@@ -63,7 +66,7 @@ export class EmployeeListComponent implements OnInit {
             callback({
               recordsTotal: resp.recordsTotal,
               recordsFiltered: resp.recordsFiltered,
-              data: [],
+              data: resp.data,
             });
           });
       },
@@ -71,20 +74,32 @@ export class EmployeeListComponent implements OnInit {
       columns: [
         {
           title: 'Name',
-          data: '',
+          data: null,
+          render: (data: any, type: any, row: any) => {
+            return `${row.firstName || ''} ${row.lastName || ''}`;
+          },
         },
         {
           title: 'Title',
-          data: '',
+          data: null,
+          render: (data: any, type: any, row: any) => {
+            return row.position?.positionTitle || '';
+          },
         },
         {
           title: 'Email',
-          data: '',
+          data: null,
+          render: (data: any, type: any, row: any) => {
+            return row.email || '';
+          },
         },
         {
           title: 'Action',
-          data: '',
+          data: null,
           orderable: false,
+          render: () => {
+            return '<button class="btn btn-sm btn-outline-primary">View</button>';
+          },
         },
       ],
     };
@@ -105,15 +120,29 @@ export class EmployeeListComponent implements OnInit {
       start: 0,
       length: 50, // Load more employees for grid view
       search: { value: '', regex: false },
-      order: [{ column: 0, dir: 'asc' }],
+      order: [],
       columns: [],
     };
 
-    this.apiHttpService
-      .post(this.apiEndpointsService.postEmployeesPagedEndpoint(), initialRequest)
-      .subscribe((resp: DataTablesResponse) => {
+    this.apiHttpService.post(this.apiEndpointsService.postEmployeesPagedEndpoint(), initialRequest).subscribe({
+      next: (resp: DataTablesResponse) => {
         this.employees = resp.data;
         this.isLoading = false;
-      });
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error loading employee data:', error);
+        // Set some fallback data or show error state
+        this.employees = [];
+      },
+    });
+  }
+
+  exportToExcel(): void {
+    if (this.employees && this.employees.length > 0) {
+      this.exportService.exportEmployeesToExcel(this.employees);
+    } else {
+      console.warn('No employee data to export');
+    }
   }
 }

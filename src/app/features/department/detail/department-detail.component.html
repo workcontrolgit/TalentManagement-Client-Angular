@@ -1,0 +1,199 @@
+<div class="container-fluid">
+  <form [formGroup]="entryForm" novalidate>
+    <div class="card shadow-sm">
+      <div class="card-header bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="text-secondary mb-0">
+              <i class="fas fa-building me-2"></i>
+              {{ formMode() === 'New' ? 'New Department' : 'Edit Department' }}
+            </h3>
+          </div>
+          <div>
+            <a
+              class="btn btn-outline-secondary"
+              ngbTooltip="Return to Department List"
+              [routerLink]="['/department']"
+              [class.disabled]="isLoading()"
+            >
+              <i class="fas fa-arrow-left me-1"></i> Back
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Loading State -->
+        @if(isLoading()) {
+        <div class="d-flex justify-content-center align-items-center py-4">
+          <div class="spinner-border text-primary me-2" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <span>Processing...</span>
+        </div>
+        }
+
+        <!-- Error State -->
+        @if(error()) {
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          {{ error() }}
+        </div>
+        }
+
+        <div class="row">
+          <div class="col-12">
+            <div class="mb-3">
+              <label for="id" class="form-label fw-bold"> <i class="fas fa-fingerprint me-1"></i>Department ID </label>
+              <input
+                type="text"
+                id="id"
+                class="form-control bg-light"
+                formControlName="id"
+                readonly
+                ngbTooltip="Auto-generated unique identifier"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold">
+                <i class="fas fa-building me-1"></i>Department Name <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                id="name"
+                class="form-control"
+                [class.is-invalid]="f['name'].invalid && f['name'].touched"
+                [class.is-valid]="f['name'].valid && f['name'].touched"
+                formControlName="name"
+                placeholder="Enter department name"
+                ngbTooltip="Department name must be at least 2 characters long"
+              />
+              @if(f['name'].invalid && f['name'].touched) {
+              <div class="invalid-feedback">
+                @if(f['name'].errors?.['required']) {
+                <div>Department name is required</div>
+                } @if(f['name'].errors?.['minlength']) {
+                <div>Department name must be at least 2 characters long</div>
+                }
+              </div>
+              }
+            </div>
+
+            @if(!isAddNew()) {
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="createdBy" class="form-label fw-bold"> <i class="fas fa-user me-1"></i>Created By </label>
+                  <input
+                    type="text"
+                    id="createdBy"
+                    class="form-control bg-light"
+                    formControlName="createdBy"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="created" class="form-label fw-bold">
+                    <i class="fas fa-calendar-plus me-1"></i>Created Date
+                  </label>
+                  <input
+                    type="text"
+                    id="created"
+                    class="form-control bg-light"
+                    [value]="department()?.created | date : 'medium'"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="lastModifiedBy" class="form-label fw-bold">
+                    <i class="fas fa-user-edit me-1"></i>Last Modified By
+                  </label>
+                  <input
+                    type="text"
+                    id="lastModifiedBy"
+                    class="form-control bg-light"
+                    formControlName="lastModifiedBy"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="lastModified" class="form-label fw-bold">
+                    <i class="fas fa-calendar-edit me-1"></i>Last Modified Date
+                  </label>
+                  <input
+                    type="text"
+                    id="lastModified"
+                    class="form-control bg-light"
+                    [value]="department()?.lastModified | date : 'medium'"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between">
+          <div>
+            @if(canDelete()) {
+            <button
+              type="button"
+              class="btn btn-danger"
+              [disabled]="isLoading()"
+              (click)="onDelete()"
+              ngbTooltip="Delete this department permanently"
+            >
+              <i class="fas fa-trash me-1"></i>
+              @if(isLoading()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              } Delete
+            </button>
+            }
+          </div>
+          <div>
+            @if(isAddNew()) {
+            <button
+              type="button"
+              class="btn btn-success"
+              [disabled]="!canSave()"
+              (click)="onCreate()"
+              ngbTooltip="Create new department"
+            >
+              <i class="fas fa-plus me-1"></i>
+              @if(isLoading()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              } Create
+            </button>
+            } @else {
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!canSave()"
+              (click)="onUpdate()"
+              ngbTooltip="Save changes to department"
+            >
+              <i class="fas fa-save me-1"></i>
+              @if(isLoading()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              } Save Changes
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

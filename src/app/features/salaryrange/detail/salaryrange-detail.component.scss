@@ -1,0 +1,124 @@
+c.salary-range-section {
+  background: rgba(248, 249, 250, 0.5);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(222, 226, 230, 0.5);
+
+  h5 {
+    color: #495057;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(220, 38, 38, 0.1);
+
+    i {
+      color: #dc2626;
+    }
+  }
+
+  .input-group-text {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+    border: none;
+    font-weight: 600;
+  }
+
+  .form-control {
+    border-left: none;
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+      border-color: #dc2626;
+    }
+
+    &.is-valid {
+      border-color: #198754;
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+      }
+    }
+
+    &.is-invalid {
+      border-color: #dc3545;
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+      }
+    }
+  }
+}
+
+.card-header {
+  h3 i {
+    color: #dc2626;
+  }
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #198754, #20c997);
+  border: none;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #157347, #1ba085);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  border: none;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #0b5ed7, #520dc2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+  }
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #dc3545, #e55353);
+  border: none;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #bb2d3b, #c44242);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  }
+}
+
+.alert-info {
+  background: linear-gradient(135deg, rgba(13, 202, 240, 0.1), rgba(13, 110, 253, 0.05));
+  border-color: rgba(13, 202, 240, 0.2);
+  color: #055160;
+
+  i {
+    color: #0dcaf0;
+  }
+
+  .badge {
+    background: linear-gradient(135deg, #0dcaf0, #0d6efd) !important;
+  }
+}
+
+.alert-light {
+  background: linear-gradient(135deg, rgba(248, 249, 250, 0.8), rgba(233, 236, 239, 0.3));
+  border-color: rgba(222, 226, 230, 0.5);
+  color: #495057;
+
+  .badge {
+    background: linear-gradient(135deg, #6c757d, #495057) !important;
+  }
+}
+
+.text-success {
+  color: #198754 !important;
+}
+
+.text-danger {
+  color: #dc2626 !important;
+}
+
+.text-info {
+  color: #0dcaf0 !important;
+}

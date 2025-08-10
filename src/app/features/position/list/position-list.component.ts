@@ -5,6 +5,8 @@ import { Position } from '@shared/interfaces/position';
 import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 import { DataTablesResponse } from '@shared/interfaces/data-tables-response';
+import { ModalService } from '@app/services/modal/modal.service';
+import { ExportService } from '@app/services/export/export.service';
 import { Logger } from '@app/core';
 import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/breadcrumb.component';
 
@@ -29,6 +31,8 @@ export class PositionListComponent implements OnInit {
   private readonly apiHttpService = inject(ApiHttpService);
   private readonly apiEndpointsService = inject(ApiEndpointsService);
   private readonly router = inject(Router);
+  private readonly modalService = inject(ModalService);
+  private readonly exportService = inject(ExportService);
 
   dtOptions: DataTables.Settings = {};
 
@@ -62,8 +66,32 @@ export class PositionListComponent implements OnInit {
       return;
     }
 
-    this.router.navigate(['/position/detail', { id: position.id }]);
-    log.debug('Navigation to position detail:', position.id);
+    let modalTitle = 'Position Detail';
+    this.openModal(modalTitle, position);
+    log.debug('Whole row clicked.', position);
+  }
+
+  openModal(title: string, position: Position) {
+    this.modalService.OpenPositionDetailDialog(title, position);
+  }
+
+  viewPosition(event: Event, position: Position): void {
+    event.stopPropagation(); // Prevent card click from triggering
+    let modalTitle = 'Position Detail';
+    this.openModal(modalTitle, position);
+    log.debug('View position clicked.', position);
+  }
+
+  editPosition(event: Event, position: Position): void {
+    event.stopPropagation(); // Prevent card click from triggering
+    if (!position?.id) {
+      log.error('Invalid position selected for editing');
+      this.error.set('Invalid position selected for editing');
+      return;
+    }
+
+    this.router.navigate(['/position/edit', position.id]);
+    log.debug('Edit position clicked.', position);
   }
 
   setViewMode(mode: 'grid' | 'table'): void {
@@ -139,8 +167,9 @@ export class PositionListComponent implements OnInit {
         {
           title: 'Position Number',
           data: null,
+          className: 'dt-left',
           render: (data: any, type: any, row: any) => {
-            return `<span class="position-number">${row.positionNumber || ''}</span>`;
+            return `<div style="text-align: left;"><span class="position-number">${row.positionNumber || ''}</span></div>`;
           },
         },
         {
@@ -226,5 +255,14 @@ export class PositionListComponent implements OnInit {
         return row;
       },
     };
+  }
+
+  exportToExcel(): void {
+    const positionData = this.positions();
+    if (positionData && positionData.length > 0) {
+      this.exportService.exportPositionsToExcel(positionData);
+    } else {
+      console.warn('No position data to export');
+    }
   }
 }

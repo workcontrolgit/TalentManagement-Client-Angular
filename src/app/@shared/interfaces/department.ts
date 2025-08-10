@@ -1,6 +1,6 @@
 export interface Department {
   name: string;
-  positions: any[];
+  positions?: any[];
   createdBy: string;
   created: Date;
   lastModifiedBy: null;

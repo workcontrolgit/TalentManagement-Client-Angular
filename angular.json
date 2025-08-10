@@ -37,16 +37,14 @@
             ],
             "styles": [
               "src/main.scss",
-              "src/theme/theme.scss",
-              "src/theme/theme-variables.scss",
-              "node_modules/bootstrap/scss/bootstrap.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.css",
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
               "node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/datatables.net/js/jquery.dataTables.min.js",
+              "node_modules/datatables.net/js/dataTables.min.js",
               "node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"
             ],
             "browser": "src/main.ts",

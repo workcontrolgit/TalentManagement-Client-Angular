@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PositionListComponent } from './list/position-list.component';
-import { PositionDetailComponent } from './detail/position-detail.component';
+import { PositionFormComponent } from './form/position-form.component';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AuthGuard } from '@app/core/auth/auth-guard.service';
 import { RoleGuard } from '@app/core/auth/role-guard.service';
@@ -14,16 +14,16 @@ const routes: Routes = [
     data: { title: marker('Position') },
   },
   {
-    path: 'detail',
-    component: PositionDetailComponent,
+    path: 'new',
+    component: PositionFormComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { title: marker('Position New'), role: 'HRAdmin' },
+    data: { title: marker('New Position'), role: 'HRAdmin' },
   },
   {
-    path: 'detail/:id',
-    component: PositionDetailComponent,
+    path: 'edit/:id',
+    component: PositionFormComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { title: marker('Position Detail'), role: 'HRAdmin' },
+    data: { title: marker('Edit Position'), role: 'HRAdmin' },
   },
 ];
 

@@ -1,0 +1,327 @@
+<div class="container-fluid">
+  <form [formGroup]="entryForm" novalidate>
+    <div class="card shadow-sm">
+      <div class="card-header bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="text-secondary mb-0">
+              <i class="fas fa-briefcase me-2"></i>
+              {{ formMode() === 'New' ? 'New Position' : 'Edit Position' }}
+            </h3>
+          </div>
+          <div>
+            <a
+              class="btn btn-outline-secondary"
+              ngbTooltip="Return to Position List"
+              [routerLink]="['/position']"
+              [class.disabled]="isLoading()"
+            >
+              <i class="fas fa-arrow-left me-1"></i> Back
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Loading State -->
+        @if(isLoading()) {
+        <div class="d-flex justify-content-center align-items-center py-4">
+          <div class="spinner-border text-primary me-2" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <span>Processing...</span>
+        </div>
+        }
+
+        <!-- Error State -->
+        @if(error()) {
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          {{ error() }}
+        </div>
+        }
+
+        <!-- Form Sections -->
+        <div class="detail-sections">
+          <!-- System Information Section -->
+          <div class="detail-section">
+            <h3 class="section-title">
+              <i class="fas fa-cog"></i>
+              System Information
+            </h3>
+            <div class="row">
+              <div class="col-12">
+                <div class="mb-3">
+                  <label for="id" class="form-label fw-bold">
+                    <i class="fas fa-fingerprint me-1"></i>Position ID
+                  </label>
+                  <input
+                    type="text"
+                    id="id"
+                    class="form-control bg-light"
+                    formControlName="id"
+                    placeholder="Auto-assigned ID"
+                    readonly
+                  />
+                  <div class="form-text">This ID is automatically generated and cannot be changed</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Basic Information Section -->
+          <div class="detail-section">
+            <h3 class="section-title">
+              <i class="fas fa-info-circle"></i>
+              Basic Information
+            </h3>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="positionNumber" class="form-label fw-bold">
+                    <i class="fas fa-hashtag me-1"></i>Position Number *
+                  </label>
+                  <input
+                    type="text"
+                    id="positionNumber"
+                    class="form-control"
+                    formControlName="positionNumber"
+                    [class.is-invalid]="
+                      f['positionNumber'].invalid && (f['positionNumber'].dirty || f['positionNumber'].touched)
+                    "
+                    [class.is-valid]="
+                      f['positionNumber'].valid && (f['positionNumber'].dirty || f['positionNumber'].touched)
+                    "
+                    placeholder="Enter position number"
+                    [disabled]="isLoading()"
+                  />
+                  @if(f['positionNumber'].invalid && (f['positionNumber'].dirty || f['positionNumber'].touched)) {
+                  <div class="invalid-feedback">
+                    @if(f['positionNumber'].errors?.['required']) { Position number is required }
+                    @if(f['positionNumber'].errors?.['minlength']) { Position number must be at least 2 characters long
+                    }
+                  </div>
+                  }
+                  <div class="form-text">Unique identifier for this position (e.g., POS-001, MGMT-101)</div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="positionTitle" class="form-label fw-bold">
+                    <i class="fas fa-user-tie me-1"></i>Position Title *
+                  </label>
+                  <input
+                    type="text"
+                    id="positionTitle"
+                    class="form-control"
+                    formControlName="positionTitle"
+                    [class.is-invalid]="
+                      f['positionTitle'].invalid && (f['positionTitle'].dirty || f['positionTitle'].touched)
+                    "
+                    [class.is-valid]="
+                      f['positionTitle'].valid && (f['positionTitle'].dirty || f['positionTitle'].touched)
+                    "
+                    placeholder="Enter position title"
+                    [disabled]="isLoading()"
+                  />
+                  @if(f['positionTitle'].invalid && (f['positionTitle'].dirty || f['positionTitle'].touched)) {
+                  <div class="invalid-feedback">
+                    @if(f['positionTitle'].errors?.['required']) { Position title is required }
+                    @if(f['positionTitle'].errors?.['minlength']) { Position title must be at least 3 characters long }
+                  </div>
+                  }
+                  <div class="form-text">Official job title (e.g., Software Engineer, Marketing Manager)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Job Description Section -->
+          <div class="detail-section">
+            <h3 class="section-title">
+              <i class="fas fa-file-alt"></i>
+              Job Description
+            </h3>
+            <div class="row">
+              <div class="col-12">
+                <div class="mb-3">
+                  <label for="positionDescription" class="form-label fw-bold">
+                    <i class="fas fa-file-text me-1"></i>Position Description *
+                  </label>
+                  <textarea
+                    id="positionDescription"
+                    rows="5"
+                    class="form-control"
+                    formControlName="positionDescription"
+                    [class.is-invalid]="
+                      f['positionDescription'].invalid &&
+                      (f['positionDescription'].dirty || f['positionDescription'].touched)
+                    "
+                    [class.is-valid]="
+                      f['positionDescription'].valid &&
+                      (f['positionDescription'].dirty || f['positionDescription'].touched)
+                    "
+                    placeholder="Describe the key responsibilities, qualifications, and requirements for this position..."
+                    [disabled]="isLoading()"
+                  ></textarea>
+                  @if(f['positionDescription'].invalid && (f['positionDescription'].dirty ||
+                  f['positionDescription'].touched)) {
+                  <div class="invalid-feedback">
+                    @if(f['positionDescription'].errors?.['required']) { Position description is required }
+                    @if(f['positionDescription'].errors?.['minlength']) { Position description must be at least 10
+                    characters long }
+                  </div>
+                  }
+                  <div class="form-text">
+                    Provide comprehensive details about responsibilities, qualifications, skills required, and
+                    expectations. This will be used for job postings and performance evaluations.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Organizational Details Section -->
+          <div class="detail-section">
+            <h3 class="section-title">
+              <i class="fas fa-sitemap"></i>
+              Organizational Details
+            </h3>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="department" class="form-label fw-bold">
+                    <i class="fas fa-building me-1"></i>Department *
+                  </label>
+                  <ng-select
+                    [items]="departments()"
+                    bindLabel="name"
+                    formControlName="departmentId"
+                    bindValue="id"
+                    placeholder="Select Department"
+                    [disabled]="isLoading()"
+                    [class.is-invalid]="
+                      f['departmentId'].invalid && (f['departmentId'].dirty || f['departmentId'].touched)
+                    "
+                    [clearable]="false"
+                    [searchable]="true"
+                  >
+                  </ng-select>
+                  @if(f['departmentId'].invalid && (f['departmentId'].dirty || f['departmentId'].touched)) {
+                  <div class="invalid-feedback d-block">Please select the department for this position</div>
+                  }
+                  <div class="form-text">
+                    Choose the department this position belongs to for organizational structure
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="salaryRange" class="form-label fw-bold">
+                    <i class="fas fa-dollar-sign me-1"></i>Salary Range *
+                  </label>
+                  <ng-select
+                    [items]="salaryRanges()"
+                    bindLabel="name"
+                    formControlName="salaryRangeId"
+                    bindValue="id"
+                    placeholder="Select Salary Range"
+                    [disabled]="isLoading()"
+                    [class.is-invalid]="
+                      f['salaryRangeId'].invalid && (f['salaryRangeId'].dirty || f['salaryRangeId'].touched)
+                    "
+                    [clearable]="false"
+                    [searchable]="true"
+                  >
+                    <ng-template ng-label-tmp let-item="item">
+                      <span class="salary-option">
+                        <strong>{{ item.name }}</strong>
+                        <span class="salary-range"
+                          >${{ item.minSalary | number }} - ${{ item.maxSalary | number }}</span
+                        >
+                      </span>
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                      <div class="salary-option-detailed">
+                        <div class="salary-name">{{ item.name }}</div>
+                        <div class="salary-details">
+                          <span class="min-salary">${{ item.minSalary | number }}</span>
+                          <span class="separator">-</span>
+                          <span class="max-salary">${{ item.maxSalary | number }}</span>
+                          <span class="range-info">(Range: ${{ item.maxSalary - item.minSalary | number }})</span>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ng-select>
+                  @if(f['salaryRangeId'].invalid && (f['salaryRangeId'].dirty || f['salaryRangeId'].touched)) {
+                  <div class="invalid-feedback d-block">Please select a salary range for this position</div>
+                  }
+                  <div class="form-text">
+                    Choose the appropriate salary range for budgeting and candidate expectations
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between">
+          <div>
+            @if(canDelete()) {
+            <button
+              type="button"
+              class="btn btn-danger"
+              [disabled]="isLoading()"
+              (click)="onDelete()"
+              ngbTooltip="Delete this position permanently"
+            >
+              <i class="fas fa-trash me-1"></i>
+              @if(isLoading()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              } Delete
+            </button>
+            }
+          </div>
+          <div>
+            @if(isAddNew()) {
+            <button
+              type="button"
+              class="btn btn-success"
+              [disabled]="!canSave()"
+              (click)="onCreate()"
+              ngbTooltip="Create new position"
+            >
+              <i class="fas fa-plus me-1"></i>
+              @if(isLoading()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              } Create
+            </button>
+            } @else {
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!canSave()"
+              (click)="onUpdate()"
+              ngbTooltip="Save changes to position"
+            >
+              <i class="fas fa-save me-1"></i>
+              @if(isLoading()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              } Save Changes
+            </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<!-- <hr />
+<p>
+  Debug this.entryForm.value <br />
+  {{ this.entryForm.value | json }}
+</p> -->

@@ -11,6 +11,11 @@ export interface Employee {
   employeeNumber: string;
   prefix: string;
   phone: string;
-  position: Position;
+  position: Position | null;
+  positionId: string;
   salary: number;
+  createdBy?: string;
+  created?: string;
+  lastModifiedBy?: string;
+  lastModified?: string;
 }

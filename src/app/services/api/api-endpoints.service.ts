@@ -49,17 +49,35 @@ export class ApiEndpointsService {
 
   // TALENT MANAGEMENT
   // call Positions endpoint
+  public getPositionsCountEndpoint = (): string => this.createUrl('Positions/count');
   public getPositionByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
   public deletePositionByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
   public postPositionsPagedEndpoint = (): string => this.createUrl('Positions/Paged');
   public postPositionsEndpoint = (): string => this.createUrl('Positions');
   public putPositionsEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
   // call Employees endpoint
+  public getEmployeesCountEndpoint = (): string => this.createUrl('Employees/count');
   public postEmployeesPagedEndpoint = (): string => this.createUrl('Employees/Paged');
+  public getEmployeeByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Employees', [id]);
+  public postEmployeesEndpoint = (): string => this.createUrl('Employees');
+  public putEmployeesEndpoint = (id: string): string => this.createUrlWithPathVariables('Employees', [id]);
+  public deleteEmployeeByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Employees', [id]);
   // call Departments endpoint
+  public getDepartmentsCountEndpoint = (): string => this.createUrl('Departments/count');
   public getDepartmentsEndpoint = (): string => this.createUrl('Departments');
+  public getDepartmentByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Departments', [id]);
+  public postDepartmentsPagedEndpoint = (): string => this.createUrl('Departments/Paged');
+  public postDepartmentsEndpoint = (): string => this.createUrl('Departments');
+  public putDepartmentsEndpoint = (id: string): string => this.createUrlWithPathVariables('Departments', [id]);
+  public deleteDepartmentByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Departments', [id]);
   // call SalaryRanges endpoint
+  public getSalaryRangesCountEndpoint = (): string => this.createUrl('SalaryRanges/count');
   public getSalaryRangesEndpoint = (): string => this.createUrl('SalaryRanges');
+  public getSalaryRangeByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('SalaryRanges', [id]);
+  public postSalaryRangesPagedEndpoint = (): string => this.createUrl('SalaryRanges/Paged');
+  public postSalaryRangesEndpoint = (): string => this.createUrl('SalaryRanges');
+  public putSalaryRangesEndpoint = (id: string): string => this.createUrlWithPathVariables('SalaryRanges', [id]);
+  public deleteSalaryRangeByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('SalaryRanges', [id]);
 
   /* #region URL CREATOR */
   // URL

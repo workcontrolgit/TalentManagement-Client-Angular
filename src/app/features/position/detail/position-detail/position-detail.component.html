@@ -1,0 +1,241 @@
+<div class="modern-position-detail">
+  <div class="modal-header">
+    <div class="header-content">
+      <div class="position-icon-large">
+        <div class="icon-circle">
+          <i class="fas fa-briefcase"></i>
+        </div>
+        <div class="status-indicator active"></div>
+      </div>
+      <div class="header-info">
+        <h2 class="position-title">{{ position.positionTitle }}</h2>
+        <p class="position-number">{{ position.positionNumber }}</p>
+        <div class="position-id-badge">ID: {{ position.id }}</div>
+      </div>
+    </div>
+    <button type="button" class="close-btn" aria-label="Close" (click)="this.activeModal.dismiss()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="detail-sections">
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-info-circle"></i>
+          Basic Information
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Position Title</div>
+            <div class="info-value">{{ position.positionTitle }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Position Number</div>
+            <div class="info-value position-id">{{ position.positionNumber }}</div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-label">Position ID</div>
+            <div class="info-value position-uuid">{{ position.id }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-file-alt"></i>
+          Job Description
+        </h3>
+        <div class="description-content">
+          <p>{{ position.positionDescription || 'No description available' }}</p>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-building"></i>
+          Department Information
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Department</div>
+            <div class="info-value">
+              <div class="department-badge">
+                <i class="fas fa-building"></i>
+                {{ position.department.name || 'Not assigned' }}
+              </div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Department ID</div>
+            <div class="info-value department-id">{{ position.departmentId || 'N/A' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-dollar-sign"></i>
+          Compensation Details
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Salary Range</div>
+            <div class="info-value">
+              @if (position.salaryRange) {
+                <div class="salary-badge">
+                  <i class="fas fa-money-bill-wave"></i>
+                  <span>{{ position.salaryRange.name }}</span>
+                </div>
+              } @else {
+                <div class="salary-badge not-assigned">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  <span>Not specified</span>
+                </div>
+              }
+            </div>
+          </div>
+          @if (position.salaryRange) {
+            <div class="info-item">
+              <div class="info-label">Salary Range Details</div>
+              <div class="info-value">
+                <div class="salary-details">
+                  <div class="salary-item">
+                    <span class="salary-label">Minimum:</span>
+                    <span class="salary-amount min">{{
+                      position.salaryRange.minSalary | currency: 'USD' : 'symbol' : '1.0-0'
+                    }}</span>
+                  </div>
+                  <div class="salary-item">
+                    <span class="salary-label">Maximum:</span>
+                    <span class="salary-amount max">{{
+                      position.salaryRange.maxSalary | currency: 'USD' : 'symbol' : '1.0-0'
+                    }}</span>
+                  </div>
+                  <div class="salary-item">
+                    <span class="salary-label">Range:</span>
+                    <span class="salary-amount range">{{
+                      position.salaryRange.maxSalary - position.salaryRange.minSalary
+                        | currency: 'USD' : 'symbol' : '1.0-0'
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Average Salary</div>
+              <div class="info-value">
+                <div class="average-salary-badge">
+                  {{
+                    (position.salaryRange.minSalary + position.salaryRange.maxSalary) / 2
+                      | currency: 'USD' : 'symbol' : '1.0-0'
+                  }}
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3 class="section-title">
+          <i class="fas fa-users"></i>
+          Current Assignments
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Employees in This Position</div>
+            <div class="info-value">
+              <div class="employee-count-badge">
+                <i class="fas fa-user-friends"></i>
+                {{ employeeCount }} Employee{{ employeeCount !== 1 ? 's' : '' }}
+              </div>
+            </div>
+          </div>
+          @if (position.employees && position.employees.length > 0) {
+            <div class="info-item full-width">
+              <div class="info-label">Employee List</div>
+              <div class="info-value">
+                <div class="employees-list">
+                  @for (employee of position.employees; track employee.id) {
+                    <div class="employee-item">
+                      <div class="employee-avatar">
+                        <span>{{ getEmployeeInitials(employee) }}</span>
+                      </div>
+                      <div class="employee-info">
+                        <span class="employee-name">{{ getEmployeeFullName(employee) }}</span>
+                        <span class="employee-id">ID: {{ employee.employeeNumber || employee.id }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="info-item full-width">
+              <div class="info-value">
+                <div class="empty-assignments">
+                  <i class="fas fa-user-slash"></i>
+                  <span>No employees currently assigned to this position</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (position.created || position.lastModified) {
+        <div class="detail-section">
+          <h3 class="section-title">
+            <i class="fas fa-clock"></i>
+            Audit Information
+          </h3>
+          <div class="info-grid">
+            @if (position.created) {
+              <div class="info-item">
+                <div class="info-label">Created Date</div>
+                <div class="info-value audit-date">{{ position.created | date: 'medium' }}</div>
+              </div>
+            }
+            @if (position.createdBy) {
+              <div class="info-item">
+                <div class="info-label">Created By</div>
+                <div class="info-value audit-user">{{ position.createdBy }}</div>
+              </div>
+            }
+            @if (position.lastModified) {
+              <div class="info-item">
+                <div class="info-label">Last Modified</div>
+                <div class="info-value audit-date">{{ position.lastModified | date: 'medium' }}</div>
+              </div>
+            }
+            @if (position.lastModifiedBy) {
+              <div class="info-item">
+                <div class="info-label">Last Modified By</div>
+                <div class="info-value audit-user">{{ position.lastModifiedBy }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="action-buttons">
+      <button type="button" class="action-btn secondary" (click)="this.activeModal.dismiss()">
+        <i class="fas fa-times"></i>
+        <span>Close</span>
+      </button>
+      <button
+        type="button"
+        class="action-btn primary"
+        (click)="editPosition()"
+        style="pointer-events: auto; z-index: 999"
+      >
+        <i class="fas fa-edit"></i>
+        <span>Edit Position</span>
+      </button>
+    </div>
+  </div>
+</div>

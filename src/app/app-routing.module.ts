@@ -23,6 +23,14 @@ const routes: Routes = [
       loadChildren: () => import('./features/position/position.module').then((m) => m.PositionModule),
     },
     {
+      path: 'department',
+      loadChildren: () => import('./features/department/department.module').then((m) => m.DepartmentModule),
+    },
+    {
+      path: 'salaryrange',
+      loadChildren: () => import('./features/salaryrange/salaryrange.module').then((m) => m.SalaryRangeModule),
+    },
+    {
       path: 'profile',
       loadChildren: () => import('./features/profile/profile.module').then((m) => m.ProfileModule),
     },
