@@ -35,7 +35,7 @@
     "@fortawesome/fontawesome-free": "^6.4.0",
     "@ng-bootstrap/ng-bootstrap": "^19.0.1",
     "@ng-select/ng-select": "^20.1.0",
-    "@ngx-translate/core": "^15.0.0",
+    "@ngx-translate/core": "^17.0.0",
     "@popperjs/core": "^2.11.0",
     "angular-datatables": "^19.0.0",
     "angular-oauth2-oidc": "^20.0.2",
