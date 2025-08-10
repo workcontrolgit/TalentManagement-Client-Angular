@@ -5,6 +5,7 @@ import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 import { DataTablesResponse } from '@shared/interfaces/data-tables-response';
 import { ModalService } from '@app/services/modal/modal.service';
+import { ExportService } from '@app/services/export/export.service';
 import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/breadcrumb.component';
 
 import { Logger } from '@app/core';
@@ -36,6 +37,7 @@ export class EmployeeListComponent implements OnInit {
     private apiHttpService: ApiHttpService,
     private apiEndpointsService: ApiEndpointsService,
     private modalService: ModalService,
+    private exportService: ExportService,
   ) {}
 
   wholeRowClick(employee: Employee): void {
@@ -134,5 +136,13 @@ export class EmployeeListComponent implements OnInit {
         this.employees = [];
       },
     });
+  }
+
+  exportToExcel(): void {
+    if (this.employees && this.employees.length > 0) {
+      this.exportService.exportEmployeesToExcel(this.employees);
+    } else {
+      console.warn('No employee data to export');
+    }
   }
 }

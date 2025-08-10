@@ -15,7 +15,7 @@
           <i class="fas fa-plus"></i>
           <span>Add Department</span>
         </a>
-        <button class="action-btn secondary">
+        <button class="action-btn secondary" (click)="exportToExcel()">
           <i class="fas fa-download"></i>
           <span>Export</span>
         </button>
@@ -58,9 +58,9 @@
           </div>
 
           <div class="department-actions">
-            <a [routerLink]="['/department/edit', department.id]" class="quick-action" title="View Details">
+            <button class="quick-action" title="View Details" (click)="viewDepartment($event, department)">
               <i class="fas fa-eye"></i>
-            </a>
+            </button>
             <a [routerLink]="['/department/edit', department.id]" class="quick-action" title="Edit">
               <i class="fas fa-edit"></i>
             </a>

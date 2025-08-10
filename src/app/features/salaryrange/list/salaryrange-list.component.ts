@@ -6,13 +6,14 @@ import { ApiHttpService } from '@app/services/api/api-http.service';
 import { ApiEndpointsService } from '@app/services/api/api-endpoints.service';
 import { DataTablesResponse } from '@shared/interfaces/data-tables-response';
 import { ModalService } from '@app/services/modal/modal.service';
+import { ExportService } from '@app/services/export/export.service';
 import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/breadcrumb.component';
 
 import { Logger } from '@app/core';
 
 import { DataTablesModule } from 'angular-datatables';
 import { RouterLink } from '@angular/router';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, CommonModule } from '@angular/common';
 
 const log = new Logger('SalaryRange');
 
@@ -20,7 +21,7 @@ const log = new Logger('SalaryRange');
   selector: 'app-salaryrange-list',
   templateUrl: './salaryrange-list.component.html',
   styleUrls: ['./salaryrange-list.component.scss'],
-  imports: [DataTablesModule, BreadcrumbComponent, RouterLink, DecimalPipe],
+  imports: [DataTablesModule, BreadcrumbComponent, RouterLink, DecimalPipe, CommonModule],
   standalone: true,
 })
 export class SalaryRangeListComponent implements OnInit {
@@ -47,6 +48,7 @@ export class SalaryRangeListComponent implements OnInit {
     private apiEndpointsService: ApiEndpointsService,
     private modalService: ModalService,
     private router: Router,
+    private exportService: ExportService,
   ) {}
 
   wholeRowClick(salaryRange: SalaryRange): void {
@@ -214,5 +216,18 @@ export class SalaryRangeListComponent implements OnInit {
         this._salaryRanges.set([]);
       },
     });
+  }
+
+  exportToExcel(): void {
+    // Try to export from tableData first (table view), then fallback to salaryRanges (grid view)
+    const tableData = this._tableData();
+    const gridData = this._salaryRanges();
+    const dataToExport = tableData?.length > 0 ? tableData : gridData;
+
+    if (dataToExport && dataToExport.length > 0) {
+      this.exportService.exportSalaryRangesToExcel(dataToExport);
+    } else {
+      console.warn('No salary range data to export');
+    }
   }
 }
