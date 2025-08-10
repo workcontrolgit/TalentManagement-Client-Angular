@@ -122,6 +122,12 @@ export class DepartmentListComponent implements OnInit {
     };
   }
 
+  viewDepartment(event: Event, department: Department): void {
+    event.stopPropagation(); // Prevent card click from triggering
+    let modalTitle = 'Department Detail';
+    this.openModal(modalTitle, department);
+  }
+
   openModal(title: string, department: Department) {
     this.modalService.OpenDepartmentDetailDialog(title, department);
   }
