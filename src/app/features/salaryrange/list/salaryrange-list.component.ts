@@ -11,11 +11,11 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/bre
 
 import { Logger } from '@app/core';
 
-import { DataTablesModule } from 'angular-datatables';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe, CommonModule } from '@angular/common';
 import { RequireRoleDirective } from '@app/core/auth/directives';
 import { FormsModule } from '@angular/forms';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 const log = new Logger('SalaryRange');
 
@@ -24,25 +24,22 @@ const log = new Logger('SalaryRange');
   templateUrl: './salaryrange-list.component.html',
   styleUrls: ['./salaryrange-list.component.scss'],
   imports: [
-    DataTablesModule,
     BreadcrumbComponent,
     RouterLink,
     DecimalPipe,
     CommonModule,
     RequireRoleDirective,
     FormsModule,
+    NgbDropdownModule,
   ],
   standalone: true,
 })
 export class SalaryRangeListComponent implements OnInit {
-  dtOptions: DataTables.Settings = {};
   private _salaryRanges = signal<SalaryRange[]>([]); // For grid view
-  private _tableData = signal<SalaryRange[]>([]); // For DataTables view
   private _viewMode = signal<'grid' | 'table'>('grid');
   private _isLoading = signal<boolean>(true);
 
   salaryRanges = computed(() => this._salaryRanges());
-  tableData = computed(() => this._tableData());
   viewMode = computed(() => this._viewMode());
   isLoading = computed(() => this._isLoading());
 
@@ -88,7 +85,11 @@ export class SalaryRangeListComponent implements OnInit {
 
   deleteSalaryRange(event: Event, salaryRange: SalaryRange): void {
     event.stopPropagation();
-    if (confirm(`Are you sure you want to delete the salary range "${salaryRange.name}"?`)) {
+    if (
+      confirm(
+        `⚠️ DELETE CONFIRMATION\n\nAre you sure you want to delete salary range "${salaryRange.name}"?\n\nThis action cannot be undone and will permanently remove:\n• Salary range record\n• Associated position assignments\n• Compensation data\n\nClick OK to confirm deletion or Cancel to abort.`,
+      )
+    ) {
       this.apiHttpService.delete(this.apiEndpointsService.deleteSalaryRangeByIdEndpoint(salaryRange.id)).subscribe({
         next: () => {
           this.loadSalaryRangeData();
@@ -104,99 +105,6 @@ export class SalaryRangeListComponent implements OnInit {
 
   ngOnInit() {
     this.loadSalaryRangeData();
-
-    this.dtOptions = {
-      pagingType: 'simple_numbers',
-      pageLength: 10,
-      serverSide: true,
-      processing: false, // Disable processing indicator to prevent stuck dots
-      ajax: (dataTablesParameters: any, callback: any) => {
-        this.apiHttpService
-          .post(this.apiEndpointsService.postSalaryRangesPagedEndpoint(), dataTablesParameters)
-          .subscribe({
-            next: (resp: DataTablesResponse) => {
-              this._tableData.set(
-                resp.data.map((sr: SalaryRange) => ({
-                  ...sr,
-                  positions: sr.positions || [],
-                })),
-              );
-              callback({
-                recordsTotal: resp.recordsTotal,
-                recordsFiltered: resp.recordsFiltered,
-                data: resp.data,
-              });
-            },
-            error: (error) => {
-              console.error('Error loading DataTables data:', error);
-              callback({
-                recordsTotal: 0,
-                recordsFiltered: 0,
-                data: [],
-              });
-            },
-          });
-      },
-      columns: [
-        {
-          title: 'Name',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return row.name || '';
-          },
-        },
-        {
-          title: 'Minimum Salary',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return `$${row.minSalary?.toLocaleString() || '0'}`;
-          },
-        },
-        {
-          title: 'Maximum Salary',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return `$${row.maxSalary?.toLocaleString() || '0'}`;
-          },
-        },
-        {
-          title: 'Range',
-          data: null,
-          orderable: false,
-          render: (data: any, type: any, row: any) => {
-            const range = (row.maxSalary || 0) - (row.minSalary || 0);
-            return `$${range.toLocaleString()}`;
-          },
-        },
-        {
-          title: 'Positions',
-          data: null,
-          orderable: false,
-          render: (data: any, type: any, row: any) => {
-            const positionCount = row.positions?.length || 0;
-            return `${positionCount}`;
-          },
-        },
-        {
-          title: 'Created',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return row.created ? new Date(row.created).toLocaleDateString() : '';
-          },
-        },
-        {
-          title: 'Action',
-          data: null,
-          orderable: false,
-          render: () => {
-            return (
-              '<button class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i></button>' +
-              '<button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>'
-            );
-          },
-        },
-      ],
-    };
   }
 
   setViewMode(mode: 'grid' | 'table') {
@@ -308,10 +216,8 @@ export class SalaryRangeListComponent implements OnInit {
   }
 
   exportToExcel(): void {
-    // Try to export from tableData first (table view), then fallback to salaryRanges (grid view)
-    const tableData = this._tableData();
-    const gridData = this._salaryRanges();
-    const dataToExport = tableData?.length > 0 ? tableData : gridData;
+    // Export salary ranges data
+    const dataToExport = this._salaryRanges();
 
     if (dataToExport && dataToExport.length > 0) {
       this.exportService.exportSalaryRangesToExcel(dataToExport);

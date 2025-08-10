@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared';
-import { DataTablesModule } from 'angular-datatables';
 
 import { DepartmentComponent } from './department.component';
 import { DepartmentListComponent } from './list/department-list.component';
@@ -17,7 +16,6 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
     NgbNavModule,
     TranslateModule,
     SharedModule,
-    DataTablesModule,
     DepartmentComponent,
     DepartmentListComponent,
     DepartmentDetailComponent,

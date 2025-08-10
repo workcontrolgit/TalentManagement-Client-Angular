@@ -23,6 +23,43 @@
     </div>
   </div>
 
+  @if (viewMode === 'grid') {
+    <!-- Search and Controls for Grid View -->
+    <div class="table-controls mb-3">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="search-box">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search departments..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearch($event)"
+            />
+            <i class="fas fa-search search-icon"></i>
+          </div>
+        </div>
+        <div class="col-md-6 text-end">
+          <div class="entries-control">
+            <label
+              >Show
+              <select
+                class="form-select form-select-sm d-inline-block w-auto mx-1"
+                (change)="onItemsPerPageChange($event)"
+              >
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+              entries
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
   <div class="department-grid" [style.display]="viewMode === 'grid' ? 'grid' : 'none'">
     @if (isLoading) {
       <div class="loading-state">
@@ -32,8 +69,8 @@
         <h3>Loading Departments...</h3>
         <p>Please wait while we fetch your departments</p>
       </div>
-    } @else if (departments.length !== 0) {
-      @for (department of departments; track department) {
+    } @else if (paginatedDepartments.length !== 0) {
+      @for (department of paginatedDepartments; track department) {
         <div class="department-card" (click)="wholeRowClick(department)">
           <div class="department-icon">
             <div class="icon-circle">
@@ -61,11 +98,21 @@
             <button class="quick-action" title="View Details" (click)="viewDepartment($event, department)">
               <i class="fas fa-eye"></i>
             </button>
-            <button class="quick-action" title="Edit" (click)="editDepartment($event, department)">
+            <button
+              appRequireRole="HRAdmin"
+              class="quick-action"
+              title="Edit"
+              (click)="editDepartment($event, department)"
+            >
               <i class="fas fa-edit"></i>
             </button>
-            <button class="quick-action" title="More Options">
-              <i class="fas fa-ellipsis-v"></i>
+            <button
+              appRequireRole="HRAdmin"
+              class="quick-action text-danger"
+              title="Delete"
+              (click)="deleteDepartment($event, department)"
+            >
+              <i class="fas fa-trash"></i>
             </button>
           </div>
         </div>
@@ -75,15 +122,62 @@
         <div class="empty-icon">
           <i class="fas fa-building"></i>
         </div>
-        <h3>No Departments Found</h3>
-        <p>Get started by adding your first department</p>
-        <a appRequireRole="HRAdmin" routerLink="/department/new" class="action-btn primary">
-          <i class="fas fa-plus"></i>
-          <span>Add First Department</span>
-        </a>
+        @if (searchTerm) {
+          <h3>No Departments Found</h3>
+          <p>No departments found matching "{{ searchTerm }}"</p>
+        } @else {
+          <h3>No Departments Found</h3>
+          <p>Get started by adding your first department</p>
+          <a appRequireRole="HRAdmin" routerLink="/department/new" class="action-btn primary">
+            <i class="fas fa-plus"></i>
+            <span>Add First Department</span>
+          </a>
+        }
       </div>
     }
   </div>
+
+  <!-- Pagination for Grid View -->
+  @if (viewMode === 'grid' && totalPages > 1) {
+    <div class="table-pagination">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="pagination-info">
+            Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ getEndIndex() }} of
+            {{ filteredDepartments.length }} entries
+            @if (searchTerm) {
+              (filtered from {{ departments.length }} total entries)
+            }
+          </div>
+        </div>
+        <div class="col-md-6">
+          <nav aria-label="Department pagination">
+            <ul class="pagination justify-content-end mb-0">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+                  Previous
+                </button>
+              </li>
+              @for (page of getPaginationPages(); track page) {
+                <li class="page-item" [class.active]="page === currentPage">
+                  <button class="page-link" (click)="onPageChange(page)">{{ page }}</button>
+                </li>
+              }
+              <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <button
+                  class="page-link"
+                  (click)="onPageChange(currentPage + 1)"
+                  [disabled]="currentPage === totalPages"
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  }
 
   <div class="table-view-toggle">
     <button class="toggle-btn" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
@@ -175,22 +269,46 @@
                     <div class="created-date">{{ department.created | date: 'shortDate' }}</div>
                   </td>
                   <td>
-                    <button
-                      appRequireRole="HRAdmin"
-                      class="btn btn-sm btn-outline-primary me-1"
-                      title="Edit Department"
-                      (click)="editDepartment($event, department)"
-                    >
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button
-                      appRequireRole="HRAdmin"
-                      class="btn btn-sm btn-outline-danger"
-                      title="Delete Department"
-                      (click)="deleteDepartment($event, department)"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
+                    <div class="dropdown" ngbDropdown>
+                      <button
+                        class="btn btn-sm btn-outline-secondary"
+                        type="button"
+                        [id]="'departmentActions' + department.id"
+                        ngbDropdownToggle
+                        (click)="$event.stopPropagation()"
+                      >
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                      <div
+                        class="dropdown-menu"
+                        ngbDropdownMenu
+                        [attr.aria-labelledby]="'departmentActions' + department.id"
+                      >
+                        <button class="dropdown-item" type="button" (click)="viewDepartment($event, department)">
+                          <i class="fas fa-eye text-info me-2"></i>
+                          View Details
+                        </button>
+                        <button
+                          appRequireRole="HRAdmin"
+                          class="dropdown-item"
+                          type="button"
+                          (click)="editDepartment($event, department)"
+                        >
+                          <i class="fas fa-edit text-primary me-2"></i>
+                          Edit
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button
+                          appRequireRole="HRAdmin"
+                          class="dropdown-item text-danger"
+                          type="button"
+                          (click)="deleteDepartment($event, department)"
+                        >
+                          <i class="fas fa-trash me-2"></i>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               }

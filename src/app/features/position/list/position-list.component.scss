@@ -496,8 +496,61 @@
   }
 }
 
-::ng-deep table.dataTable td.dataTables_empty {
-  display: none;
+// Enhanced dropdown styles for better UX
+.dropdown {
+  .dropdown-toggle {
+    border: none;
+    background: rgba(107, 114, 128, 0.1);
+    color: #6b7280;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(37, 99, 235, 0.1);
+      color: #2563eb;
+      transform: scale(1.05);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+  }
+
+  .dropdown-menu {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0;
+    min-width: 160px;
+
+    .dropdown-item {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: rgba(37, 99, 235, 0.05);
+        color: #2563eb;
+      }
+
+      &.text-danger {
+        &:hover {
+          background-color: rgba(239, 68, 68, 0.05);
+          color: #dc2626;
+        }
+      }
+
+      i {
+        width: 16px;
+        font-size: 0.875rem;
+      }
+    }
+
+    .dropdown-divider {
+      margin: 0.5rem 0;
+    }
+  }
 }
 
 // Search and pagination styles for table view

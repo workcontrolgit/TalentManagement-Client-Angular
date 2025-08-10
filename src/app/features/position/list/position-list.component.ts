@@ -12,13 +12,10 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/bre
 
 import { Router, RouterLink } from '@angular/router';
 
-import { DataTablesModule } from 'angular-datatables';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTooltipModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { RequireRoleDirective } from '@app/core/auth/directives';
 import { FormsModule } from '@angular/forms';
-
-declare var $: any;
 
 const log = new Logger('Position');
 @Component({
@@ -27,8 +24,8 @@ const log = new Logger('Position');
   styleUrls: ['./position-list.component.scss'],
   imports: [
     RouterLink,
-    DataTablesModule,
     NgbTooltipModule,
+    NgbDropdownModule,
     CommonModule,
     BreadcrumbComponent,
     RequireRoleDirective,
@@ -43,8 +40,6 @@ export class PositionListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly modalService = inject(ModalService);
   private readonly exportService = inject(ExportService);
-
-  dtOptions: DataTables.Settings = {};
 
   // Modern signal-based state management
   readonly positions = signal<Position[]>([]);
@@ -219,136 +214,6 @@ export class PositionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPositionData();
-    this.dtOptions = {
-      pagingType: 'simple_numbers',
-      pageLength: 10,
-      serverSide: true,
-      processing: true,
-      ajax: (dataTablesParameters: any, callback: (data: any) => void) => {
-        this.isLoading.set(true);
-        this.error.set(null);
-
-        this.apiHttpService
-          .post(this.apiEndpointsService.postPositionsPagedEndpoint(), dataTablesParameters)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: (resp: DataTablesResponse) => {
-              this.positions.set(resp.data || []);
-              this.isLoading.set(false);
-              callback({
-                recordsTotal: resp.recordsTotal || 0,
-                recordsFiltered: resp.recordsFiltered || 0,
-                data: resp.data || [],
-              });
-              log.debug('Positions loaded successfully', resp.data?.length);
-            },
-            error: (error) => {
-              this.isLoading.set(false);
-              this.error.set('Failed to load positions. Please try again.');
-              log.error('Error loading positions:', error);
-              callback({
-                recordsTotal: 0,
-                recordsFiltered: 0,
-                data: [],
-              });
-            },
-          });
-      },
-      // Set column title and data field
-      columns: [
-        {
-          title: 'Position Number',
-          data: null,
-          className: 'dt-left',
-          render: (data: any, type: any, row: any) => {
-            return `<div style="text-align: left;"><span class="position-number">${
-              row.positionNumber || ''
-            }</span></div>`;
-          },
-        },
-        {
-          title: 'Title',
-          data: null,
-          className: 'position-cell',
-          render: (data: any, type: any, row: any) => {
-            return `
-              <div class="position-info-inline">
-                <div class="icon-small">
-                  <i class="fas fa-briefcase"></i>
-                </div>
-                <div class="info-text">
-                  <div class="name">${row.positionTitle || ''}</div>
-                </div>
-              </div>
-            `;
-          },
-        },
-        {
-          title: 'Department',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return `<div class="department-badge">${row.department?.name || ''}</div>`;
-          },
-        },
-        {
-          title: 'Salary Range',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            const minSalary = row.salaryRange?.minSalary || 0;
-            const maxSalary = row.salaryRange?.maxSalary || 0;
-            return `
-              <div class="salary-info">
-                <div class="range">$${minSalary} - $${maxSalary}</div>
-              </div>
-            `;
-          },
-        },
-        {
-          title: 'Action',
-          data: null,
-          orderable: false,
-          render: () => {
-            return `
-              <div class="table-actions">
-                <button class="table-action-btn" title="View Details">
-                  <i class="fas fa-eye"></i>
-                </button>
-              </div>
-            `;
-          },
-        },
-      ],
-      columnDefs: [
-        { orderable: true, targets: 0 }, // Enable sorting on Position Number
-        { orderable: true, targets: 1 }, // Enable sorting on Title
-        { orderable: true, targets: 2 }, // Enable sorting on Department
-        { orderable: false, targets: 3 }, // Disable sorting on Salary Range
-        { orderable: false, targets: 4 }, // Disable sorting on Action
-      ],
-      rowCallback: (row: Node, data: any) => {
-        // Add CSS class for styling
-        $(row).addClass('table-row');
-
-        // Add click event to action buttons
-        $('td:last-child button', row)
-          .off('click')
-          .on('click', (e: any) => {
-            e.stopPropagation();
-            this.wholeRowClick(data);
-          });
-
-        // Add click event to entire row (excluding action buttons)
-        $(row)
-          .off('click')
-          .on('click', (e: any) => {
-            if (!$(e.target).closest('button').length) {
-              this.wholeRowClick(data);
-            }
-          });
-
-        return row;
-      },
-    };
   }
 
   deletePosition(event: Event, position: Position): void {
@@ -359,7 +224,11 @@ export class PositionListComponent implements OnInit {
       return;
     }
 
-    if (confirm(`Are you sure you want to delete position "${position.positionTitle}"?`)) {
+    if (
+      confirm(
+        `⚠️ DELETE CONFIRMATION\n\nAre you sure you want to delete position "${position.positionTitle}"?\n\nThis action cannot be undone and will permanently remove:\n• Position record\n• Associated employee assignments\n• Related data\n\nClick OK to confirm deletion or Cancel to abort.`,
+      )
+    ) {
       this.apiHttpService.delete(this.apiEndpointsService.deletePositionByIdEndpoint(position.id)).subscribe({
         next: () => {
           this.loadPositionData();

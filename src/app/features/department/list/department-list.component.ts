@@ -10,11 +10,11 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/bre
 
 import { Logger } from '@app/core';
 
-import { DataTablesModule } from 'angular-datatables';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe, CommonModule } from '@angular/common';
 import { RequireRoleDirective } from '@app/core/auth/directives';
 import { FormsModule } from '@angular/forms';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 const log = new Logger('Department');
 
@@ -23,19 +23,17 @@ const log = new Logger('Department');
   templateUrl: './department-list.component.html',
   styleUrls: ['./department-list.component.scss'],
   imports: [
-    DataTablesModule,
     BreadcrumbComponent,
     RouterLink,
     DatePipe,
     CommonModule,
     RequireRoleDirective,
     FormsModule,
+    NgbDropdownModule,
   ],
 })
 export class DepartmentListComponent implements OnInit {
-  dtOptions: DataTables.Settings = {};
   departments: Department[] = []; // For grid view
-  tableData: Department[] = []; // For DataTables view
 
   // Pagination and search state
   filteredDepartments: Department[] = [];
@@ -91,73 +89,6 @@ export class DepartmentListComponent implements OnInit {
   ngOnInit() {
     // Load initial department data for grid view
     this.loadDepartmentData();
-
-    this.dtOptions = {
-      pagingType: 'simple_numbers',
-      pageLength: 10,
-      serverSide: true,
-      processing: false, // Disable processing indicator to prevent stuck dots
-      ajax: (dataTablesParameters: any, callback: any) => {
-        // Call WebAPI to get departments
-        this.apiHttpService
-          .post(this.apiEndpointsService.postDepartmentsPagedEndpoint(), dataTablesParameters)
-          .subscribe({
-            next: (resp: DataTablesResponse) => {
-              this.tableData = resp.data.map((dept: Department) => ({
-                ...dept,
-                positions: dept.positions || [],
-              }));
-              callback({
-                recordsTotal: resp.recordsTotal,
-                recordsFiltered: resp.recordsFiltered,
-                data: resp.data,
-              });
-            },
-            error: (error) => {
-              console.error('Error loading DataTables data:', error);
-              callback({
-                recordsTotal: 0,
-                recordsFiltered: 0,
-                data: [],
-              });
-            },
-          });
-      },
-      // Set column title and data field
-      columns: [
-        {
-          title: 'Name',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return row.name || '';
-          },
-        },
-        {
-          title: 'Positions',
-          data: null,
-          orderable: false,
-          render: (data: any, type: any, row: any) => {
-            const positionCount = row.positions?.length || 0;
-            return `${positionCount} Position${positionCount !== 1 ? 's' : ''}`;
-          },
-        },
-        {
-          title: 'Created',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return row.created ? new Date(row.created).toLocaleDateString() : '';
-          },
-        },
-        {
-          title: 'Action',
-          data: null,
-          orderable: false,
-          render: () => {
-            return '<button class="btn btn-sm btn-outline-primary">Edit</button>';
-          },
-        },
-      ],
-    };
   }
 
   openModal(title: string, department: Department) {
@@ -278,7 +209,11 @@ export class DepartmentListComponent implements OnInit {
       return;
     }
 
-    if (confirm(`Are you sure you want to delete department "${department.name}"?`)) {
+    if (
+      confirm(
+        `⚠️ DELETE CONFIRMATION\n\nAre you sure you want to delete department "${department.name}"?\n\nThis action cannot be undone and will permanently remove:\n• Department record\n• Associated positions\n• Related organizational data\n\nClick OK to confirm deletion or Cancel to abort.`,
+      )
+    ) {
       this.apiHttpService.delete(this.apiEndpointsService.deleteDepartmentByIdEndpoint(department.id)).subscribe({
         next: () => {
           this.loadDepartmentData();
@@ -293,8 +228,8 @@ export class DepartmentListComponent implements OnInit {
   }
 
   exportToExcel(): void {
-    // Try to export from tableData first (table view), then fallback to departments (grid view)
-    const dataToExport = this.tableData?.length > 0 ? this.tableData : this.departments;
+    // Export departments data
+    const dataToExport = this.departments;
 
     if (dataToExport && dataToExport.length > 0) {
       this.exportService.exportDepartmentsToExcel(dataToExport);

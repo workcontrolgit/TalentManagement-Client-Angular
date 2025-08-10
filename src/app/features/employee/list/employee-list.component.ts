@@ -10,10 +10,10 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/bre
 
 import { Logger } from '@app/core';
 
-import { DataTablesModule } from 'angular-datatables';
 import { Router, RouterLink } from '@angular/router';
 import { RequireRoleDirective } from '@app/core/auth/directives';
 import { FormsModule } from '@angular/forms';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 const log = new Logger('Employee');
 
@@ -21,10 +21,9 @@ const log = new Logger('Employee');
   selector: 'app-employee-list',
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss'],
-  imports: [DataTablesModule, BreadcrumbComponent, RouterLink, RequireRoleDirective, FormsModule],
+  imports: [BreadcrumbComponent, RouterLink, RequireRoleDirective, FormsModule, NgbDropdownModule],
 })
 export class EmployeeListComponent implements OnInit {
-  dtOptions: DataTables.Settings = {};
   employees: Employee[] = [];
   filteredEmployees: Employee[] = [];
   paginatedEmployees: Employee[] = [];
@@ -83,58 +82,6 @@ export class EmployeeListComponent implements OnInit {
   ngOnInit() {
     // Load initial employee data for grid view
     this.loadEmployeeData();
-
-    this.dtOptions = {
-      pagingType: 'simple_numbers',
-      pageLength: 10,
-      serverSide: true,
-      processing: true,
-      ajax: (dataTablesParameters: any, callback: any) => {
-        // Call WebAPI to get employees
-        this.apiHttpService
-          .post(this.apiEndpointsService.postEmployeesPagedEndpoint(), dataTablesParameters)
-          .subscribe((resp: DataTablesResponse) => {
-            this.employees = resp.data;
-            callback({
-              recordsTotal: resp.recordsTotal,
-              recordsFiltered: resp.recordsFiltered,
-              data: resp.data,
-            });
-          });
-      },
-      // Set column title and data field
-      columns: [
-        {
-          title: 'Name',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return `${row.firstName || ''} ${row.lastName || ''}`;
-          },
-        },
-        {
-          title: 'Title',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return row.position?.positionTitle || '';
-          },
-        },
-        {
-          title: 'Email',
-          data: null,
-          render: (data: any, type: any, row: any) => {
-            return row.email || '';
-          },
-        },
-        {
-          title: 'Action',
-          data: null,
-          orderable: false,
-          render: () => {
-            return '<button class="btn btn-sm btn-outline-primary">View</button>';
-          },
-        },
-      ],
-    };
   }
 
   openModal(title: string, employee: Employee) {
@@ -250,7 +197,11 @@ export class EmployeeListComponent implements OnInit {
       return;
     }
 
-    if (confirm(`Are you sure you want to delete employee "${employee.firstName} ${employee.lastName}"?`)) {
+    if (
+      confirm(
+        `⚠️ DELETE CONFIRMATION\n\nAre you sure you want to delete employee "${employee.firstName} ${employee.lastName}"?\n\nThis action cannot be undone and will permanently remove:\n• Employee record\n• Associated data\n\nClick OK to confirm deletion or Cancel to abort.`,
+      )
+    ) {
       this.apiHttpService.delete(this.apiEndpointsService.deleteEmployeeByIdEndpoint(employee.id)).subscribe({
         next: () => {
           this.loadEmployeeData();
