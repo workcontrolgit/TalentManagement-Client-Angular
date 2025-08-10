@@ -169,7 +169,9 @@ export class PositionListComponent implements OnInit {
           data: null,
           className: 'dt-left',
           render: (data: any, type: any, row: any) => {
-            return `<div style="text-align: left;"><span class="position-number">${row.positionNumber || ''}</span></div>`;
+            return `<div style="text-align: left;"><span class="position-number">${
+              row.positionNumber || ''
+            }</span></div>`;
           },
         },
         {
