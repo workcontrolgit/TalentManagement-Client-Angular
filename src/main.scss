@@ -4,3 +4,6 @@
  */
 
 // Bootstrap CSS is now included via angular.json configuration
+
+// RBAC Directive Styles
+@use "./app/core/auth/directives/rbac-directives.scss";

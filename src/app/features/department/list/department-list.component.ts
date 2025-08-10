@@ -11,8 +11,10 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@app/@shared/breadcrumb/bre
 import { Logger } from '@app/core';
 
 import { DataTablesModule } from 'angular-datatables';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DatePipe, CommonModule } from '@angular/common';
+import { RequireRoleDirective } from '@app/core/auth/directives';
+import { FormsModule } from '@angular/forms';
 
 const log = new Logger('Department');
 
@@ -20,12 +22,29 @@ const log = new Logger('Department');
   selector: 'app-department-list',
   templateUrl: './department-list.component.html',
   styleUrls: ['./department-list.component.scss'],
-  imports: [DataTablesModule, BreadcrumbComponent, RouterLink, DatePipe, CommonModule],
+  imports: [
+    DataTablesModule,
+    BreadcrumbComponent,
+    RouterLink,
+    DatePipe,
+    CommonModule,
+    RequireRoleDirective,
+    FormsModule,
+  ],
 })
 export class DepartmentListComponent implements OnInit {
   dtOptions: DataTables.Settings = {};
   departments: Department[] = []; // For grid view
   tableData: Department[] = []; // For DataTables view
+
+  // Pagination and search state
+  filteredDepartments: Department[] = [];
+  paginatedDepartments: Department[] = [];
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalPages = 0;
+  searchTerm = '';
+
   message = '';
   viewMode: 'grid' | 'table' = 'grid';
   isLoading = true;
@@ -40,6 +59,7 @@ export class DepartmentListComponent implements OnInit {
     private apiEndpointsService: ApiEndpointsService,
     private modalService: ModalService,
     private exportService: ExportService,
+    private router: Router,
   ) {}
 
   wholeRowClick(department: Department): void {
@@ -48,6 +68,24 @@ export class DepartmentListComponent implements OnInit {
     this.openModal(modalTitle, department);
 
     log.debug('Whole row clicked.', department);
+  }
+
+  viewDepartment(event: Event, department: Department): void {
+    event.stopPropagation(); // Prevent card click from triggering
+    let modalTitle = 'Department Detail';
+    this.openModal(modalTitle, department);
+    log.debug('View department clicked.', department);
+  }
+
+  editDepartment(event: Event, department: Department): void {
+    event.stopPropagation(); // Prevent card click from triggering
+    if (!department?.id) {
+      log.error('Invalid department selected for editing');
+      return;
+    }
+
+    this.router.navigate(['/department/edit', department.id]);
+    log.debug('Edit department clicked.', department);
   }
 
   ngOnInit() {
@@ -122,12 +160,6 @@ export class DepartmentListComponent implements OnInit {
     };
   }
 
-  viewDepartment(event: Event, department: Department): void {
-    event.stopPropagation(); // Prevent card click from triggering
-    let modalTitle = 'Department Detail';
-    this.openModal(modalTitle, department);
-  }
-
   openModal(title: string, department: Department) {
     this.modalService.OpenDepartmentDetailDialog(title, department);
   }
@@ -138,6 +170,74 @@ export class DepartmentListComponent implements OnInit {
 
   getPositionCount(department: Department): number {
     return department.positions?.length ?? 0;
+  }
+
+  onSearch(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchTerm = target.value;
+    this.filterAndPaginateDepartments();
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.updatePaginatedDepartments();
+  }
+
+  onItemsPerPageChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.itemsPerPage = parseInt(target.value, 10);
+    this.currentPage = 1; // Reset to first page
+    this.filterAndPaginateDepartments();
+  }
+
+  private filterAndPaginateDepartments(): void {
+    // Filter departments based on search term
+    if (this.searchTerm.trim() === '') {
+      this.filteredDepartments = [...this.departments];
+    } else {
+      const searchLower = this.searchTerm.toLowerCase();
+      this.filteredDepartments = this.departments.filter(
+        (department) =>
+          department.name?.toLowerCase().includes(searchLower) ||
+          department.createdBy?.toLowerCase().includes(searchLower),
+      );
+    }
+
+    // Calculate pagination
+    this.totalPages = Math.ceil(this.filteredDepartments.length / this.itemsPerPage);
+
+    // Reset to page 1 if current page is out of range
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = 1;
+    }
+
+    this.updatePaginatedDepartments();
+  }
+
+  private updatePaginatedDepartments(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedDepartments = this.filteredDepartments.slice(startIndex, endIndex);
+  }
+
+  getPaginationPages(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+    // Adjust start page if we're near the end
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
+
+  getEndIndex(): number {
+    return Math.min(this.currentPage * this.itemsPerPage, this.filteredDepartments.length);
   }
 
   private loadDepartmentData() {
@@ -157,6 +257,7 @@ export class DepartmentListComponent implements OnInit {
           ...dept,
           positions: dept.positions || [],
         }));
+        this.filterAndPaginateDepartments(); // Initialize filtered and paginated data
         this.isLoading = false;
       },
       error: (error) => {
@@ -164,8 +265,31 @@ export class DepartmentListComponent implements OnInit {
         console.error('Error loading department data:', error);
         // Set some fallback data or show error state
         this.departments = [];
+        this.filteredDepartments = [];
+        this.paginatedDepartments = [];
       },
     });
+  }
+
+  deleteDepartment(event: Event, department: Department): void {
+    event.stopPropagation(); // Prevent card click from triggering
+    if (!department?.id) {
+      log.error('Invalid department selected for deletion');
+      return;
+    }
+
+    if (confirm(`Are you sure you want to delete department "${department.name}"?`)) {
+      this.apiHttpService.delete(this.apiEndpointsService.deleteDepartmentByIdEndpoint(department.id)).subscribe({
+        next: () => {
+          this.loadDepartmentData();
+          log.info('Department deleted successfully');
+        },
+        error: (error) => {
+          console.error('Error deleting department:', error);
+          log.error('Error deleting department:', error);
+        },
+      });
+    }
   }
 
   exportToExcel(): void {

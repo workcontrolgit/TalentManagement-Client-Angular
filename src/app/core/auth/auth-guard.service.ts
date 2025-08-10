@@ -1,32 +1,46 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
+import { RoleService } from './role.service';
 import { ToastService } from '@app/services/toast/toast.service';
-import { Logger } from '@app/core';
 
 @Injectable()
 export class AuthGuard {
-  profile: any;
-  constructor(private toastService: ToastService, private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private roleService: RoleService,
+    private toastService: ToastService,
+  ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.authService.canActivateProtectedRoutes$.pipe(
-      tap((canActivateProtectedRoutes: boolean) => {
-        if (canActivateProtectedRoutes) {
-          return true;
+      map((isAuthenticated: boolean) => {
+        // Step 1: Check authentication
+        if (!isAuthenticated) {
+          console.log('Access denied', 'Please login to continue access');
+          this.showToaster('Access denied', 'Please login to continue access');
+          return false;
         }
-        console.log('Access denied', 'Please login to continue access');
-        this.showToaster('Access denied', 'Please login to continue access');
-        return false;
-      })
+
+        // Step 2: Check role authorization (if required)
+        const requiredRole = route.data['role'];
+        if (requiredRole) {
+          if (!this.roleService.hasRole(requiredRole)) {
+            console.log('Role access denied', `You do not have role ${requiredRole}`);
+            this.showToaster('Access denied', `You do not have role ${requiredRole}`);
+            return false;
+          }
+        }
+
+        return true;
+      }),
     );
   }
 
-  // ngbmodal service
-  showToaster(title: string, message: string) {
+  private showToaster(title: string, message: string): void {
     this.toastService.show(title, message, {
       classname: 'bg-danger text-light',
       delay: 2000,

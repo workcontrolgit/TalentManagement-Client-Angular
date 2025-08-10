@@ -1,3 +1,12 @@
+/**
+ * @deprecated This guard has been deprecated and replaced by enhanced AuthGuard.
+ * The AuthGuard now handles both authentication and role-based authorization.
+ * This file is kept for reference only and should not be used in new code.
+ *
+ * Migration: Use AuthGuard instead with role data in route configuration.
+ * Example: canActivate: [AuthGuard], data: { role: 'HRAdmin' }
+ */
+
 import { AuthService } from './auth.service';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, Router, Route } from '@angular/router';
@@ -9,7 +18,10 @@ import { ToastService } from '@app/services/toast/toast.service';
 export class RoleGuard {
   userProfile: any;
 
-  constructor(private authService: AuthService, private toastService: ToastService) {}
+  constructor(
+    private authService: AuthService,
+    private toastService: ToastService,
+  ) {}
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.authService.canActivateProtectedRoutes$.pipe(
       map((canActivateProtectedRoutes: boolean) => {
@@ -34,7 +46,7 @@ export class RoleGuard {
           }
         }
         return false;
-      })
+      }),
     );
   }
 

@@ -14,6 +14,8 @@ import { Logger } from '@app/core';
 import { DataTablesModule } from 'angular-datatables';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe, CommonModule } from '@angular/common';
+import { RequireRoleDirective } from '@app/core/auth/directives';
+import { FormsModule } from '@angular/forms';
 
 const log = new Logger('SalaryRange');
 
@@ -21,7 +23,15 @@ const log = new Logger('SalaryRange');
   selector: 'app-salaryrange-list',
   templateUrl: './salaryrange-list.component.html',
   styleUrls: ['./salaryrange-list.component.scss'],
-  imports: [DataTablesModule, BreadcrumbComponent, RouterLink, DecimalPipe, CommonModule],
+  imports: [
+    DataTablesModule,
+    BreadcrumbComponent,
+    RouterLink,
+    DecimalPipe,
+    CommonModule,
+    RequireRoleDirective,
+    FormsModule,
+  ],
   standalone: true,
 })
 export class SalaryRangeListComponent implements OnInit {
@@ -35,6 +45,14 @@ export class SalaryRangeListComponent implements OnInit {
   tableData = computed(() => this._tableData());
   viewMode = computed(() => this._viewMode());
   isLoading = computed(() => this._isLoading());
+
+  // Pagination and search state
+  filteredSalaryRanges: SalaryRange[] = [];
+  paginatedSalaryRanges: SalaryRange[] = [];
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalPages = 0;
+  searchTerm = '';
 
   message = '';
 
@@ -189,6 +207,74 @@ export class SalaryRangeListComponent implements OnInit {
     return salaryRange.positions?.length ?? 0;
   }
 
+  onSearch(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchTerm = target.value;
+    this.filterAndPaginateSalaryRanges();
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.updatePaginatedSalaryRanges();
+  }
+
+  onItemsPerPageChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.itemsPerPage = parseInt(target.value, 10);
+    this.currentPage = 1; // Reset to first page
+    this.filterAndPaginateSalaryRanges();
+  }
+
+  private filterAndPaginateSalaryRanges(): void {
+    const salaryRanges = this.salaryRanges();
+
+    // Filter salary ranges based on search term
+    if (this.searchTerm.trim() === '') {
+      this.filteredSalaryRanges = [...salaryRanges];
+    } else {
+      const searchLower = this.searchTerm.toLowerCase();
+      this.filteredSalaryRanges = salaryRanges.filter((salaryRange) =>
+        salaryRange.name?.toLowerCase().includes(searchLower),
+      );
+    }
+
+    // Calculate pagination
+    this.totalPages = Math.ceil(this.filteredSalaryRanges.length / this.itemsPerPage);
+
+    // Reset to page 1 if current page is out of range
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = 1;
+    }
+
+    this.updatePaginatedSalaryRanges();
+  }
+
+  private updatePaginatedSalaryRanges(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedSalaryRanges = this.filteredSalaryRanges.slice(startIndex, endIndex);
+  }
+
+  getPaginationPages(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+    // Adjust start page if we're near the end
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
+
+  getEndIndex(): number {
+    return Math.min(this.currentPage * this.itemsPerPage, this.filteredSalaryRanges.length);
+  }
+
   private loadSalaryRangeData() {
     const initialRequest = {
       draw: 1,
@@ -207,6 +293,7 @@ export class SalaryRangeListComponent implements OnInit {
             positions: sr.positions || [],
           })),
         );
+        this.filterAndPaginateSalaryRanges(); // Initialize filtered and paginated data
         this._isLoading.set(false);
       },
       error: (error) => {
@@ -214,6 +301,8 @@ export class SalaryRangeListComponent implements OnInit {
         console.error('Error loading salary range data:', error);
         log.error('Error loading salary range data:', error);
         this._salaryRanges.set([]);
+        this.filteredSalaryRanges = [];
+        this.paginatedSalaryRanges = [];
       },
     });
   }

@@ -11,7 +11,7 @@
         <p class="page-subtitle">Manage organizational salary ranges and compensation levels</p>
       </div>
       <div class="header-actions">
-        <button class="action-btn primary" [routerLink]="['/salaryrange/new']">
+        <button appRequireRole="HRAdmin" class="action-btn primary" [routerLink]="['/salaryrange/new']">
           <i class="fas fa-plus"></i>
           <span>Add Salary Range</span>
         </button>
@@ -81,7 +81,7 @@
         </div>
         <h3>No Salary Ranges Found</h3>
         <p>Get started by creating your first salary range to define compensation levels.</p>
-        <button class="action-btn primary" [routerLink]="['/salaryrange/new']">
+        <button appRequireRole="HRAdmin" class="action-btn primary" [routerLink]="['/salaryrange/new']">
           <i class="fas fa-plus"></i>
           <span>Add First Salary Range</span>
         </button>
@@ -102,8 +102,43 @@
 
   @if (viewMode() === 'table') {
     <div class="table-container">
+      <!-- Search and Controls -->
+      <div class="table-controls mb-3">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="search-box">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search salary ranges..."
+                [(ngModel)]="searchTerm"
+                (input)="onSearch($event)"
+              />
+              <i class="fas fa-search search-icon"></i>
+            </div>
+          </div>
+          <div class="col-md-6 text-end">
+            <div class="entries-control">
+              <label
+                >Show
+                <select
+                  class="form-select form-select-sm d-inline-block w-auto mx-1"
+                  (change)="onItemsPerPageChange($event)"
+                >
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                entries
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="table-responsive">
-        <table datatable [dtOptions]="dtOptions" class="table table-striped">
+        <table class="table table-striped">
           <thead>
             <tr>
               <th>Name</th>
@@ -115,40 +150,102 @@
             </tr>
           </thead>
           <tbody>
-            @for (salaryRange of tableData(); track salaryRange.id) {
-              <tr (click)="wholeRowClick(salaryRange)">
-                <td>
-                  <div class="name-cell">
-                    <strong>{{ salaryRange.name }}</strong>
-                  </div>
-                </td>
-                <td>
-                  <span class="salary-amount">${{ salaryRange.minSalary | number: '1.0-0' }}</span>
-                </td>
-                <td>
-                  <span class="salary-amount">${{ salaryRange.maxSalary | number: '1.0-0' }}</span>
-                </td>
-                <td>
-                  <span class="salary-range"
-                    >${{ salaryRange.maxSalary - salaryRange.minSalary | number: '1.0-0' }}</span
-                  >
-                </td>
-                <td>
-                  <span class="position-count">{{ getPositionCount(salaryRange) }}</span>
-                </td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" (click)="editSalaryRange($event, salaryRange)">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="btn btn-sm btn-outline-danger" (click)="deleteSalaryRange($event, salaryRange)">
-                    <i class="fas fa-trash"></i>
-                  </button>
+            @if (paginatedSalaryRanges.length === 0 && !isLoading()) {
+              <tr>
+                <td colspan="6" class="text-center py-4">
+                  @if (searchTerm) {
+                    No salary ranges found matching "{{ searchTerm }}"
+                  } @else {
+                    No salary ranges available
+                  }
                 </td>
               </tr>
+            } @else {
+              @for (salaryRange of paginatedSalaryRanges; track salaryRange.id) {
+                <tr (click)="wholeRowClick(salaryRange)">
+                  <td>
+                    <div class="name-cell">
+                      <strong>{{ salaryRange.name }}</strong>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="salary-amount">${{ salaryRange.minSalary | number: '1.0-0' }}</span>
+                  </td>
+                  <td>
+                    <span class="salary-amount">${{ salaryRange.maxSalary | number: '1.0-0' }}</span>
+                  </td>
+                  <td>
+                    <span class="salary-range"
+                      >${{ salaryRange.maxSalary - salaryRange.minSalary | number: '1.0-0' }}</span
+                    >
+                  </td>
+                  <td>
+                    <span class="position-count">{{ getPositionCount(salaryRange) }}</span>
+                  </td>
+                  <td>
+                    <button
+                      appRequireRole="HRAdmin"
+                      class="btn btn-sm btn-outline-primary me-1"
+                      (click)="editSalaryRange($event, salaryRange)"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button
+                      appRequireRole="HRAdmin"
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="deleteSalaryRange($event, salaryRange)"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              }
             }
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+        <div class="table-pagination">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <div class="pagination-info">
+                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ getEndIndex() }} of
+                {{ filteredSalaryRanges.length }} entries
+                @if (searchTerm) {
+                  (filtered from {{ salaryRanges().length }} total entries)
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <nav aria-label="Salary Range pagination">
+                <ul class="pagination justify-content-end mb-0">
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button class="page-link" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+                      Previous
+                    </button>
+                  </li>
+                  @for (page of getPaginationPages(); track page) {
+                    <li class="page-item" [class.active]="page === currentPage">
+                      <button class="page-link" (click)="onPageChange(page)">{{ page }}</button>
+                    </li>
+                  }
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button
+                      class="page-link"
+                      (click)="onPageChange(currentPage + 1)"
+                      [disabled]="currentPage === totalPages"
+                    >
+                      Next
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   }
 </div>

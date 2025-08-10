@@ -1,26 +1,30 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { AuthGuard } from '@app/core/auth/auth-guard.service';
 
-import { SalaryRangeComponent } from './salaryrange.component';
+import { SalaryRangeListComponent } from './list/salaryrange-list.component';
 import { SalaryRangeDetailComponent } from './detail/salaryrange-detail.component';
 
 const routes: Routes = [
   // Module is lazy loaded, see app-routing.module.ts
   {
     path: '',
-    component: SalaryRangeComponent,
+    component: SalaryRangeListComponent,
+    canActivate: [AuthGuard],
     data: { title: marker('Salary Range') },
   },
   {
     path: 'new',
     component: SalaryRangeDetailComponent,
-    data: { title: marker('New Salary Range') },
+    canActivate: [AuthGuard],
+    data: { title: marker('New Salary Range'), role: 'HRAdmin' },
   },
   {
     path: 'edit/:id',
     component: SalaryRangeDetailComponent,
-    data: { title: marker('Edit Salary Range') },
+    canActivate: [AuthGuard],
+    data: { title: marker('Edit Salary Range'), role: 'HRAdmin' },
   },
 ];
 
