@@ -24,21 +24,21 @@
 
       <div class="card-body">
         <!-- Loading State -->
-        @if(isLoading()) {
-        <div class="d-flex justify-content-center align-items-center py-4">
-          <div class="spinner-border text-primary me-2" role="status">
-            <span class="visually-hidden">Loading...</span>
+        @if (isLoading()) {
+          <div class="d-flex justify-content-center align-items-center py-4">
+            <div class="spinner-border text-primary me-2" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span>Processing...</span>
           </div>
-          <span>Processing...</span>
-        </div>
         }
 
         <!-- Error State -->
-        @if(error()) {
-        <div class="alert alert-danger d-flex align-items-center" role="alert">
-          <i class="fas fa-exclamation-triangle me-2"></i>
-          {{ error() }}
-        </div>
+        @if (error()) {
+          <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            {{ error() }}
+          </div>
         }
 
         <div class="row">
@@ -78,14 +78,15 @@
                 placeholder="Enter first name"
                 ngbTooltip="Employee's first name"
               />
-              @if(f['firstName'].invalid && f['firstName'].touched) {
-              <div class="invalid-feedback">
-                @if(f['firstName'].errors?.['required']) {
-                <div>First name is required</div>
-                } @if(f['firstName'].errors?.['minlength']) {
-                <div>First name must be at least 2 characters long</div>
-                }
-              </div>
+              @if (f['firstName'].invalid && f['firstName'].touched) {
+                <div class="invalid-feedback">
+                  @if (f['firstName'].errors?.['required']) {
+                    <div>First name is required</div>
+                  }
+                  @if (f['firstName'].errors?.['minlength']) {
+                    <div>First name must be at least 2 characters long</div>
+                  }
+                </div>
               }
             </div>
           </div>
@@ -121,14 +122,15 @@
                 placeholder="Enter last name"
                 ngbTooltip="Employee's last name"
               />
-              @if(f['lastName'].invalid && f['lastName'].touched) {
-              <div class="invalid-feedback">
-                @if(f['lastName'].errors?.['required']) {
-                <div>Last name is required</div>
-                } @if(f['lastName'].errors?.['minlength']) {
-                <div>Last name must be at least 2 characters long</div>
-                }
-              </div>
+              @if (f['lastName'].invalid && f['lastName'].touched) {
+                <div class="invalid-feedback">
+                  @if (f['lastName'].errors?.['required']) {
+                    <div>Last name is required</div>
+                  }
+                  @if (f['lastName'].errors?.['minlength']) {
+                    <div>Last name must be at least 2 characters long</div>
+                  }
+                </div>
               }
             </div>
           </div>
@@ -166,10 +168,10 @@
                 <option value="1">Female</option>
                 <option value="2">Other</option>
               </select>
-              @if(f['gender'].invalid && f['gender'].touched) {
-              <div class="invalid-feedback">
-                <div>Gender selection is required</div>
-              </div>
+              @if (f['gender'].invalid && f['gender'].touched) {
+                <div class="invalid-feedback">
+                  <div>Gender selection is required</div>
+                </div>
               }
             </div>
           </div>
@@ -189,10 +191,10 @@
                 formControlName="birthday"
                 ngbTooltip="Employee's date of birth"
               />
-              @if(f['birthday'].invalid && f['birthday'].touched) {
-              <div class="invalid-feedback">
-                <div>Birthday is required</div>
-              </div>
+              @if (f['birthday'].invalid && f['birthday'].touched) {
+                <div class="invalid-feedback">
+                  <div>Birthday is required</div>
+                </div>
               }
             </div>
           </div>
@@ -218,14 +220,15 @@
                 placeholder="Enter email address"
                 ngbTooltip="Employee's email address"
               />
-              @if(f['email'].invalid && f['email'].touched) {
-              <div class="invalid-feedback">
-                @if(f['email'].errors?.['required']) {
-                <div>Email address is required</div>
-                } @if(f['email'].errors?.['email']) {
-                <div>Please enter a valid email address</div>
-                }
-              </div>
+              @if (f['email'].invalid && f['email'].touched) {
+                <div class="invalid-feedback">
+                  @if (f['email'].errors?.['required']) {
+                    <div>Email address is required</div>
+                  }
+                  @if (f['email'].errors?.['email']) {
+                    <div>Please enter a valid email address</div>
+                  }
+                </div>
               }
             </div>
           </div>
@@ -246,10 +249,10 @@
                 placeholder="Enter phone number"
                 ngbTooltip="Employee's phone number"
               />
-              @if(f['phone'].invalid && f['phone'].touched) {
-              <div class="invalid-feedback">
-                <div>Phone number is required</div>
-              </div>
+              @if (f['phone'].invalid && f['phone'].touched) {
+                <div class="invalid-feedback">
+                  <div>Phone number is required</div>
+                </div>
               }
             </div>
           </div>
@@ -275,14 +278,15 @@
                 placeholder="Enter employee number"
                 ngbTooltip="Unique employee number"
               />
-              @if(f['employeeNumber'].invalid && f['employeeNumber'].touched) {
-              <div class="invalid-feedback">
-                @if(f['employeeNumber'].errors?.['required']) {
-                <div>Employee number is required</div>
-                } @if(f['employeeNumber'].errors?.['minlength']) {
-                <div>Employee number must be at least 2 characters long</div>
-                }
-              </div>
+              @if (f['employeeNumber'].invalid && f['employeeNumber'].touched) {
+                <div class="invalid-feedback">
+                  @if (f['employeeNumber'].errors?.['required']) {
+                    <div>Employee number is required</div>
+                  }
+                  @if (f['employeeNumber'].errors?.['minlength']) {
+                    <div>Employee number must be at least 2 characters long</div>
+                  }
+                </div>
               }
             </div>
           </div>
@@ -307,10 +311,10 @@
                 [compareWith]="comparePositions"
               >
               </ng-select>
-              @if(f['positionId'].invalid && f['positionId'].touched) {
-              <div class="invalid-feedback">
-                <div>Position selection is required</div>
-              </div>
+              @if (f['positionId'].invalid && f['positionId'].touched) {
+                <div class="invalid-feedback">
+                  <div>Position selection is required</div>
+                </div>
               }
             </div>
           </div>
@@ -333,14 +337,15 @@
                 step="0.01"
                 ngbTooltip="Employee's annual salary"
               />
-              @if(f['salary'].invalid && f['salary'].touched) {
-              <div class="invalid-feedback">
-                @if(f['salary'].errors?.['required']) {
-                <div>Salary is required</div>
-                } @if(f['salary'].errors?.['min']) {
-                <div>Salary must be greater than or equal to 0</div>
-                }
-              </div>
+              @if (f['salary'].invalid && f['salary'].touched) {
+                <div class="invalid-feedback">
+                  @if (f['salary'].errors?.['required']) {
+                    <div>Salary is required</div>
+                  }
+                  @if (f['salary'].errors?.['min']) {
+                    <div>Salary must be greater than or equal to 0</div>
+                  }
+                </div>
               }
             </div>
           </div>
@@ -350,48 +355,54 @@
       <div class="card-footer bg-light">
         <div class="d-flex justify-content-between">
           <div>
-            @if(canDelete()) {
-            <button
-              type="button"
-              class="btn btn-danger"
-              [disabled]="isLoading()"
-              (click)="onDelete()"
-              ngbTooltip="Delete this employee permanently"
-            >
-              <i class="fas fa-trash me-1"></i>
-              @if(isLoading()) {
-              <span class="spinner-border spinner-border-sm me-1"></span>
-              } Delete
-            </button>
+            @if (canDelete()) {
+              <button
+                appRequireRole="HRAdmin"
+                type="button"
+                class="btn btn-danger"
+                [disabled]="isLoading()"
+                (click)="onDelete()"
+                ngbTooltip="Delete this employee permanently"
+              >
+                <i class="fas fa-trash me-1"></i>
+                @if (isLoading()) {
+                  <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                Delete
+              </button>
             }
           </div>
           <div>
-            @if(isAddNew()) {
-            <button
-              type="button"
-              class="btn btn-success"
-              [disabled]="!canSave()"
-              (click)="onCreate()"
-              ngbTooltip="Create new employee"
-            >
-              <i class="fas fa-plus me-1"></i>
-              @if(isLoading()) {
-              <span class="spinner-border spinner-border-sm me-1"></span>
-              } Create
-            </button>
+            @if (isAddNew()) {
+              <button
+                appRequireRole="HRAdmin"
+                type="button"
+                class="btn btn-success"
+                [disabled]="!canSave()"
+                (click)="onCreate()"
+                ngbTooltip="Create new employee"
+              >
+                <i class="fas fa-plus me-1"></i>
+                @if (isLoading()) {
+                  <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                Create
+              </button>
             } @else {
-            <button
-              type="button"
-              class="btn btn-primary"
-              [disabled]="!canSave()"
-              (click)="onUpdate()"
-              ngbTooltip="Save changes to employee"
-            >
-              <i class="fas fa-save me-1"></i>
-              @if(isLoading()) {
-              <span class="spinner-border spinner-border-sm me-1"></span>
-              } Save Changes
-            </button>
+              <button
+                appRequireRole="HRAdmin"
+                type="button"
+                class="btn btn-primary"
+                [disabled]="!canSave()"
+                (click)="onUpdate()"
+                ngbTooltip="Save changes to employee"
+              >
+                <i class="fas fa-save me-1"></i>
+                @if (isLoading()) {
+                  <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                Save Changes
+              </button>
             }
           </div>
         </div>

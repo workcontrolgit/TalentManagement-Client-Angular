@@ -1,0 +1,42 @@
+/* RBAC Directive Styles */
+.rbac-disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+
+  &:hover {
+    opacity: 0.6 !important;
+  }
+
+  /* Prevent any visual changes on hover/focus for disabled elements */
+  &:hover,
+  &:focus,
+  &:active {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Additional styling for different element types */
+button.rbac-disabled,
+a.rbac-disabled,
+.btn.rbac-disabled {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+/* Ensure disabled state overrides Bootstrap button states */
+.btn.rbac-disabled {
+  &.btn-primary,
+  &.btn-secondary,
+  &.btn-success,
+  &.btn-danger,
+  &.btn-warning,
+  &.btn-info,
+  &.btn-light,
+  &.btn-dark {
+    opacity: 0.6 !important;
+  }
+}

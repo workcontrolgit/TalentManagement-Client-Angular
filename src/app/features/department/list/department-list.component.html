@@ -11,7 +11,7 @@
         <p class="page-subtitle">Manage your organization's departments and structure</p>
       </div>
       <div class="header-actions">
-        <a routerLink="/department/new" class="action-btn primary">
+        <a appRequireRole="HRAdmin" routerLink="/department/new" class="action-btn primary">
           <i class="fas fa-plus"></i>
           <span>Add Department</span>
         </a>
@@ -61,9 +61,9 @@
             <button class="quick-action" title="View Details" (click)="viewDepartment($event, department)">
               <i class="fas fa-eye"></i>
             </button>
-            <a [routerLink]="['/department/edit', department.id]" class="quick-action" title="Edit">
+            <button class="quick-action" title="Edit" (click)="editDepartment($event, department)">
               <i class="fas fa-edit"></i>
-            </a>
+            </button>
             <button class="quick-action" title="More Options">
               <i class="fas fa-ellipsis-v"></i>
             </button>
@@ -77,7 +77,7 @@
         </div>
         <h3>No Departments Found</h3>
         <p>Get started by adding your first department</p>
-        <a routerLink="/department/new" class="action-btn primary">
+        <a appRequireRole="HRAdmin" routerLink="/department/new" class="action-btn primary">
           <i class="fas fa-plus"></i>
           <span>Add First Department</span>
         </a>
@@ -97,59 +97,149 @@
   </div>
 
   @if (viewMode === 'table') {
-    <div class="modern-table-container">
-      <div class="table-wrapper">
-        <table datatable [dtOptions]="dtOptions" class="modern-table">
+    <div class="table-container">
+      <!-- Search and Controls -->
+      <div class="table-controls mb-3">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="search-box">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search departments..."
+                [(ngModel)]="searchTerm"
+                (input)="onSearch($event)"
+              />
+              <i class="fas fa-search search-icon"></i>
+            </div>
+          </div>
+          <div class="col-md-6 text-end">
+            <div class="entries-control">
+              <label
+                >Show
+                <select
+                  class="form-select form-select-sm d-inline-block w-auto mx-1"
+                  (change)="onItemsPerPageChange($event)"
+                >
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                entries
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped">
           <thead>
             <tr>
               <th>Name</th>
               <th>Positions</th>
               <th>Created</th>
-              <th>Action</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            @for (department of tableData; track department) {
-              <tr class="table-row" (click)="wholeRowClick(department)">
-                <td class="department-cell">
-                  <div class="department-info-inline">
-                    <div class="icon-small">
-                      <i class="fas fa-building"></i>
-                    </div>
-                    <div class="info-text">
-                      <div class="name">{{ department.name }}</div>
-                      <div class="subtitle">{{ department.createdBy }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="position-count">{{ getPositionCount(department) }} Positions</div>
-                </td>
-                <td>
-                  <div class="created-date">{{ department.created | date: 'shortDate' }}</div>
-                </td>
-                <td>
-                  <div class="table-actions">
-                    <a
-                      [routerLink]="['/department/edit', department.id]"
-                      class="table-action-btn"
-                      title="Edit Department"
-                    >
-                      <i class="fas fa-edit"></i>
-                    </a>
-                  </div>
+            @if (paginatedDepartments.length === 0 && !isLoading) {
+              <tr>
+                <td colspan="4" class="text-center py-4">
+                  @if (searchTerm) {
+                    No departments found matching "{{ searchTerm }}"
+                  } @else {
+                    No departments available
+                  }
                 </td>
               </tr>
+            } @else {
+              @for (department of paginatedDepartments; track department.id) {
+                <tr (click)="wholeRowClick(department)">
+                  <td>
+                    <div class="department-info-inline">
+                      <div class="icon-small">
+                        <i class="fas fa-building"></i>
+                      </div>
+                      <div class="info-text">
+                        <div class="name">{{ department.name }}</div>
+                        <div class="subtitle">{{ department.createdBy }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="position-count">{{ getPositionCount(department) }} Positions</div>
+                  </td>
+                  <td>
+                    <div class="created-date">{{ department.created | date: 'shortDate' }}</div>
+                  </td>
+                  <td>
+                    <button
+                      appRequireRole="HRAdmin"
+                      class="btn btn-sm btn-outline-primary me-1"
+                      title="Edit Department"
+                      (click)="editDepartment($event, department)"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button
+                      appRequireRole="HRAdmin"
+                      class="btn btn-sm btn-outline-danger"
+                      title="Delete Department"
+                      (click)="deleteDepartment($event, department)"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              }
             }
           </tbody>
         </table>
       </div>
-      <div class="table-footer">
-        <span class="table-hint">
-          <i class="fas fa-info-circle"></i>
-          All columns are searchable and sortable
-        </span>
-      </div>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+        <div class="table-pagination">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <div class="pagination-info">
+                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ getEndIndex() }} of
+                {{ filteredDepartments.length }} entries
+                @if (searchTerm) {
+                  (filtered from {{ departments.length }} total entries)
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <nav aria-label="Department pagination">
+                <ul class="pagination justify-content-end mb-0">
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button class="page-link" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+                      Previous
+                    </button>
+                  </li>
+                  @for (page of getPaginationPages(); track page) {
+                    <li class="page-item" [class.active]="page === currentPage">
+                      <button class="page-link" (click)="onPageChange(page)">{{ page }}</button>
+                    </li>
+                  }
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button
+                      class="page-link"
+                      (click)="onPageChange(currentPage + 1)"
+                      [disabled]="currentPage === totalPages"
+                    >
+                      Next
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   }
 </div>

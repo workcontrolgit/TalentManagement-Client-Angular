@@ -493,3 +493,56 @@
 ::ng-deep .dataTables_processing {
   display: none !important;
 }
+
+// Search and pagination styles for table view
+.table-controls {
+  .search-box {
+    position: relative;
+
+    .search-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+      pointer-events: none;
+    }
+  }
+
+  .entries-control label {
+    font-weight: 500;
+    color: #4b5563;
+    align-items: center;
+  }
+}
+
+.table-pagination {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+
+  .pagination-info {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .page-link {
+    border-color: #d1d5db;
+    color: #6b7280;
+
+    &:hover {
+      background-color: #f3f4f6;
+      border-color: #d1d5db;
+    }
+  }
+
+  .page-item.active .page-link {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+  }
+
+  .page-item.disabled .page-link {
+    color: #9ca3af;
+    pointer-events: none;
+  }
+}

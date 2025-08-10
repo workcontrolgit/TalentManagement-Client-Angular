@@ -24,6 +24,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 
 // boostrap tooltip https://ng-bootstrap.github.io/#/components/tooltip/examples
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { RequireRoleDirective } from '@app/core/auth/directives';
 
 // logger
 const log = new Logger('EmployeeForm');
@@ -32,7 +33,15 @@ const log = new Logger('EmployeeForm');
   selector: 'app-employee-form',
   templateUrl: './employee-form.component.html',
   styleUrls: ['./employee-form.component.scss'],
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, TranslateModule, NgbTooltipModule, NgSelectModule],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    RouterLink,
+    TranslateModule,
+    NgbTooltipModule,
+    NgSelectModule,
+    RequireRoleDirective,
+  ],
   standalone: true,
 })
 export class EmployeeFormComponent implements OnInit, AfterViewInit {
