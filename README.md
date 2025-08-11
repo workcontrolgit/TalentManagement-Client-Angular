@@ -255,6 +255,194 @@ export const environment = {
 - **Logout Handling**: Proper cleanup of tokens and session state
 - **PKCE Support**: Enhanced security for public clients
 
+## 🔐 Role-Based Access Control (RBAC)
+
+This application implements a comprehensive **Role-Based Access Control (RBAC)** system that restricts access to features and actions based on user roles. The RBAC system integrates seamlessly with the OIDC authentication to provide fine-grained authorization.
+
+### User Roles
+
+The system currently supports the following user roles:
+
+- **Employee** - Basic user role with read-only access to their own data
+- **HRAdmin** - Administrative role with full CRUD permissions across all modules
+
+### RBAC Implementation
+
+#### Angular Directive for UI Protection
+
+The application uses a custom structural directive `appRequireRole` to conditionally show/hide UI elements based on user roles:
+
+```typescript
+@Directive({
+  selector: '[appRequireRole]',
+  standalone: true,
+})
+export class RequireRoleDirective {
+  @Input('appRequireRole') requiredRole!: string;
+
+  constructor(
+    private templateRef: TemplateRef<any>,
+    private viewContainer: ViewContainerRef,
+    private authService: OAuthService,
+  ) {}
+
+  ngOnInit() {
+    if (this.hasRequiredRole()) {
+      this.viewContainer.createEmbeddedView(this.templateRef);
+    } else {
+      this.viewContainer.clear();
+    }
+  }
+}
+```
+
+#### Usage Examples
+
+**Grid View Actions**
+
+```html
+<!-- View action - Available to all authenticated users -->
+<button class="quick-action" title="View Details" (click)="viewEmployee($event, employee)">
+  <i class="fas fa-eye"></i>
+</button>
+
+<!-- Edit/Delete actions - Only for HRAdmin role -->
+<button appRequireRole="HRAdmin" class="quick-action" title="Edit" (click)="editEmployee($event, employee)">
+  <i class="fas fa-edit"></i>
+</button>
+
+<button appRequireRole="HRAdmin" class="quick-action text-danger" title="Delete" (click)="deleteEmployee($event, employee)">
+  <i class="fas fa-trash"></i>
+</button>
+```
+
+**Table View Dropdown Actions**
+
+```html
+<div class="dropdown" ngbDropdown>
+  <button class="btn btn-sm btn-outline-secondary" ngbDropdownToggle>
+    <i class="fas fa-ellipsis-v"></i>
+  </button>
+  <div class="dropdown-menu" ngbDropdownMenu>
+    <!-- View Details - Available to all users -->
+    <button class="dropdown-item" type="button" (click)="viewEmployee($event, employee)"><i class="fas fa-eye text-info me-2"></i>View Details</button>
+
+    <!-- Admin-only actions -->
+    <button appRequireRole="HRAdmin" class="dropdown-item" type="button" (click)="editEmployee($event, employee)"><i class="fas fa-edit text-primary me-2"></i>Edit</button>
+
+    <div class="dropdown-divider"></div>
+
+    <button appRequireRole="HRAdmin" class="dropdown-item text-danger" type="button" (click)="deleteEmployee($event, employee)"><i class="fas fa-trash me-2"></i>Delete</button>
+  </div>
+</div>
+```
+
+**Header Actions**
+
+```html
+<!-- Add buttons - Only HRAdmin can create new records -->
+<a appRequireRole="HRAdmin" routerLink="/employee/new" class="action-btn primary">
+  <i class="fas fa-plus"></i>
+  <span>Add Employee</span>
+</a>
+
+<!-- Export functionality - Available to all users -->
+<button class="action-btn secondary" (click)="exportToExcel()">
+  <i class="fas fa-download"></i>
+  <span>Export</span>
+</button>
+```
+
+#### Protected Features by Role
+
+**Employee Role Permissions:**
+
+- ✅ View employee records
+- ✅ View position information
+- ✅ View department structure
+- ✅ View salary ranges
+- ✅ Export data to Excel
+- ❌ Create new records
+- ❌ Edit existing records
+- ❌ Delete records
+
+**HRAdmin Role Permissions:**
+
+- ✅ All Employee role permissions plus:
+- ✅ Create new employees, positions, departments, and salary ranges
+- ✅ Edit existing records across all modules
+- ✅ Delete records with confirmation dialogs
+- ✅ Full administrative access
+
+### RBAC Integration Points
+
+#### Module-Level Protection
+
+All major modules implement RBAC protection:
+
+1. **Employee Management** (`src/app/features/employee/`)
+   - Create, edit, delete operations require HRAdmin role
+   - Grid and table view actions are role-protected
+
+2. **Position Management** (`src/app/features/position/`)
+   - Administrative functions restricted to HRAdmin
+   - View operations available to all authenticated users
+
+3. **Department Management** (`src/app/features/department/`)
+   - Department creation and modification require HRAdmin role
+   - Organizational structure viewing allowed for all users
+
+4. **Salary Range Management** (`src/app/features/salaryrange/`)
+   - Salary range administration requires HRAdmin role
+   - Read-only access for Employee role users
+
+#### User Experience
+
+The RBAC system provides a seamless user experience:
+
+- **Progressive Enhancement**: Users see only the actions they can perform
+- **No Broken UI**: Unauthorized elements are hidden, not disabled
+- **Consistent Application**: RBAC is applied across grid, table, and detail views
+- **Security by Default**: New features require explicit role assignment
+
+### Server-Side Authorization
+
+While the Angular client implements UI-level role protection, the backend Web API enforces authorization at the API level:
+
+```csharp
+[Authorize(Roles = "HRAdmin")]
+[HttpPost]
+public async Task<IActionResult> CreateEmployee(CreateEmployeeRequest request)
+{
+    // Only HRAdmin users can create employees
+}
+
+[Authorize] // All authenticated users can view
+[HttpGet("{id}")]
+public async Task<IActionResult> GetEmployee(int id)
+{
+    // All authenticated users can view employee details
+}
+```
+
+### Future RBAC Extensions
+
+The system is designed to support additional roles and permissions:
+
+- **Manager** - Team-specific management capabilities
+- **Recruiter** - Hiring and candidate management
+- **Payroll** - Salary and compensation management
+- **Viewer** - Read-only access across all modules
+
+### Testing RBAC
+
+To test different role scenarios:
+
+1. Configure users with different roles in IdentityServer
+2. Log in with different user accounts
+3. Verify that UI elements appear/disappear based on roles
+4. Test API endpoints with different user tokens
+
 ## 🌐 Web API Integration
 
 ### API Architecture
