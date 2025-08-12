@@ -1,0 +1,14 @@
+{
+  "project_type": "angular",
+  "language": "typescript",
+  "framework": "angular",
+  "test_framework": "jasmine",
+  "e2e_framework": "cypress",
+  "build_command": "npm run build",
+  "dev_command": "npm start",
+  "test_command": "npm run test",
+  "lint_command": "npm run lint",
+  "package_manager": "npm",
+  "main_directories": ["src/app", "docs"],
+  "ignore_patterns": ["node_modules/**", "dist/**", "reports/**", "ssl/**", "*.log"]
+}
